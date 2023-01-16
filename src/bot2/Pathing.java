@@ -18,26 +18,26 @@ public class Pathing {
         switch (type) {
             case WELL_AD:
                 for (WellInfo w : rc.senseNearbyWells(ResourceType.ADAMANTIUM)) {
-                    if(Communication.setItem(rc, new Well())
+                    if(Communication.setItem(rc, new Well()))
                         locations.add(new Vec2D(w.getMapLocation()));
                 }
                 break;
             case WELL_MN:
                 for (WellInfo w : rc.senseNearbyWells(ResourceType.MANA)) {
-                    if(Communication.setItem(rc, new Well())
+                    if(Communication.setItem(rc, new Well()))
                         locations.add(new Vec2D(w.getMapLocation()));
                 }
                 break;
             case WELL_EX:
                 for (WellInfo w : rc.senseNearbyWells(ResourceType.ELIXIR)) {
-                    if(Communication.setItem(rc, new Well())
+                    if(Communication.setItem(rc, new Well()))
                         locations.add(new Vec2D(w.getMapLocation()));
                 }
                 break;
             case ISLAND:
                 for (int i : rc.senseNearbyIslands()) {
                     for (MapLocation l : rc.senseNearbyIslandLocations(i)) {
-                        if(Communication.setItem(rc, new Island())
+                        if(Communication.setItem(rc, new Island()))
                             locations.add(new Vec2D(l));
                         break;
                     }
