@@ -70,8 +70,7 @@ public class Carrier {
             if (total == 0) {
 
                 // Move towards well or search for well
-                if (!rc.getLocation().isAdjacentTo(wellLoc))
-                    Pathing.moveTowards(rc, wellTarget);
+                Pathing.moveTowards(rc, wellTarget);
 
             }
             if (total == GameConstants.CARRIER_CAPACITY) {
@@ -96,7 +95,7 @@ public class Carrier {
     }
 
     static void scanWells(RobotController rc) throws GameActionException {
-        WellInfo[] wells = rc.senseNearbyWells();
+        WellInfo[] wells = rc.senseNearbyWells(2);
         if(wells.length > 0) wellLoc = wells[0].getMapLocation();
     }
 
