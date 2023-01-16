@@ -1,1 +1,87 @@
 package bot2;
+
+import battlecode.common.*;
+
+public class Launcher {
+
+    static void runLauncher(RobotController rc) throws GameActionException {
+
+        final int ACTION_RADIUS = rc.getType().actionRadiusSquared;
+        final Team OPPONENT = rc.getTeam().opponent();
+        final double ISLAND_PROB = 0.3;
+        final double[] WELL_PROBS = { 0.3, 0.3 }; // WELL_AD, WELL_MN
+
+        // Assign role
+        boolean isIsland = false;
+        Pathing.LocationType wellTarget = Pathing.LocationType.WELL_AD;
+        if (RobotPlayer.turnCount == 2) {
+
+            if (RobotPlayer.rng.nextDouble() < ISLAND_PROB) {
+                isIsland = true;
+            } else {
+
+                double rand = RobotPlayer.rng.nextDouble();
+                if (rand < WELL_PROBS[0])
+                    wellTarget = Pathing.LocationType.WELL_AD;
+                else if (rand < WELL_PROBS[1])
+                    wellTarget = Pathing.LocationType.WELL_MN;
+                else
+                    wellTarget = Pathing.LocationType.WELL_EX;
+
+            }
+
+        }
+
+        // Find target enemy
+        RobotInfo[] enemies = rc.senseNearbyRobots(ACTION_RADIUS, OPPONENT);
+        int bestScore = -1;
+        RobotInfo target = null;
+        if (enemies.length > 0) {
+            for (RobotInfo enemy: enemies) {
+                int score = 50 - enemy.getHealth();
+                switch (enemy.getType()) {
+                    case BOOSTER:
+                    case DESTABILIZER:
+                        score *= 3;
+                        break;
+                    case LAUNCHER:
+                        score *= 3;
+                        break;
+                    case CARRIER:
+                        score *= 2;
+                        break;
+                    case AMPLIFIER:
+                        score *= 1;
+                        break;
+                    default:
+                        score *= 1;
+                        break;
+                }
+                if (score > bestScore) {
+                    bestScore = score;
+                    target = enemy;
+                }
+            }
+        }
+
+        if (target != null){
+
+            // If there is a target, attack
+            if (rc.canAttack(target.getLocation()))
+                rc.attack(target.getLocation());
+
+        } else if (isIsland) {
+
+            // Go to island if launcher role is to go to island
+            Pathing.moveTowards(rc, LocationType.ISLAND);
+
+        } else {
+
+            // Go to resources if launcher role is to go to resources
+            Pathing.moveTowards(rc, wellTarget);
+
+        }
+
+    }
+
+}
