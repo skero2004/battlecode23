@@ -1,4 +1,4 @@
-package bot0;
+package bot2;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -6,15 +6,15 @@ import java.util.ArrayList;
 import battlecode.common.*;
 
 class Message {
-    public int idx;
-    public int value;
-    public int turnAdded;
+  public int idx;
+  public int value;
+  public int turnAdded;
 
-    Message (int idx, int value, int turnAdded) {
-        this.idx = idx;
-        this.value = value;
-        this.turnAdded = turnAdded;
-    }
+  Message(int idx, int value, int turnAdded) {
+    this.idx = idx;
+    this.value = value;
+    this.turnAdded = turnAdded;
+  }
 }
 
 class Item

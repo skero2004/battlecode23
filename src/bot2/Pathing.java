@@ -7,20 +7,20 @@ import Util.Vec2D;
 
 public class Pathing {
 
-    enum LocationType {
-        WELL_AD, WELL_MN, WELL_EX, ISLAND, HEADQUARTERS
+  enum LocationType {
+    WELL_AD, WELL_MN, WELL_EX, ISLAND, HEADQUARTERS
+  }
+
+  static int mass(LocationType type) {
+    switch (type) {
+      default:
+        return 5000000;
     }
+  }
 
-    static int mass(LocationType type) {
-        switch (type) {
-            default:
-                return 5000000;
-        }
-    }
+  static final int MASS = 5000000;
 
-    static final int MASS = 5000000;
-
-    static void moveTowards(RobotController rc, LocationType type) throws GameActionException {
+  static void moveTowards(RobotController rc, LocationType type) throws GameActionException {
         ArrayList<Vec2D> locations = new ArrayList<>();
         for (Location l : Communication.getItemsByType(rc, type)) {
             locations.add(l.coordinates);
