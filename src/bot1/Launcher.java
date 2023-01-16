@@ -18,7 +18,7 @@ public class Launcher {
         Communication.clearObsoleteEnemies(rc);
         if (enemies.length > 0) {
             for (RobotInfo enemy: enemies) {
-                int score = (50 + RobotPlayer.rng.nextInt(50)) * enemy.getHealth();
+                int score = (50 + RobotPlayer.rng.nextInt(50)) * (50 - enemy.getHealth());
                 switch (enemy.getType()) {
                 case BOOSTER:
                 case DESTABILIZER:
