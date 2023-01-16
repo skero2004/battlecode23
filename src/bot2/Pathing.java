@@ -7,9 +7,9 @@ import bot2.Util.*;
 
 public class Pathing {
 
-  static final int MASS = 5000000;
+    static final int MASS = 5000000;
 
-  static void moveTowards(RobotController rc, LocationType type) throws GameActionException {
+    static void moveTowards(RobotController rc, LocationType type) throws GameActionException {
         ArrayList<Vec2D> locations = new ArrayList<>();
         for (Location l : Communication.getItemsByType(rc, type)) {
             locations.add(l.coordinates);

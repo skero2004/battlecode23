@@ -77,7 +77,6 @@ public class Carrier {
             }
 
         }
-        Communication.tryWriteMessages(rc);
 
     }
 
@@ -106,14 +105,13 @@ public class Carrier {
                     break;
                 }
             }
-            Communication.updateIslandInfo(rc, id);
         }
     }
 
     static void depositResource(RobotController rc, ResourceType type) throws GameActionException {
 
         int amount = rc.getResourceAmount(type);
-        if(amount > 0) {
+        if (amount > 0) {
             if(rc.canTransferResource(Pathing.LocationType.WELL_AD, type, amount)) rc.transferResource(hqLoc, type, amount);
         }
 
