@@ -3,20 +3,9 @@ package bot2;
 import battlecode.common.*;
 import java.util.ArrayList;
 import java.util.Set;
-import Util.Vec2D;
+import bot2.Util.*;
 
 public class Pathing {
-
-  enum LocationType {
-    WELL_AD, WELL_MN, WELL_EX, ISLAND, HEADQUARTERS
-  }
-
-  static int mass(LocationType type) {
-    switch (type) {
-      default:
-        return 5000000;
-    }
-  }
 
   static final int MASS = 5000000;
 

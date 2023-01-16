@@ -1,3 +1,7 @@
+package bot2;
+
+import battlecode.common.*;
+
 public class Util {
     public static class Vec2D {
         final int x, y;
@@ -28,4 +32,9 @@ public class Util {
             return (int) Math.sqrt(x * x + y * y);
         }
     }
+
+    enum LocationType {
+        WELL_AD, WELL_MN, WELL_EX, ISLAND, HEADQUARTERS
+    }
+
 }
