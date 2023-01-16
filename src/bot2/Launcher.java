@@ -6,7 +6,7 @@ import static bot2.Util.*;
 
 public class Launcher {
 
-    static final double ISLAND_PROB = 0.3;
+    static final double ISLAND_PROB = 0.7;
     //static final double[] WELL_PROBS = { 0.5, 0.6 }; // WELL_AD, WELL_MN
     static LocationType wellTarget = LocationType.WELL_AD;
 
