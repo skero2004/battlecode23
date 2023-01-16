@@ -31,6 +31,14 @@ public class Util {
         int length() {
             return (int) Math.sqrt(x * x + y * y);
         }
+
+        static int serialize(Vec2D coord) {
+            return coord.x | (coord.y << 6);
+        }
+
+        static Vec2D deserialize(int bin) {
+            return new Vec2D(bin & 63, (bin >> 6));
+        }
     }
 
     static enum LocationType {
@@ -39,28 +47,11 @@ public class Util {
 
     static LocationType[] lookup = { LocationType.WELL_AD, LocationType.WELL_MN, LocationType.WELL_EX };
 
-    static class Coordinates {
-        final int x, y;
-
-        Coordinates(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        static int serialize(Coordinates coord) {
-            return coord.x | (coord.y << 6);
-        }
-
-        static Coordinates deserialize(int bin) {
-            return new Coordinates(bin & 63, (bin >> 6));
-        }
-    }
-
     abstract static class Location {
         final LocationType typ;
-        final Coordinates coordinates;
+        final Vec2D coordinates;
 
-        Location(LocationType typ, Coordinates coordinates) {
+        Location(LocationType typ, Vec2D coordinates) {
             this.typ = typ;
             this.coordinates = coordinates;
         }
@@ -73,7 +64,7 @@ public class Util {
         final boolean needsLauncher; // launchers # < ??
         final boolean isAnchorDying; // HP below ?? %
 
-        Island(LocationType typ, Coordinates coord, boolean isNotCaptured, boolean needsLauncher,
+        Island(LocationType typ, Vec2D coord, boolean isNotCaptured, boolean needsLauncher,
                 boolean isAnchorDying) {
             super(typ, coord);
             this.isNotCaptured = isNotCaptured;
@@ -84,7 +75,7 @@ public class Util {
         Island(int bin) {
             this(
                     LocationType.ISLAND,
-                    Coordinates.deserialize(bin >> 4),
+                    Vec2D.deserialize(bin >> 4),
                     ((bin >> 1) & 1) == 1,
                     ((bin >> 2) & 1) == 1,
                     ((bin >> 3) & 1) == 1);
@@ -98,7 +89,7 @@ public class Util {
             res |= ((isNotCaptured ? 1 : 0) << 1);
             res |= ((needsLauncher ? 1 : 0) << 2);
             res |= ((isAnchorDying ? 1 : 0) << 3);
-            res |= (Coordinates.serialize(coordinates) << 4);
+            res |= (Vec2D.serialize(coordinates) << 4);
             return res;
         }
     }
@@ -106,7 +97,7 @@ public class Util {
     static class Well extends Location {
         final boolean isUpgraded;
 
-        Well(LocationType typ, Coordinates coordinates, boolean isUpgraded) {
+        Well(LocationType typ, Vec2D coordinates, boolean isUpgraded) {
             super(typ, coordinates);
             this.isUpgraded = isUpgraded;
         }
@@ -114,7 +105,7 @@ public class Util {
         Well(int bin) {
             this(
                     lookup[(bin >> 1) & 3],
-                    Coordinates.deserialize(bin >> 4),
+                    Vec2D.deserialize(bin >> 4),
                     ((bin >> 3) & 1) == 1);
             int typ = bin & 1;
             if (typ != 0)
@@ -126,18 +117,18 @@ public class Util {
             int res = 0;
             res |= (idx << 1);
             res |= ((isUpgraded ? 1 : 0) << 3);
-            res |= (Coordinates.serialize(coordinates) << 4);
+            res |= (Vec2D.serialize(coordinates) << 4);
             return res;
         }
     }
 
     static class Headquarters extends Location {
-        Headquarters(LocationType typ, Coordinates coord) {
+        Headquarters(LocationType typ, Vec2D coord) {
             super(typ, coord);
         }
 
         Headquarters(int bin) {
-            this(LocationType.HEADQUARTERS, Coordinates.deserialize(bin >> 4));
+            this(LocationType.HEADQUARTERS, Vec2D.deserialize(bin >> 4));
             int typ = bin & 1;
             if (typ != 0)
                 throw new IllegalArgumentException();
@@ -148,7 +139,7 @@ public class Util {
         int serialize() {
             int res = 1;
             res |= (3 << 1);
-            res |= (Coordinates.serialize(coordinates) << 4);
+            res |= (Vec2D.serialize(coordinates) << 4);
             return res;
         }
     }

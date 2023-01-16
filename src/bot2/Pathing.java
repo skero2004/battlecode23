@@ -18,26 +18,28 @@ public class Pathing {
     switch (type) {
       case WELL_AD:
         for (WellInfo w : rc.senseNearbyWells(ResourceType.ADAMANTIUM)) {
-          if (Communication.setItem(rc, new Well()))
+          if (Communication.setItem(rc, new Well(LocationType.WELL_AD, new Vec2D(w.getMapLocation()), w.isUpgraded())))
             locations.add(new Vec2D(w.getMapLocation()));
         }
         break;
       case WELL_MN:
         for (WellInfo w : rc.senseNearbyWells(ResourceType.MANA)) {
-          if (Communication.setItem(rc, new Well()))
+          if (Communication.setItem(rc, new Well(LocationType.WELL_AD, new Vec2D(w.getMapLocation()), w.isUpgraded())))
             locations.add(new Vec2D(w.getMapLocation()));
         }
         break;
       case WELL_EX:
         for (WellInfo w : rc.senseNearbyWells(ResourceType.ELIXIR)) {
-          if (Communication.setItem(rc, new Well()))
+          if (Communication.setItem(rc, new Well(LocationType.WELL_AD, new Vec2D(w.getMapLocation()), w.isUpgraded())))
             locations.add(new Vec2D(w.getMapLocation()));
         }
         break;
       case ISLAND:
         for (int i : rc.senseNearbyIslands()) {
           for (MapLocation l : rc.senseNearbyIslandLocations(i)) {
-            if (Communication.setItem(rc, new Island()))
+            if (Communication.setItem(rc,
+                new Island(LocationType.ISLAND, new Vec2D(l), rc.senseTeamOccupyingIsland(i) == rc.getTeam(), false,
+                    false)))
               locations.add(new Vec2D(l));
             break;
           }
@@ -53,7 +55,7 @@ public class Pathing {
     }
 
     Vec2D current = new Vec2D(rc.getLocation());
-    Vec2D dir = new Vec2D(RobotPlayer.rng.nextInt, 0);
+    Vec2D dir = new Vec2D(RobotPlayer.rng.nextInt(20), RobotPlayer.rng.nextInt(20));
 
     for (MapInfo m : rc.senseNearbyMapInfos()) {
       if (m.isPassable())
