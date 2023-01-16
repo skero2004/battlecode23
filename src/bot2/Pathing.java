@@ -11,13 +11,11 @@ public class Pathing {
 
   static void moveTowards(RobotController rc, LocationType type) throws GameActionException {
     ArrayList<Vec2D> locations = new ArrayList<>();
-		/*
+        /*
     for (Location l : Communication.getItemsByType(rc, type)) {
       locations.add(l.coordinates);
     }
-		*/
-
-    try {
+        */
 
     switch (type) {
       case WELL_AD:
@@ -52,8 +50,13 @@ public class Pathing {
           if (r.getTeam() == rc.getTeam() && r.getType() == RobotType.HEADQUARTERS) {
 //          if (Communication.setItem(rc, new Headquarters(LocationType.HEADQUARTERS, new Vec2D(r.getLocation()))))
             locations.add(new Vec2D(r.getLocation()));
+            Communication.hq = new Vec2D(r.getLocation());
+            break;
           }
         }
+        if (locations.size() == 0) 
+            locations.add(Communication.hq);
+        System.out.println("HQ location: " + locations.get(0).x + ", " + locations.get(0).y);
         break;
     }
 
@@ -75,12 +78,9 @@ public class Pathing {
     // System.out.println("Tried dir: " + dir.x + ", "  + dir.y);
     MapLocation to = rc.getLocation().translate(dir.x, dir.y);
     Direction move = rc.getLocation().directionTo(to);
-    if (rc.canMove(move) && move != Direction.CENTER)
+    if (rc.canMove(move))
       rc.move(move);
     else
       RobotPlayer.moveRandom(rc);
-      } catch (Exception e) {
-      RobotPlayer.moveRandom(rc);
-    }
   }
 }

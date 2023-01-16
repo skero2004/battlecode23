@@ -1,6 +1,7 @@
 package bot2;
 
 import battlecode.common.*;
+import bot2.Util.*;
 
 import java.util.Random;
 
@@ -24,6 +25,8 @@ public strictfp class RobotPlayer {
     public static void run(RobotController rc) throws GameActionException {
 
         System.out.println("I'm a " + rc.getType() + " and I just got created! I have health " + rc.getHealth());
+
+        Communication.hq = new Vec2D(rc.getLocation());
 
         while (true) {
 

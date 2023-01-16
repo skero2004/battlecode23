@@ -10,6 +10,8 @@ public class Communication {
     static final int ARRAY_LENGTH = 64;
     static final int ITEM_BITS = 16;
 
+    public static Vec2D hq = new Vec2D(0, 0);
+
     static Location deserialize(int bin, LocationType typ) {
         Location loc;
         switch (typ) {
