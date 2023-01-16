@@ -18,17 +18,18 @@ public class Launcher {
         Communication.clearObsoleteEnemies(rc);
         if (enemies.length > 0) {
             for (RobotInfo enemy: enemies) {
-                int score = (50 + RobotPlayer.rng.nextInt(50)) * (50 - enemy.getHealth());
+                Communication.reportEnemy(rc, enemy.location);
+                int score = 50 - enemy.getHealth();
                 switch (enemy.getType()) {
                 case BOOSTER:
                 case DESTABILIZER:
-                    score *= 1;
+                    score *= 3;
                     break;
                 case LAUNCHER:
-                    score *= 1;
+                    score *= 3;
                     break;
                 case CARRIER:
-                    score *= 1;
+                    score *= 2;
                     break;
                 case AMPLIFIER:
                     score *= 1;
@@ -38,6 +39,7 @@ public class Launcher {
                     break;
                 }
                 if (score > bestScore) {
+                    bestScore = score;
                     target = enemy;
                 }
             }
