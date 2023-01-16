@@ -8,7 +8,6 @@ public class Carrier {
 
     static MapLocation hqLoc;
     static MapLocation wellLoc;
-    static MapLocation islandLoc;
 
     static boolean anchorMode = false;
 
@@ -41,7 +40,6 @@ public class Carrier {
         // Scan for locations of nearby elements
         if (hqLoc == null) scanHQ(rc);
         if (wellLoc == null) scanWells(rc);
-        scanIslands(rc);
 
         // Collect from well if close and inventory not full
         if (wellLoc != null && rc.canCollectResource(wellLoc, -1)) rc.collectResource(wellLoc, -1);
@@ -72,13 +70,12 @@ public class Carrier {
             if (total == 0) {
 
                 // Move towards well or search for well
-                if (wellLoc == null) Pathing.moveTowards(rc, wellTarget);
-                else if (!me.isAdjacentTo(wellLoc)) RobotPlayer.moveTowards(rc, wellLoc);
-                else RobotPlayer.moveTowards(rc, wellLoc);
+                Pathing.moveTowards(rc, wellTarget);
 
             }
             if (total == GameConstants.CARRIER_CAPACITY) {
 
+                // Move towards HQ if it has full capacity
                 Pathing.moveTowards(rc, LocationType.HEADQUARTERS);
 
             }
@@ -100,19 +97,6 @@ public class Carrier {
     static void scanWells(RobotController rc) throws GameActionException {
         WellInfo[] wells = rc.senseNearbyWells();
         if(wells.length > 0) wellLoc = wells[0].getMapLocation();
-    }
-
-    static void scanIslands(RobotController rc) throws GameActionException {
-        int[] ids = rc.senseNearbyIslands();
-        for(int id : ids) {
-            if(rc.senseTeamOccupyingIsland(id) == Team.NEUTRAL) {
-                MapLocation[] locs = rc.senseNearbyIslandLocations(id);
-                if(locs.length > 0) {
-                    islandLoc = locs[0];
-                    break;
-                }
-            }
-        }
     }
 
     static void depositResource(RobotController rc, ResourceType type) throws GameActionException {
