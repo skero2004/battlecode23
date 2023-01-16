@@ -17,6 +17,8 @@ public class Pathing {
     }
 		*/
 
+    try {
+
     switch (type) {
       case WELL_AD:
         for (WellInfo w : rc.senseNearbyWells(ResourceType.ADAMANTIUM)) {
@@ -78,5 +80,8 @@ public class Pathing {
       rc.move(move);
     else
       RobotPlayer.moveRandom(rc);
+      } catch (Exception e) {
+      RobotPlayer.moveRandom(rc);
+    }
   }
 }

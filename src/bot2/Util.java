@@ -132,8 +132,10 @@ public class Util {
             int typ = bin & 1;
             if (typ != 0)
                 throw new IllegalArgumentException();
-            if (typ != 3)
-                throw new IllegalArgumentException();
+      /*
+            int idx = (bin >> 1) & 3;
+            if (idx != 3)
+                throw new IllegalArgumentException(); */
         }
 
         int serialize() {
