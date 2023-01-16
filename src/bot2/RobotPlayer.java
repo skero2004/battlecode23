@@ -29,19 +29,15 @@ public strictfp class RobotPlayer {
 
             turnCount += 1;
 
-            if (turnCount == 2) {
-                // TODO: Update HQ information at the beginning of spawn
-            }
-
             try {
 
                 switch (rc.getType()) {
                     case HEADQUARTERS: Headquarter.runHeadquarter(rc); break;
                     case CARRIER: Carrier.runCarrier(rc); break;
                     case LAUNCHER: Launcher.runLauncher(rc); break;
-                    case BOOSTER: break;
-                    case DESTABILIZER: break;
-                    case AMPLIFIER: break;
+                    case BOOSTER: Booster.runBooster(rc); break;
+                    case DESTABILIZER: Destabilizer.runDestabilizer(rc); break;
+                    case AMPLIFIER: Amplifier.runAmplifier(rc); break;
                 }
 
             } catch (GameActionException e) {
