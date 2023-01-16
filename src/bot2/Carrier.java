@@ -70,7 +70,8 @@ public class Carrier {
             if (total == 0) {
 
                 // Move towards well or search for well
-                Pathing.moveTowards(rc, wellTarget);
+                if (!rc.getLocation().isAdjacentTo(wellLoc))
+                    Pathing.moveTowards(rc, wellTarget);
 
             }
             if (total == GameConstants.CARRIER_CAPACITY) {
