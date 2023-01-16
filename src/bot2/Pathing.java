@@ -11,9 +11,11 @@ public class Pathing {
 
   static void moveTowards(RobotController rc, LocationType type) throws GameActionException {
     ArrayList<Vec2D> locations = new ArrayList<>();
+		/*
     for (Location l : Communication.getItemsByType(rc, type)) {
       locations.add(l.coordinates);
     }
+		*/
 
     switch (type) {
       case WELL_AD:
@@ -48,6 +50,7 @@ public class Pathing {
       case HEADQUARTERS:
         for (RobotInfo r : rc.senseNearbyRobots()) {
           if (r.getTeam() == rc.getTeam() && r.getType() == RobotType.HEADQUARTERS) {
+          if (Communication.setItem(rc, new Headquarters(LocationType.HEADQUARTERS, new Vec2D(r.getLocation()))))
             locations.add(new Vec2D(r.getLocation()));
           }
         }
@@ -55,7 +58,7 @@ public class Pathing {
     }
 
     Vec2D current = new Vec2D(rc.getLocation());
-    Vec2D dir = new Vec2D(RobotPlayer.rng.nextInt(20), RobotPlayer.rng.nextInt(20));
+    Vec2D dir = new Vec2D(RobotPlayer.rng.nextInt(1000) - 500, RobotPlayer.rng.nextInt(1000) - 500);
 
     for (MapInfo m : rc.senseNearbyMapInfos()) {
       if (m.isPassable())
@@ -65,9 +68,15 @@ public class Pathing {
     for (Vec2D v : locations) {
       Vec2D diff = v.sub(current);
       int l = diff.length();
-      dir = dir.add(diff.scale(MASS / (l * l * l)));
+      dir = dir.add(diff.scale(MASS / (1 + l * l * l)));
     }
 
-    rc.move(rc.getLocation().directionTo(rc.getLocation().translate(dir.x, dir.y)));
+    System.out.println("Tried dir: " + dir.x + ", "  + dir.y);
+    MapLocation to = rc.getLocation().translate(dir.x, dir.y);
+    Direction move = rc.getLocation().directionTo(to);
+    if (rc.canMove(move) && move != Direction.CENTER)
+      rc.move(move);
+    else
+      RobotPlayer.moveRandom(rc);
   }
 }

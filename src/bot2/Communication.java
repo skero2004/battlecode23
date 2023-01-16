@@ -83,7 +83,7 @@ public class Communication {
                 rc.writeSharedArray(idx, val);
                 return true;
             } else {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Hi");
             }
         } else
             throw new IllegalArgumentException();

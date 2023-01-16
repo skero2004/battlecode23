@@ -21,7 +21,7 @@ public class Util {
         }
 
         Vec2D sub(Vec2D v) {
-            return new Vec2D(x + v.x, y + v.y);
+            return new Vec2D(x - v.x, y - v.y);
         }
 
         Vec2D scale(int s) {
