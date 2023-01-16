@@ -6,83 +6,63 @@ public class Launcher {
 
     static void runLauncher(RobotController rc) throws GameActionException {
 
-        Team opponent = rc.getTeam().opponent();
-        MapLocation me = rc.getLocation();
-
-        // List of enemies that are actionable
+        // Try to attack someone
         int radius = rc.getType().actionRadiusSquared;
-        RobotInfo[] actionEnemies = rc.senseNearbyRobots(radius, opponent);
-
-        // Find target enemy
-        int lowestHealth = Integer.MAX_VALUE;
-        int smallestDistance = Integer.MAX_VALUE;
+        Team opponent = rc.getTeam().opponent();
+        RobotInfo[] enemies = rc.senseNearbyRobots(radius, opponent);
+        int lowestHealth = 100;
+        int smallestDistance = 100;
         RobotInfo target = null;
-        if (actionEnemies.length > 0) {
-
-            for (RobotInfo enemy : actionEnemies) {
-
+        if (RobotPlayer.turnCount == 2) {
+            Communication.updateHeadquarterInfo(rc);
+        }
+        Communication.clearObsoleteEnemies(rc);
+        if (enemies.length > 0) {
+            for (RobotInfo enemy: enemies){
+                Communication.reportEnemy(rc, enemy.location);
                 int enemyHealth = enemy.getHealth();
-                int enemyDistance = enemy.getLocation().distanceSquaredTo(me);
-
-                if (enemyHealth < lowestHealth) {
-
-                    target = enemy;
+                int enemyDistance = enemy.getLocation().distanceSquaredTo(rc.getLocation());
+                if (enemyHealth < lowestHealth){target = enemy;
                     lowestHealth = enemyHealth;
                     smallestDistance = enemyDistance;
-
-                } else if (enemyHealth == lowestHealth) {
-
-                    if (enemyDistance < smallestDistance) {
-
+                }
+                else if (enemyHealth == lowestHealth){
+                    if (enemyDistance < smallestDistance){
                         target = enemy;
                         smallestDistance = enemyDistance;
-
                     }
-
                 }
-
             }
-
         }
-
-        if (target != null) {
-
-            // Attack target enemy
+        Communication.tryWriteMessages(rc);
+        if (target != null){
             if (rc.canAttack(target.getLocation()))
                 rc.attack(target.getLocation());
+        }
+        else {
 
-        } else {
-
-            // If no target, then move to well
             WellInfo[] wells = rc.senseNearbyWells();
-            if (wells.length > 0) {
-
+            if (wells.length > 0){
                 MapLocation wellLoc = wells[0].getMapLocation();
-                Direction dir = me.directionTo(wellLoc);
+                Direction dir = rc.getLocation().directionTo(wellLoc);
                 if (rc.canMove(dir))
                     rc.move(dir);
-
             }
-
         }
 
-        // List of enemies that are visible
         RobotInfo[] visibleEnemies = rc.senseNearbyRobots(-1, opponent);
-
-        // Iterate through visible enemies
         for (RobotInfo enemy : visibleEnemies) {
-
-            if (enemy.getType() != RobotType.HEADQUARTERS) {
-
-                MapLocation enemyLocation = enemy.getLocation();
-                Direction moveDir = me.directionTo(enemyLocation);
-                if (rc.canMove(moveDir)) {
-                    rc.move(moveDir);
-                }
-
-            }
-
+        	if (enemy.getType() != RobotType.HEADQUARTERS) {
+        		MapLocation enemyLocation = enemy.getLocation();
+        		MapLocation robotLocation = rc.getLocation();
+        		Direction moveDir = robotLocation.directionTo(enemyLocation);
+        		if (rc.canMove(moveDir)) {
+        			rc.move(moveDir);
+        		}
+        	}
         }
+
+        // Also try to move randomly.
         Direction dir = RobotPlayer.directions[RobotPlayer.rng.nextInt(RobotPlayer.directions.length)];
         if (rc.canMove(dir)) {
             rc.move(dir);

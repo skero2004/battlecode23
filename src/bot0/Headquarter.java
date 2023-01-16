@@ -4,14 +4,20 @@ import battlecode.common.*;
 
 public class Headquarter {
 
-    static void runHeadquarters(RobotController rc) throws GameActionException {
+static void runHeadquarters(RobotController rc) throws GameActionException {
+
         // Pick a direction to build in.
         Direction dir = RobotPlayer.directions[RobotPlayer.rng.nextInt(RobotPlayer.directions.length)];
         MapLocation newLoc = rc.getLocation().add(dir);
-        if (rc.canBuildAnchor(Anchor.STANDARD)) {
+        if (RobotPlayer.turnCount == 1) {
+            Communication.addHeadquarter(rc);
+        } else if (RobotPlayer.turnCount == 2) {
+            Communication.updateHeadquarterInfo(rc);
+        }
+        if (rc.canBuildAnchor(Anchor.STANDARD) && rc.getResourceAmount(ResourceType.ADAMANTIUM) > 100) {
             // If we can build an anchor do it!
             rc.buildAnchor(Anchor.STANDARD);
-            rc.setIndicatorString("Building anchor! " + rc.getAnchor());
+            rc.setIndicatorString("Building anchor! " + rc.getNumAnchors(Anchor.STANDARD));
         }
         if (RobotPlayer.rng.nextBoolean()) {
             // Let's try to build a carrier.
@@ -26,6 +32,8 @@ public class Headquarter {
                 rc.buildRobot(RobotType.LAUNCHER, newLoc);
             }
         }
+        Communication.tryWriteMessages(rc);
+
     }
 
 }

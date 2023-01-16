@@ -2,7 +2,12 @@ package bot0;
 
 import battlecode.common.*;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * RobotPlayer is the class that describes your main robot strategy.
@@ -70,7 +75,7 @@ public strictfp class RobotPlayer {
                 // this into a different control structure!
                 switch (rc.getType()) {
                     case HEADQUARTERS:     Headquarter.runHeadquarters(rc);  break;
-                    case CARRIER:      Carrier.runCarrier(rc);   break;
+                    case CARRIER: Carrier.runCarrier(rc);   break;
                     case LAUNCHER: Launcher.runLauncher(rc); break;
                     case BOOSTER: // Examplefuncsplayer doesn't use any of these robot types below.
                     case DESTABILIZER: // You might want to give them a try!
@@ -98,6 +103,18 @@ public strictfp class RobotPlayer {
             // End of loop: go back to the top. Clock.yield() has ended, so it's time for another turn!
         }
 
+        // Your code should never reach here (unless it's intentional)! Self-destruction imminent...
+    }
+
+    static void moveRandom(RobotController rc) throws GameActionException {
+        Direction dir = directions[rng.nextInt(directions.length)];
+        if(rc.canMove(dir)) rc.move(dir);
+    }
+
+    static void moveTowards(RobotController rc, MapLocation loc) throws GameActionException{
+        Direction dir = rc.getLocation().directionTo(loc);
+        if(rc.canMove(dir)) rc.move(dir);
+        else moveRandom(rc);
     }
 
 }
