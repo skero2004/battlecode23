@@ -2,6 +2,8 @@ package bot2;
 
 import battlecode.common.*;
 
+import static bot2.Util.*;
+
 public class Carrier {
 
     static MapLocation hqLoc;
@@ -10,8 +12,8 @@ public class Carrier {
 
     static boolean anchorMode = false;
 
-    static Pathing.LocationType wellTarget = Pathing.LocationType.WELL_AD;
-    static final double[] WELL_PROBS = { 0.3, 0.3 }; // WELL_AD, WELL_MN
+    static LocationType wellTarget = Util.LocationType.WELL_AD;
+    //static final double[] WELL_PROBS = { 0.3, 0.6 }; // WELL_AD, WELL_MN
 
     static void runCarrier(RobotController rc) throws GameActionException {
 
@@ -22,12 +24,17 @@ public class Carrier {
         if (RobotPlayer.turnCount == 2) {
 
             double rand = RobotPlayer.rng.nextDouble();
+            /*
             if (rand < WELL_PROBS[0])
-                wellTarget = Pathing.LocationType.WELL_AD;
+                wellTarget = LocationType.WELL_AD;
             else if (rand < WELL_PROBS[1])
-                wellTarget = Pathing.LocationType.WELL_MN;
+                wellTarget = LocationType.WELL_MN;
             else
-                wellTarget = Pathing.LocationType.WELL_EX;
+                wellTarget = LocationType.WELL_EX;
+            */
+
+            if (rand < 0.5) wellTarget = LocationType.WELL_AD;
+            else wellTarget = LocationType.WELL_MN;
 
         }
 
@@ -52,7 +59,7 @@ public class Carrier {
         if (anchorMode) {
 
             // If in anchor mode, move towards island
-            Pathing.moveTowards(rc, Pathing.LocationType.ISLAND);
+            Pathing.moveTowards(rc, LocationType.ISLAND);
 
             if (rc.canPlaceAnchor() && rc.senseTeamOccupyingIsland(rc.senseIsland(me)) == Team.NEUTRAL) {
                 rc.placeAnchor();
@@ -65,14 +72,14 @@ public class Carrier {
             if (total == 0) {
 
                 // Move towards well or search for well
-                if (wellLoc == null) Pathing.moveTowards(rc, Pathing.LocationType.WELL_);
+                if (wellLoc == null) Pathing.moveTowards(rc, wellTarget);
                 else if (!me.isAdjacentTo(wellLoc)) RobotPlayer.moveTowards(rc, wellLoc);
                 else RobotPlayer.moveTowards(rc, wellLoc);
 
             }
             if (total == GameConstants.CARRIER_CAPACITY) {
 
-                Pathing.moveTowards(rc, Pathing.LocationType.HEADQUARTERS);
+                Pathing.moveTowards(rc, LocationType.HEADQUARTERS);
 
             }
 
@@ -112,7 +119,7 @@ public class Carrier {
 
         int amount = rc.getResourceAmount(type);
         if (amount > 0) {
-            if(rc.canTransferResource(Pathing.LocationType.WELL_AD, type, amount)) rc.transferResource(hqLoc, type, amount);
+            if (rc.canTransferResource(hqLoc, type, amount)) rc.transferResource(hqLoc, type, amount);
         }
 
     }
