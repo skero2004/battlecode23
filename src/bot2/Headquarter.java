@@ -6,8 +6,8 @@ public class Headquarter {
 
     static void runHeadquarter(RobotController rc) throws GameActionException {
 
+        final double[] ROBOT_PROBS = { 0.4, 0.8 }; // Carrier, Launcher
         final int MAX_ANCHORS = 10;
-        final int MINIMAL_ROBOTS = 20;
         final int MIN_RESOURCES = 400;
 
         // Pick a direction to build in.
@@ -23,11 +23,8 @@ public class Headquarter {
 
         }
 
-        double probLauncher = 0.5;
-        if (rc.getRobotCount() < MINIMAL_ROBOTS) {
-            probLauncher = 0.2;
-        }
-        if (RobotPlayer.rng.nextDouble() > probLauncher) {
+        double rand = RobotPlayer.rng.nextDouble();
+        if (rand < ROBOT_PROBS[0]) {
 
             // Let's try to build a carrier.
             rc.setIndicatorString("Trying to build a carrier");
@@ -35,13 +32,22 @@ public class Headquarter {
                 rc.buildRobot(RobotType.CARRIER, newLoc);
             }
 
-        } else {
+        } else if (rand < ROBOT_PROBS[1]) {
 
             // Let's try to build a launcher.
             rc.setIndicatorString("Trying to build a launcher");
             if (rc.canBuildRobot(RobotType.LAUNCHER, newLoc)) {
                 rc.buildRobot(RobotType.LAUNCHER, newLoc);
             }
+
+        } else {
+
+             // Let's try to build an amplifier
+            rc.setIndicatorString("Trying to build an amplifier");
+            if (rc.canBuildRobot(RobotType.AMPLIFIER, newLoc)) {
+                rc.buildRobot(RobotType.AMPLIFIER, newLoc);
+            }
+
 
         }
 

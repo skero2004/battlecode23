@@ -33,7 +33,7 @@ public class Util {
         }
     }
 
-    enum LocationType {
+    public enum LocationType {
         WELL_AD, WELL_MN, WELL_EX, ISLAND, HEADQUARTERS
     }
 

@@ -2,11 +2,13 @@ package bot2;
 
 import battlecode.common.*;
 
+import static bot2.Util.*;
+
 public class Launcher {
 
     static final double ISLAND_PROB = 0.3;
-    static final double[] WELL_PROBS = { 0.3, 0.3 }; // WELL_AD, WELL_MN
-    static Pathing.LocationType wellTarget = Pathing.LocationType.WELL_AD;
+    static final double[] WELL_PROBS = { 0.3, 0.6 }; // WELL_AD, WELL_MN
+    static LocationType wellTarget = LocationType.WELL_AD;
 
     static void runLauncher(RobotController rc) throws GameActionException {
 
@@ -23,11 +25,11 @@ public class Launcher {
 
                 double rand = RobotPlayer.rng.nextDouble();
                 if (rand < WELL_PROBS[0])
-                    wellTarget = Pathing.LocationType.WELL_AD;
+                    wellTarget = LocationType.WELL_AD;
                 else if (rand < WELL_PROBS[1])
-                    wellTarget = Pathing.LocationType.WELL_MN;
+                    wellTarget = LocationType.WELL_MN;
                 else
-                    wellTarget = Pathing.LocationType.WELL_EX;
+                    wellTarget = LocationType.WELL_EX;
 
             }
 
