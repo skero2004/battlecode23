@@ -1,4 +1,4 @@
-package examplefuncsplayer;
+package bot0;
 
 import battlecode.common.*;
 
