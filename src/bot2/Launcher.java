@@ -4,16 +4,17 @@ import battlecode.common.*;
 
 public class Launcher {
 
+    static final double ISLAND_PROB = 0.3;
+    static final double[] WELL_PROBS = { 0.3, 0.3 }; // WELL_AD, WELL_MN
+    static Pathing.LocationType wellTarget = Pathing.LocationType.WELL_AD;
+
     static void runLauncher(RobotController rc) throws GameActionException {
 
         final int ACTION_RADIUS = rc.getType().actionRadiusSquared;
         final Team OPPONENT = rc.getTeam().opponent();
-        final double ISLAND_PROB = 0.3;
-        final double[] WELL_PROBS = { 0.3, 0.3 }; // WELL_AD, WELL_MN
 
         // Assign role
         boolean isIsland = false;
-        Pathing.LocationType wellTarget = Pathing.LocationType.WELL_AD;
         if (RobotPlayer.turnCount == 2) {
 
             if (RobotPlayer.rng.nextDouble() < ISLAND_PROB) {
