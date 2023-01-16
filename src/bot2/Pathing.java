@@ -53,7 +53,7 @@ public class Pathing {
         }
 
         Vec2D current = new Vec2D(rc.getLocation());
-        Vec2D dir = new Vec2D(RobotPlayer.rng.nextInt, 0);
+        Vec2D dir = new Vec2D(RobotPlayer.rng.nextInt(), 0);
 
         for (MapInfo m : rc.senseNearbyMapInfos()) {
             if (m.isPassable())
