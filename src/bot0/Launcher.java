@@ -10,7 +10,7 @@ public class Launcher {
         int radius = rc.getType().actionRadiusSquared;
         Team opponent = rc.getTeam().opponent();
         RobotInfo[] enemies = rc.senseNearbyRobots(radius, opponent);
-        int lowestHealth = 100;
+        int lowestHealth = Integer.MAX_VALUE;
         int smallestDistance = 100;
         RobotInfo target = null;
         if (RobotPlayer.turnCount == 2) {
