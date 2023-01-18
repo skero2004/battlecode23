@@ -1,14 +1,14 @@
-package bot2;
+package bot3;
 
 import battlecode.common.*;
 
-import static bot2.Util.*;
+import bot3.util.*;
 
 public class Launcher {
 
     static final double ISLAND_PROB = 0.7;
-    //static final double[] WELL_PROBS = { 0.5, 0.6 }; // WELL_AD, WELL_MN
-    static LocationType wellTarget = LocationType.WELL_AD;
+    // static final double[] WELL_PROBS = { 0.5, 0.6 }; // WELL_AD, WELL_MN
+    static LocationType wellTarget = LocationType.WELL_ADAMANTIUM;
 
     static void runLauncher(RobotController rc) throws GameActionException {
 
@@ -18,22 +18,13 @@ public class Launcher {
         // Assign role
         boolean isIsland = false;
         if (RobotPlayer.turnCount == 2) {
-
-            if (RobotPlayer.rng.nextDouble() < ISLAND_PROB) {
+            if (rc.getID() % 3 == 0) {
                 isIsland = true;
             } else {
-
-                double rand = RobotPlayer.rng.nextDouble();
-                /*
-                if (rand < WELL_PROBS[0])
-                    wellTarget = LocationType.WELL_AD;
-                else if (rand < WELL_PROBS[1])
-                    wellTarget = LocationType.WELL_MN;
+                if (rc.getID() % 2 == 0)
+                    wellTarget = LocationType.WELL_ADAMANTIUM;
                 else
-                    wellTarget = LocationType.WELL_EX;
-                */
-                if (rand < 0.5) wellTarget = LocationType.WELL_AD;
-                else wellTarget = LocationType.WELL_MN;
+                    wellTarget = LocationType.WELL_MANA;
 
             }
 
@@ -44,7 +35,7 @@ public class Launcher {
         int bestScore = -1;
         RobotInfo target = null;
         if (enemies.length > 0) {
-            for (RobotInfo enemy: enemies) {
+            for (RobotInfo enemy : enemies) {
                 int score = 50 - enemy.getHealth();
                 switch (enemy.getType()) {
                     case BOOSTER:
@@ -71,7 +62,7 @@ public class Launcher {
             }
         }
 
-        if (target != null){
+        if (target != null) {
 
             // If there is a target, attack
             if (rc.canAttack(target.getLocation()))
@@ -80,12 +71,13 @@ public class Launcher {
         } else if (isIsland) {
 
             // Go to island if launcher role is to go to island
-            Pathing.moveTowards(rc, LocationType.ISLAND);
+            Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS,
+                    LocationType.ISLAND_ENEMIES);
 
         } else {
 
             // Go to resources if launcher role is to go to resources
-            Pathing.moveTowards(rc, wellTarget);
+            Searching.moveTowards(rc, wellTarget);
 
         }
 

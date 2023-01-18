@@ -1,93 +1,80 @@
-package bot2;
+package bot3;
 
 import java.util.ArrayList;
-
-import bot2.Util.*;
+import java.util.Arrays;
 
 import battlecode.common.*;
 
+import bot3.util.*;
+
 public class Communication {
-    static final int ARRAY_LENGTH = 64;
-    static final int ITEM_BITS = 16;
+    private static final int ARRAY_LENGTH = 64;
+    private static final int OUTDATED_TURNS = 30;
 
-    public static Vec2D hq = new Vec2D(0, 0);
+    private static class Update {
+        final int time, value;
 
-    static Location deserialize(int bin, LocationType typ) {
-        Location loc;
-        switch (typ) {
-            case WELL_AD:
-            case WELL_MN:
-            case WELL_EX:
-                loc = new Well(bin);
-                break;
-            case ISLAND:
-                loc = new Island(bin);
-            case HEADQUARTERS:
-                loc = new Headquarters(bin);
-            default:
-                throw new IllegalArgumentException();
-        }
-        return loc;
-    }
-
-    static int serialize(Location loc) {
-        switch (loc.typ) {
-            case WELL_AD:
-            case WELL_MN:
-            case WELL_EX:
-                return ((Well) loc).serialize();
-            case ISLAND:
-                return ((Island) loc).serialize();
-            case HEADQUARTERS:
-                return ((Headquarters) loc).serialize();
-            default:
-                throw new IllegalArgumentException();
+        Update(int time, int value) {
+            this.time = time;
+            this.value = value;
         }
     }
 
-    static ArrayList<Location> getItemsByType(RobotController rc, LocationType typ) throws GameActionException {
+    private static ArrayList<Update> queue = new ArrayList<>();
+
+    static ArrayList<Location> query(RobotController rc, LocationType... locationTypes_)
+            throws GameActionException {
+        ArrayList<LocationType> locationTypes = new ArrayList<>(Arrays.asList(locationTypes_));
         ArrayList<Location> result = new ArrayList<>();
         for (int i = 0; i < ARRAY_LENGTH; ++i) {
             int bin = rc.readSharedArray(i);
             if (bin == 0)
-                continue;
-            Location loc = deserialize(bin, typ);
-            if (loc.typ == typ) {
-                result.add(loc);
-            }
+                break;
+            Location location = Location.deserialize(bin);
+            if (locationTypes.contains(location.locationType))
+                result.add(location);
         }
         return result;
     }
 
-    // GameActionException
     // returns true if updated, false if the item already exists
-    static boolean setItem(RobotController rc, Location loc) throws GameActionException {
-        int idx = -1;
-        for (int i = 0; i < ARRAY_LENGTH; ++i) {
-            int bin = rc.readSharedArray(i);
-            if (bin == 0) {
-                if (idx == -1)
-                    idx = i;
-            } else {
-                Location cur = deserialize(bin, loc.typ);
-                if (cur.coordinates == loc.coordinates) {
-                    if (cur.equals(loc))
-                        return false;
-                    idx = i;
-                    break;
-                }
-            }
+    static boolean update(RobotController rc, Location location) throws GameActionException {
+        return Communication.update(rc, Location.serialize(location));
+    }
+
+    // returns true if successful (i.e in range), false otherwise
+    static boolean tryWriteMessages(RobotController rc) throws GameActionException {
+        queue.removeIf((update) -> update.time > OUTDATED_TURNS + RobotPlayer.turnCount);
+
+        if (!rc.canWriteSharedArray(0, 0))
+            return false;
+
+        while (!queue.isEmpty()) {
+            Update update = queue.remove(0);
+            Communication.update(rc, update.value);
         }
 
-        int val = serialize(loc);
-        if (idx != -1) {
-            if (rc.canWriteSharedArray(idx, val)) {
-                rc.writeSharedArray(idx, val);
-                return true;
-            } else {
-                throw new IllegalArgumentException("Hi");
-            }
-        } else
-            throw new IllegalArgumentException();
+        return true;
+    }
+
+    private static boolean update(RobotController rc, int locationBin) throws GameActionException {
+        int i = 0, currentBin = 0;
+        for (; i < ARRAY_LENGTH; ++i) {
+            currentBin = rc.readSharedArray(i);
+            if (currentBin == 0 || currentBin == locationBin)
+                break;
+        }
+
+        if (i == ARRAY_LENGTH)
+            throw new OutOfMemoryError("Cannot write " + locationBin + ": no slots left.");
+
+        if (locationBin != currentBin) {
+            if (rc.canWriteSharedArray(i, locationBin))
+                rc.writeSharedArray(i, locationBin);
+            else
+                queue.add(new Update(RobotPlayer.turnCount, locationBin));
+        }
+
+        return locationBin == currentBin;
     }
 }
