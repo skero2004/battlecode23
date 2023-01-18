@@ -10,40 +10,39 @@ public class Launcher {
         int radius = rc.getType().actionRadiusSquared;
         Team opponent = rc.getTeam().opponent();
         RobotInfo[] enemies = rc.senseNearbyRobots(radius, opponent);
-        int bestScore = -1;
+        int bestScore = Integer.MIN_VALUE;
         RobotInfo target = null;
         if (RobotPlayer.turnCount == 2) {
             Communication.updateHeadquarterInfo(rc);
         }
         Communication.clearObsoleteEnemies(rc);
-        if (enemies.length > 0) {
-            for (RobotInfo enemy: enemies) {
-                Communication.reportEnemy(rc, enemy.location);
-                int score = 50 - enemy.getHealth();
-                switch (enemy.getType()) {
-                case BOOSTER:
-                case DESTABILIZER:
-                    score *= 3;
-                    break;
-                case LAUNCHER:
-                    score *= 3;
-                    break;
-                case CARRIER:
-                    score *= 2;
-                    break;
-                case AMPLIFIER:
-                    score *= 1;
-                    break;
-                default:
-                    score *= 1;
-                    break;
-                }
-                if (score > bestScore) {
-                    bestScore = score;
-                    target = enemy;
-                }
+        for (RobotInfo enemy: enemies) {
+            Communication.reportEnemy(rc, enemy.location);
+            int score = 50 - enemy.getHealth();
+            switch (enemy.getType()) {
+            case BOOSTER:
+            case DESTABILIZER:
+                score *= 3;
+                break;
+            case LAUNCHER:
+                score *= 3;
+                break;
+            case CARRIER:
+                score *= 2;
+                break;
+            case AMPLIFIER:
+                score *= 1;
+                break;
+            default:
+                score *= 1;
+                break;
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                target = enemy;
             }
         }
+
         Communication.tryWriteMessages(rc);
         if (target != null){
             if (rc.canAttack(target.getLocation()))
