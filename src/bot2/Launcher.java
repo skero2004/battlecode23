@@ -9,6 +9,7 @@ public class Launcher {
     static final double ISLAND_PROB = 0.7;
     //static final double[] WELL_PROBS = { 0.5, 0.6 }; // WELL_AD, WELL_MN
     static LocationType wellTarget = LocationType.WELL_AD;
+    static boolean isIsland = false;
 
     static void runLauncher(RobotController rc) throws GameActionException {
 
@@ -16,7 +17,6 @@ public class Launcher {
         final Team OPPONENT = rc.getTeam().opponent();
 
         // Assign role
-        boolean isIsland = false;
         if (RobotPlayer.turnCount == 2) {
 
             if (RobotPlayer.rng.nextDouble() < ISLAND_PROB) {
