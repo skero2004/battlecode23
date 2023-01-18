@@ -7,8 +7,8 @@ import bot3.util.*;
 public class Launcher {
 
     static final double ISLAND_PROB = 0.7;
-    // static final double[] WELL_PROBS = { 0.5, 0.6 }; // WELL_AD, WELL_MN
     static LocationType wellTarget = LocationType.WELL_ADAMANTIUM;
+    static boolean isIsland = false;
 
     static void runLauncher(RobotController rc) throws GameActionException {
 
@@ -16,7 +16,6 @@ public class Launcher {
         final Team OPPONENT = rc.getTeam().opponent();
 
         // Assign role
-        boolean isIsland = false;
         if (RobotPlayer.turnCount == 2) {
             if (rc.getID() % 3 == 0) {
                 isIsland = true;
@@ -35,28 +34,30 @@ public class Launcher {
         int bestScore = Integer.MIN_VALUE;
         RobotInfo target = null;
         for (RobotInfo enemy : enemies) {
-            int score = 500 - enemy.getHealth();
-            switch (enemy.getType()) {
-                case BOOSTER:
-                case DESTABILIZER:
-                    score *= 3;
-                    break;
-                case LAUNCHER:
-                    score *= 3;
-                    break;
-                case CARRIER:
-                    score *= 2;
-                    break;
-                case AMPLIFIER:
-                    score *= 1;
-                    break;
-                default:
-                    score *= 1;
-                    break;
-            }
-            if (score > bestScore) {
-                bestScore = score;
-                target = enemy;
+            if (enemy.getType() != RobotType.HEADQUARTERS) {
+                int score = 500 - enemy.getHealth();
+                switch (enemy.getType()) {
+                    case BOOSTER:
+                    case DESTABILIZER:
+                        score *= 3;
+                        break;
+                    case LAUNCHER:
+                        score *= 3;
+                        break;
+                    case CARRIER:
+                        score *= 2;
+                        break;
+                    case AMPLIFIER:
+                        score *= 1;
+                        break;
+                    default:
+                        score *= 1;
+                        break;
+                }
+                if (score > bestScore) {
+                    bestScore = score;
+                    target = enemy;
+                }
             }
         }
 
@@ -69,8 +70,7 @@ public class Launcher {
         } else if (isIsland) {
 
             // Go to island if launcher role is to go to island
-            Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS,
-                    LocationType.ISLAND_ENEMIES);
+            Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS, LocationType.ISLAND_ENEMIES);
 
         } else {
 

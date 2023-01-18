@@ -12,7 +12,6 @@ public class Carrier {
     static boolean anchorMode = false;
 
     static LocationType wellTarget = null;
-    // static final double[] WELL_PROBS = { 0.4, 0.6 }; // WELL_AD, WELL_MN
 
     static void runCarrier(RobotController rc) throws GameActionException {
 
