@@ -1,4 +1,4 @@
-package bot3;
+package testElixirBot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +9,7 @@ import bot3.util.*;
 
 public class Communication {
     private static final int ARRAY_LENGTH = 64;
-    private static final int OUTDATED_TURNS = 100; //NOTE: unsure what value this should be
+    private static final int OUTDATED_TURNS = 30;
 
     private static class Update {
         final int time, value;

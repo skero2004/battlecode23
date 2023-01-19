@@ -28,60 +28,62 @@ public class Headquarter {
     /// mohit's old code
 
     static void runHeadquarter(RobotController rc) throws GameActionException {
-        final double[] ROBOT_PROBS = { 0.4, 0.95 }; // Carrier, Launcher
+
         final int MAX_ANCHORS = 10;
         final int MIN_RESOURCES = 100;
 
-        boolean builtSomething;
-        do {
-            builtSomething = false;
-            // Pick a direction to build in.
-            Direction dir = RobotPlayer.directions[RobotPlayer.rng.nextInt(RobotPlayer.directions.length)];
-            MapLocation newLoc = rc.getLocation().add(dir);
+        // Pick a direction to build in.
+        Direction dir = RobotPlayer.directions[RobotPlayer.rng.nextInt(RobotPlayer.directions.length)];
+        MapLocation newLoc = rc.getLocation().add(dir);
 
-            switch (nextItem()) {
-                case ANCHOR:
-                    if (rc.canBuildAnchor(Anchor.STANDARD) &&
-                            rc.getResourceAmount(ResourceType.ADAMANTIUM) > MIN_RESOURCES &&
-                            rc.getNumAnchors(Anchor.STANDARD) + rc.getNumAnchors(Anchor.ACCELERATING) < MAX_ANCHORS) {
+        boolean builtSomething = false;
+        switch (nextItem()) {
+            case ANCHOR:
+                if (rc.canBuildAnchor(Anchor.STANDARD) &&
+                    rc.getResourceAmount(ResourceType.ADAMANTIUM) > MIN_RESOURCES &&
+                    rc.getNumAnchors(Anchor.STANDARD) + rc.getNumAnchors(Anchor.ACCELERATING) < MAX_ANCHORS) {
 
-                        // Build an anchor if we can, if we have enough resources, and if we have less
-                        // anchors than we want
-                        rc.buildAnchor(Anchor.STANDARD);
-                        //rc.setIndicatorString("Building anchor! " + rc.getNumAnchors(Anchor.STANDARD));
-                        //System.out.println("Built anchor!");
-                        statNumAnchor += 1;
-                        statMsg = "building anchor";
-                        builtSomething = true;
-                    }
-                    break;
-                case CARRIER:
-                    if (rc.canBuildRobot(RobotType.CARRIER, newLoc)) {
-                        rc.buildRobot(RobotType.CARRIER, newLoc);
-                        statMsg = "building carrier";
-                        builtSomething = true;
-                    }
-                    break;
-                case LAUNCHER:
-                    if (rc.canBuildRobot(RobotType.LAUNCHER, newLoc)) {
-                        rc.buildRobot(RobotType.LAUNCHER, newLoc);
-                        statMsg = "building launcher";
-                        builtSomething = true;
-                    }
-                    break;
-                case AMPLIFIER:
-                    if (rc.canBuildRobot(RobotType.AMPLIFIER, newLoc)) {
-                        rc.buildRobot(RobotType.AMPLIFIER, newLoc);
-                        statMsg = "building amplifier";
-                        builtSomething = true;
-                    }
-                    break;
-            }
+                    rc.buildAnchor(Anchor.STANDARD);
+                    statNumAnchor += 1;
+                    statMsg = "building anchor";
+                    builtSomething = true;
 
-            itemsBuilt += builtSomething ? 1 : 0;
-        } while (builtSomething);
+                }
+                break;
+            case CARRIER:
+                if (rc.canBuildRobot(RobotType.CARRIER, newLoc)) {
+
+                    rc.buildRobot(RobotType.CARRIER, newLoc);
+                    statMsg = "building carrier";
+                    builtSomething = true;
+
+                }
+                break;
+            case LAUNCHER:
+                if (rc.canBuildRobot(RobotType.LAUNCHER, newLoc)) {
+
+                    rc.buildRobot(RobotType.LAUNCHER, newLoc);
+                    statMsg = "building launcher";
+                    builtSomething = true;
+
+                }
+                break;
+            case AMPLIFIER:
+                if (rc.canBuildRobot(RobotType.AMPLIFIER, newLoc)) {
+
+                    rc.buildRobot(RobotType.AMPLIFIER, newLoc);
+                    statMsg = "building amplifier";
+                    builtSomething = true;
+
+                }
+                break;
+        }
+
+        // Increment itemsBuilt if builtSomething is true
+        itemsBuilt += builtSomething ? 1 : 0;
 
         refreshIndicator(rc);
+
     }
 
 }

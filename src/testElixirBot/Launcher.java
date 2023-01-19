@@ -1,4 +1,4 @@
-package bot3;
+package testElixirBot;
 
 import battlecode.common.*;
 
