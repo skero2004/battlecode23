@@ -2,30 +2,7 @@ package bot3;
 
 import battlecode.common.*;
 
-enum BuildItem {
-    ANCHOR,
-    CARRIER,
-    LAUNCHER,
-    AMPLIFIER,
-}
-
 public class Headquarter {
-
-    static int statNumAnchor = 0;
-    static String statMsg = "";
-
-    static int itemsBuilt = 0;
-
-    static BuildItem nextItem() {
-        BuildItem[] l = { BuildItem.CARRIER, BuildItem.CARRIER, BuildItem.ANCHOR, BuildItem.LAUNCHER, BuildItem.AMPLIFIER };
-        return l[itemsBuilt % l.length];
-    }
-
-    static void refreshIndicator(RobotController rc) {
-        rc.setIndicatorString(String.format("#T %d | #A %d | %s", itemsBuilt, statNumAnchor, statMsg));
-    }
-
-    /// mohit's old code
 
     static void runHeadquarter(RobotController rc) throws GameActionException {
 
@@ -35,6 +12,7 @@ public class Headquarter {
         // Pick a direction to build in.
         Direction dir = RobotPlayer.directions[RobotPlayer.rng.nextInt(RobotPlayer.directions.length)];
         MapLocation newLoc = rc.getLocation().add(dir);
+<<<<<<< Updated upstream
 
         boolean builtSomething = false;
         switch (nextItem()) {
@@ -84,6 +62,49 @@ public class Headquarter {
 
         refreshIndicator(rc);
 
+=======
+        if (rc.canBuildAnchor(Anchor.STANDARD) &&
+                rc.getResourceAmount(ResourceType.ADAMANTIUM) > MIN_RESOURCES &&
+                rc.getNumAnchors(Anchor.STANDARD) + rc.getNumAnchors(Anchor.ACCELERATING) < MAX_ANCHORS) {
+
+            // Build an anchor if we can, if we have enough resources, and if we have less
+            // anchors than we want
+            rc.buildAnchor(Anchor.STANDARD);
+            rc.setIndicatorString("Building anchor! " + rc.getNumAnchors(Anchor.STANDARD));
+            System.out.println("Built anchor!");
+
+        }
+
+        double rand = RobotPlayer.rng.nextDouble();
+        if (rc.getResourceAmount(ResourceType.ADAMANTIUM) < MIN_RESOURCES || rand < ROBOT_PROBS[0]) {
+
+            // Let's try to build a carrier.
+            rc.setIndicatorString("Trying to build a carrier");
+            if (rc.canBuildRobot(RobotType.CARRIER, newLoc)) {
+                rc.buildRobot(RobotType.CARRIER, newLoc);
+            }
+
+        }
+
+        if (rand < ROBOT_PROBS[1]) {
+
+            // Let's try to build a launcher.
+            rc.setIndicatorString("Trying to build a launcher");
+            if (rc.canBuildRobot(RobotType.LAUNCHER, newLoc)) {
+                rc.buildRobot(RobotType.LAUNCHER, newLoc);
+            }
+
+        } else {
+
+            // Let's try to build an amplifier
+            rc.setIndicatorString("Trying to build an amplifier");
+            if (rc.canBuildRobot(RobotType.AMPLIFIER, newLoc)) {
+                rc.buildRobot(RobotType.AMPLIFIER, newLoc);
+            }
+
+        }
+
+>>>>>>> Stashed changes
     }
 
 }

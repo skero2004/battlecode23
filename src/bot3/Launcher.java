@@ -7,7 +7,6 @@ import bot3.util.*;
 public class Launcher {
 
     static final double ISLAND_PROB = 0.7;
-    static LocationType wellTarget = LocationType.WELL_ADAMANTIUM;
     static boolean isIsland = false;
     static boolean isExplorer = false;
 
@@ -24,6 +23,7 @@ public class Launcher {
             if (rc.getID() % 3 != 0) {
 
                 isIsland = true;
+<<<<<<< Updated upstream
                 if (rc.getID() % 4 == 0)
                     isExplorer = true;
 
@@ -35,8 +35,9 @@ public class Launcher {
                 else
                     wellTarget = LocationType.WELL_MANA;
 
+=======
+>>>>>>> Stashed changes
             }
-
         }
 
         // Find target enemy
@@ -79,16 +80,22 @@ public class Launcher {
 
         } else if (isIsland) {
 
+<<<<<<< Updated upstream
             // Explore neutral islands if it is an explorer
             if (isExplorer)
                 Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL);
             else
                 Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS, LocationType.ISLAND_ENEMIES);
+=======
+            // Go to island if launcher role is to go to island
+            Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS,
+                    LocationType.ISLAND_ENEMIES);
+>>>>>>> Stashed changes
 
         } else {
 
             // Go to resources if launcher role is to go to resources
-            Searching.moveTowards(rc, wellTarget);
+            Searching.moveTowards(rc, LocationType.WELL_ADAMANTIUM, LocationType.WELL_MANA);
 
         }
 
