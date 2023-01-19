@@ -9,17 +9,27 @@ public class Launcher {
     static final double ISLAND_PROB = 0.7;
     static LocationType wellTarget = LocationType.WELL_ADAMANTIUM;
     static boolean isIsland = false;
+    static boolean isExplorer = false;
 
     static void runLauncher(RobotController rc) throws GameActionException {
 
         final int ACTION_RADIUS = rc.getType().actionRadiusSquared;
         final Team OPPONENT = rc.getTeam().opponent();
 
+        // Current location
+        MapLocation me = rc.getLocation();
+
         // Assign role
         if (RobotPlayer.turnCount == 2) {
-            if (rc.getID() % 3 == 0) {
+            if (rc.getID() % 3 != 0) {
+
                 isIsland = true;
+                if (rc.getID() % 4 == 0)
+                    isExplorer = true;
+
             } else {
+
+                // Adamantium by 50%, mana by 50%
                 if (rc.getID() % 2 == 0)
                     wellTarget = LocationType.WELL_ADAMANTIUM;
                 else
@@ -69,8 +79,11 @@ public class Launcher {
 
         } else if (isIsland) {
 
-            // Go to island if launcher role is to go to island
-            Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS, LocationType.ISLAND_ENEMIES);
+            // Explore neutral islands if it is an explorer
+            if (isExplorer)
+                Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL);
+            else
+                Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS, LocationType.ISLAND_ENEMIES);
 
         } else {
 
