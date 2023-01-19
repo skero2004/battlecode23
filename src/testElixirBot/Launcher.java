@@ -6,7 +6,6 @@ import bot3.util.*;
 
 public class Launcher {
 
-    static final double ISLAND_PROB = 0.7;
     static LocationType wellTarget = LocationType.WELL_ADAMANTIUM;
     static boolean isIsland = false;
     static boolean isExplorer = false;

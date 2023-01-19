@@ -10,16 +10,15 @@ public class Carrier {
     static MapLocation wellLoc;
 
     static boolean anchorMode = false;
-
     static LocationType wellTarget = null;
-
-    static boolean goHome = false; 
+    static boolean goHome = false;
 
     static void refreshIndicator(RobotController rc) {
         rc.setIndicatorString(String.format("GH %s AM %s | %s", goHome, anchorMode, wellTarget));
     }
 
     static void init(RobotController rc) throws GameActionException {
+
         if (rc.getID() % 5 < 3) {
             wellTarget = LocationType.WELL_ADAMANTIUM;
             rc.setIndicatorString("rsrc:ad");
@@ -77,7 +76,12 @@ public class Carrier {
             } else {
 
                 // If neither goHome mode or anchorMode, then get resources
-                Searching.moveTowards(rc, wellTarget);
+
+                // At the beginning of the game, don't care about role
+                if (RobotPlayer.turnCount < 100)
+                    Searching.moveTowards(rc, LocationType.WELL_ADAMANTIUM, LocationType.WELL_MANA);
+                else
+                    Searching.moveTowards(rc, wellTarget);
 
                 if (wellLoc == null) scanWells(rc);
 

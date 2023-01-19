@@ -17,7 +17,12 @@ public class Headquarter {
     static int itemsBuilt = 0;
 
     static BuildItem nextItem() {
-        BuildItem[] l = { BuildItem.CARRIER, BuildItem.CARRIER, BuildItem.ANCHOR, BuildItem.LAUNCHER, BuildItem.AMPLIFIER };
+        BuildItem[] l = { BuildItem.CARRIER,
+                          BuildItem.LAUNCHER,
+                          BuildItem.ANCHOR,
+                          BuildItem.CARRIER,
+                          BuildItem.LAUNCHER,
+                          BuildItem.AMPLIFIER };
         return l[itemsBuilt % l.length];
     }
 
@@ -25,7 +30,9 @@ public class Headquarter {
         rc.setIndicatorString(String.format("#T %d | #A %d | %s", itemsBuilt, statNumAnchor, statMsg));
     }
 
-    /// mohit's old code
+    static int getTotalAnchors(RobotController rc) {
+        return rc.getNumAnchors(Anchor.STANDARD) + rc.getNumAnchors(Anchor.ACCELERATING);
+    }
 
     static void runHeadquarter(RobotController rc) throws GameActionException {
 
@@ -39,40 +46,48 @@ public class Headquarter {
         boolean builtSomething = false;
         switch (nextItem()) {
             case ANCHOR:
+                statMsg = "building anchor";
+                if (getTotalAnchors(rc) > 0 || RobotPlayer.turnCount < 250) {
+                    itemsBuilt++;
+                    break;
+                }
                 if (rc.canBuildAnchor(Anchor.STANDARD) &&
                     rc.getResourceAmount(ResourceType.ADAMANTIUM) > MIN_RESOURCES &&
                     rc.getNumAnchors(Anchor.STANDARD) + rc.getNumAnchors(Anchor.ACCELERATING) < MAX_ANCHORS) {
 
                     rc.buildAnchor(Anchor.STANDARD);
                     statNumAnchor += 1;
-                    statMsg = "building anchor";
                     builtSomething = true;
 
                 }
                 break;
             case CARRIER:
+                statMsg = "building carrier";
                 if (rc.canBuildRobot(RobotType.CARRIER, newLoc)) {
 
                     rc.buildRobot(RobotType.CARRIER, newLoc);
-                    statMsg = "building carrier";
                     builtSomething = true;
 
                 }
                 break;
             case LAUNCHER:
+                statMsg = "building launcher";
                 if (rc.canBuildRobot(RobotType.LAUNCHER, newLoc)) {
 
                     rc.buildRobot(RobotType.LAUNCHER, newLoc);
-                    statMsg = "building launcher";
                     builtSomething = true;
 
                 }
                 break;
             case AMPLIFIER:
+                statMsg = "building amplifier";
+                if (RobotPlayer.turnCount < 100) {
+                    itemsBuilt++;
+                    break;
+                }
                 if (rc.canBuildRobot(RobotType.AMPLIFIER, newLoc)) {
 
                     rc.buildRobot(RobotType.AMPLIFIER, newLoc);
-                    statMsg = "building amplifier";
                     builtSomething = true;
 
                 }
