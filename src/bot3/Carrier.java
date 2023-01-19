@@ -13,69 +13,81 @@ public class Carrier {
 
     static LocationType wellTarget = null;
 
-    static void runCarrier(RobotController rc) throws GameActionException {
+    static boolean goHome = false; 
 
+    static void refreshIndicator(RobotController rc) {
+        rc.setIndicatorString(String.format("GH %s AM %s | %s", goHome, anchorMode, wellTarget));
+    }
+
+    static void init(RobotController rc) throws GameActionException {
+        if (rc.getID() % 5 < 3) {
+            wellTarget = LocationType.WELL_ADAMANTIUM;
+            rc.setIndicatorString("rsrc:ad");
+        } else {
+            wellTarget = LocationType.WELL_MANA;
+            rc.setIndicatorString("rsrc:mn");
+        }
+
+        if (hqLoc == null)
+            scanHQ(rc);
+    }
+
+    static void runCarrier(RobotController rc) throws GameActionException {
         // Current location
         MapLocation me = rc.getLocation();
 
         // Set role initially
-        if (wellTarget == null) {
-            if (rc.getID() % 5 < 3) {
-                wellTarget = LocationType.WELL_ADAMANTIUM;
+        if (wellTarget == null) init(rc);
+
+        while (true) {
+            if (goHome) {
+                int manhattan = Math.abs(me.x - hqLoc.x) + Math.abs(me.y - hqLoc.y);
+
+                if (manhattan > 1) { 
+                    // Move towards HQ if it has full capacity
+                    Searching.moveTowards(rc, LocationType.HEADQUARTERS);
+                } else {
+
+                    // Transfer resource to headquarters
+                    depositResource(rc, ResourceType.ADAMANTIUM);
+                    depositResource(rc, ResourceType.MANA);
+
+                    // Take anchor if it can
+                    if (hqLoc != null && rc.canTakeAnchor(hqLoc, Anchor.STANDARD)) {
+                        rc.takeAnchor(hqLoc, Anchor.STANDARD);
+                        anchorMode = true;
+                    }
+                    goHome = false;
+                }
             } else {
-                wellTarget = LocationType.WELL_MANA;
-            }
-        }
+                // TODO check if in range to set robot mode
+                if (anchorMode) {
+                    // If in anchor mode, move towards island
+                    Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL);
 
-        // Scan for locations of nearby elements
-        if (hqLoc == null)
-            scanHQ(rc);
-        if (wellLoc == null)
-            scanWells(rc);
-
-        // Collect from well if close and inventory not full
-        if (wellLoc != null && rc.canCollectResource(wellLoc, -1))
-            rc.collectResource(wellLoc, -1);
-
-        // Transfer resource to headquarters
-        depositResource(rc, ResourceType.ADAMANTIUM);
-        depositResource(rc, ResourceType.MANA);
-
-        // Take anchor if it can
-        if (rc.canTakeAnchor(hqLoc, Anchor.STANDARD)) {
-            rc.takeAnchor(hqLoc, Anchor.STANDARD);
-            anchorMode = true;
-        }
-
-        if (anchorMode) {
-
-            // If in anchor mode, move towards island
-            Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL);
-
-            if (rc.canPlaceAnchor() && rc.senseTeamOccupyingIsland(rc.senseIsland(me)) == Team.NEUTRAL) {
-                rc.placeAnchor();
-                anchorMode = false;
-            }
-
-        } else {
-
-            int total = getTotalResources(rc);
-            if (total == 0) {
-
-                // Move towards well or search for well
-                if (wellLoc == null || !rc.canCollectResource(wellLoc, -1))
+                    if (rc.canPlaceAnchor() && rc.senseTeamOccupyingIsland(rc.senseIsland(me)) == Team.NEUTRAL) {
+                        rc.placeAnchor();
+                        anchorMode = false;
+                        goHome = true;
+                    }
+                } else {
                     Searching.moveTowards(rc, wellTarget);
+                    
+                    if (wellLoc == null)
+                        scanWells(rc);
+                    // Collect from well if close and inventory not full
+                    if (wellLoc != null && rc.canCollectResource(wellLoc, -1))
+                        rc.collectResource(wellLoc, -1);
 
+                    int total = getTotalResources(rc);
+                    if (total == GameConstants.CARRIER_CAPACITY) {
+                        goHome = true;
+                    }
+                }
             }
-            if (total == GameConstants.CARRIER_CAPACITY) {
 
-                // Move towards HQ if it has full capacity
-                Searching.moveTowards(rc, LocationType.HEADQUARTERS);
-
-            }
-
+            refreshIndicator(rc);
         }
-
     }
 
     static void scanHQ(RobotController rc) throws GameActionException {
@@ -95,13 +107,11 @@ public class Carrier {
     }
 
     static void depositResource(RobotController rc, ResourceType type) throws GameActionException {
-
         int amount = rc.getResourceAmount(type);
         if (amount > 0) {
             if (rc.canTransferResource(hqLoc, type, amount))
                 rc.transferResource(hqLoc, type, amount);
         }
-
     }
 
     static int getTotalResources(RobotController rc) {
