@@ -185,11 +185,11 @@ public class Searching {
                 return 7000000;
 
             case ISLAND_FRIENDS:
-                return 5000000;
+                return 1000000;
             case ISLAND_ENEMIES:
-                return 5000000;
+                return 3000000;
             case ISLAND_NEUTRAL:
-                return 8000000;
+                return 9000000;
 
             case HEADQUARTERS:
                 return 9000000;
