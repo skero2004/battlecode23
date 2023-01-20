@@ -134,11 +134,6 @@ public class Launcher {
 
             }
 
-            // Change role every now and then
-            if (RobotPlayer.turnCount % 200 == 0) {
-                setNextMove(rc);
-            }
-
         }
 
         refreshIndicator(rc);

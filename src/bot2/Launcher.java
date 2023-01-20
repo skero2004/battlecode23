@@ -44,30 +44,32 @@ public class Launcher {
         int bestScore = Integer.MIN_VALUE;
         RobotInfo target = null;
         for (RobotInfo enemy : enemies) {
-            int score = 500 - enemy.getHealth();
-            switch (enemy.getType()) {
-                case BOOSTER:
-                case DESTABILIZER:
-                    score *= 3;
-                    break;
-                case LAUNCHER:
-                    score *= 3;
-                    break;
-                case CARRIER:
-                    score *= 2;
-                    break;
-                case AMPLIFIER:
-                    score *= 1;
-                    break;
-                default:
-                    score *= 1;
-                    break;
-            }
-            if (score > bestScore) {
-                bestScore = score;
-                target = enemy;
-            }
-        }
+			if (enemy.getType() != RobotType.HEADQUARTERS) {
+				int score = 500 - enemy.getHealth();
+				switch (enemy.getType()) {
+					case BOOSTER:
+					case DESTABILIZER:
+						score *= 3;
+						break;
+					case LAUNCHER:
+						score *= 3;
+						break;
+					case CARRIER:
+						score *= 2;
+						break;
+					case AMPLIFIER:
+						score *= 1;
+						break;
+					default:
+						score *= 1;
+						break;
+				}
+				if (score > bestScore) {
+					bestScore = score;
+					target = enemy;
+				}
+			}
+		}
 
         if (target != null){
 

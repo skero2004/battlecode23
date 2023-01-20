@@ -43,20 +43,11 @@ public class Carrier {
             // Scan for HQ if not found
             if (hqLoc == null) scanHQ(rc);
 
+            Searching.moveTowards(rc, LocationType.HEADQUARTERS);
 
             // Transfer resource to headquarters if possible
-            int amountAd = rc.getResourceAmount(ResourceType.ADAMANTIUM);
-            int amountMn = rc.getResourceAmount(ResourceType.MANA);
-            if (rc.canTransferResource(hqLoc, ResourceType.ADAMANTIUM, amountAd))
-                rc.transferResource(hqLoc, ResourceType.ADAMANTIUM, amountAd);
-            else if (rc.canTransferResource(hqLoc, ResourceType.MANA, amountMn))
-                rc.transferResource(hqLoc, ResourceType.MANA, amountMn);
-            else {
-
-                // Move if not depositing
-                Searching.moveTowards(rc, LocationType.HEADQUARTERS);
-
-            }
+            depositResource(rc, ResourceType.ADAMANTIUM);
+            depositResource(rc, ResourceType.MANA);
 
             // Take anchor if it can
             if (hqLoc != null && rc.canTakeAnchor(hqLoc, Anchor.STANDARD)) {
@@ -70,6 +61,7 @@ public class Carrier {
 
         } else {
 
+            // TODO check if in range to set robot mode
             if (anchorMode) {
 
                 // If in anchor mode, move towards neutral island
@@ -96,7 +88,7 @@ public class Carrier {
                     // If not collecting, move
 
                     // At the beginning of the game, don't care about role
-                    if (RobotPlayer.turnCount < 500)
+                    if (RobotPlayer.turnCount < 1000)
                         Searching.moveTowards(rc, LocationType.WELL_ADAMANTIUM, LocationType.WELL_MANA);
                     else
                         Searching.moveTowards(rc, wellTarget);
@@ -104,15 +96,14 @@ public class Carrier {
                 }
 
                 // If robot carrying maximum capacity, then goHome
-                if (getTotalResources(rc) > GameConstants.CARRIER_CAPACITY)
+                if (getTotalResources(rc) == GameConstants.CARRIER_CAPACITY)
                     goHome = true;
-
 
             }
 
-        }
+            refreshIndicator(rc);
 
-        refreshIndicator(rc);
+        }
 
     }
 
@@ -127,9 +118,17 @@ public class Carrier {
     }
 
     static void scanWells(RobotController rc) throws GameActionException {
-        WellInfo[] wells = rc.senseNearbyWells(-1);
+        WellInfo[] wells = rc.senseNearbyWells(2);
         if (wells.length > 0)
             wellLoc = wells[0].getMapLocation();
+    }
+
+    static void depositResource(RobotController rc, ResourceType type) throws GameActionException {
+        int amount = rc.getResourceAmount(type);
+        if (amount > 0) {
+            if (rc.canTransferResource(hqLoc, type, amount))
+                rc.transferResource(hqLoc, type, amount);
+        }
     }
 
     static int getTotalResources(RobotController rc) {
