@@ -9,8 +9,8 @@ import bot3.util.*;
 
 public class Searching {
 
-  static final int UPDATE_FREQ = 20;
-  static final int TEMPERATURE = 5;
+  static final int UPDATE_FREQ = 100;
+  static final int TEMPERATURE = 500;
 
   private static ArrayList<ArrayList<Vec2D>> map = null;
 
@@ -21,27 +21,20 @@ public class Searching {
   private static RobotInfo[] robotCache = null;
   private static int[] islandCache = null;
 
-  private static Direction currentDir = Direction.NORTH;
-
   static void moveTowards(RobotController rc, LocationType... targets_) throws GameActionException {
     Vec2D cur = new Vec2D(rc.getLocation());
     Vec2D dir = new Vec2D(RobotPlayer.rng.nextInt(2 * TEMPERATURE) - TEMPERATURE,
         RobotPlayer.rng.nextInt(2 * TEMPERATURE) - TEMPERATURE);
 
     ArrayList<LocationType> targets = new ArrayList<>(Arrays.asList(targets_));
-    targets.add(LocationType.CLOUD);
-    targets.add(LocationType.CURRENT);
-    targets.add(LocationType.WALL);
+    // targets.add(LocationType.CLOUD);
+    // targets.add(LocationType.CURRENT);
+    // targets.add(LocationType.WALL);
 
     for (LocationType target : targets) {
       for (Vec2D to : search(rc, target)) {
         Vec2D d = to.sub(cur);
-        if (d.l == 0)
-          if (mass(target) > 0)
-            return;
-          else
-            continue;
-        dir = dir.add(d.scale(mass(target) / (d.l * d.l * d.l)));
+        dir = dir.add(d.scale(mass(target) / (1 + d.l * d.l * d.l)));
       }
     }
 
@@ -49,8 +42,13 @@ public class Searching {
     Direction move = rc.getLocation().directionTo(to);
     if (rc.canMove(move) && move != Direction.CENTER)
       rc.move(move);
-    else
-      RobotPlayer.moveRandom(rc);
+    else {
+      move = RobotPlayer.directions[(int) Math.sqrt(RobotPlayer.turnCount) % 8];
+      if (rc.canMove(move))
+        rc.move(move);
+      else
+        RobotPlayer.moveRandom(rc);
+    }
 
     adamantiumCache = null;
     manaCache = null;
@@ -66,19 +64,15 @@ public class Searching {
       map = new ArrayList<ArrayList<Vec2D>>();
       while (map.size() < LocationType.values().length)
         map.add(new ArrayList<>());
+    }
+
+    if (map.get(locationType.ordinal()).isEmpty() || RobotPlayer.turnCount % UPDATE_FREQ == 0)
       sync(rc);
-    } else if (RobotPlayer.turnCount % UPDATE_FREQ == 0)
-      sync(rc);
 
-    ArrayList<Vec2D> locations = local(rc, locationType);
-
-    for (Vec2D v : map.get(locationType.ordinal()))
-      locations.add(v);
-
-    return locations;
+    return map.get(locationType.ordinal());
   }
 
-  private static void sync(RobotController rc) throws GameActionException {
+  static void sync(RobotController rc) throws GameActionException {
     map = new ArrayList<ArrayList<Vec2D>>();
     while (map.size() < LocationType.values().length)
       map.add(new ArrayList<>());
@@ -96,6 +90,7 @@ public class Searching {
   private static void communicate(RobotController rc, LocationType locationType) throws GameActionException {
     for (Vec2D v : local(rc, locationType))
       Communication.update(rc, new Location(locationType, v));
+    Communication.tryWriteMessages(rc);
   }
 
   private static ArrayList<Vec2D> local(RobotController rc, LocationType locationType)
@@ -126,16 +121,18 @@ public class Searching {
           islandCache = rc.senseNearbyIslands();
         for (int i : islandCache)
           if (rc.senseTeamOccupyingIsland(i) == rc.getTeam())
-            for (MapLocation l : rc.senseNearbyIslandLocations(i))
+            for (MapLocation l : rc.senseNearbyIslandLocations(i)) {
               locations.add(new Vec2D(l));
+            }
         break;
       case ISLAND_NEUTRAL:
         if (islandCache == null)
           islandCache = rc.senseNearbyIslands();
         for (int i : islandCache)
           if (rc.senseTeamOccupyingIsland(i) == Team.NEUTRAL)
-            for (MapLocation l : rc.senseNearbyIslandLocations(i))
+            for (MapLocation l : rc.senseNearbyIslandLocations(i)) {
               locations.add(new Vec2D(l));
+            }
         break;
       case ISLAND_ENEMIES:
         if (islandCache == null)
@@ -143,8 +140,9 @@ public class Searching {
         for (int i : islandCache) {
           Team islandTeam = rc.senseTeamOccupyingIsland(i);
           if (islandTeam == rc.getTeam().opponent())
-            for (MapLocation l : rc.senseNearbyIslandLocations(i))
+            for (MapLocation l : rc.senseNearbyIslandLocations(i)) {
               locations.add(new Vec2D(l));
+            }
         }
         break;
 
@@ -152,8 +150,9 @@ public class Searching {
         if (robotCache == null)
           robotCache = rc.senseNearbyRobots();
         for (RobotInfo r : robotCache)
-          if (r.getTeam() == rc.getTeam() && r.getType() == RobotType.HEADQUARTERS)
+          if (r.getTeam() == rc.getTeam() && r.getType() == RobotType.HEADQUARTERS) {
             locations.add(new Vec2D(r.getLocation()));
+          }
         break;
 
       case WALL:
@@ -187,16 +186,16 @@ public class Searching {
       case WELL_MANA:
         return 5000000;
       case WELL_ADAMANTIUM:
-        return 4000000;
+        return 5000000;
       case WELL_ELIXIR:
         return 7000000;
 
       case ISLAND_FRIENDS:
-        return 5000000;
+        return 2000000;
       case ISLAND_ENEMIES:
-        return 5000000;
+        return 6000000;
       case ISLAND_NEUTRAL:
-        return 8000000;
+        return 6000000;
 
       case HEADQUARTERS:
         return 9000000;
@@ -206,7 +205,7 @@ public class Searching {
       case CLOUD:
         return 0;
       case CURRENT:
-        return 100;
+        return -100000;
     }
 
     throw new IllegalArgumentException("Mass unimplemented for LocationType: " + locationType);
