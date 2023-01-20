@@ -6,19 +6,10 @@ import bot3.util.*;
 
 public class Launcher {
 
-<<<<<<< HEAD
     static LocationType wellTarget = LocationType.WELL_ADAMANTIUM;
     static boolean goIsland = false;
     static boolean goHome = false;
-=======
-    static final double ISLAND_PROB = 0.7;
-    static boolean isIsland = false;
->>>>>>> 896d164c5ab555c39680cbfcc29cd7e05d866660
     static boolean isExplorer = false;
-
-    // Variables to check if launcher has not been moving
-    static MapLocation prevPos = new MapLocation(0, 0);
-    static int stopCount = 0;
 
     static void init(RobotController rc) throws GameActionException {
 
@@ -46,7 +37,7 @@ public class Launcher {
     }
 
     static void refreshIndicator(RobotController rc) {
-        rc.setIndicatorString("goIsland: " + goIsland + " | goHome: " + goHome + " | stopCount: " + stopCount);
+        rc.setIndicatorString("goIsland: " + goIsland + " | goHome: " + goHome);
     }
 
     static void setNextMove(RobotController rc) throws GameActionException {
@@ -75,32 +66,8 @@ public class Launcher {
         // Current location
         MapLocation me = rc.getLocation();
 
-<<<<<<< HEAD
         // Assign role initially
         if (RobotPlayer.turnCount == 2) init(rc);
-=======
-        // Assign role
-        if (RobotPlayer.turnCount == 2) {
-            if (rc.getID() % 3 != 0) {
-
-                isIsland = true;
-<<<<<<< Updated upstream
-                if (rc.getID() % 4 == 0)
-                    isExplorer = true;
-
-            } else {
-
-                // Adamantium by 50%, mana by 50%
-                if (rc.getID() % 2 == 0)
-                    wellTarget = LocationType.WELL_ADAMANTIUM;
-                else
-                    wellTarget = LocationType.WELL_MANA;
-
-=======
->>>>>>> Stashed changes
-            }
-        }
->>>>>>> 896d164c5ab555c39680cbfcc29cd7e05d866660
 
         // Find target enemy
         RobotInfo[] enemies = rc.senseNearbyRobots(ACTION_RADIUS, OPPONENT);
@@ -140,7 +107,6 @@ public class Launcher {
             if (rc.canAttack(target.getLocation()))
                 rc.attack(target.getLocation());
 
-<<<<<<< HEAD
             // Move towards target
             /*Direction moveDir = me.directionTo(target.getLocation());
             if (rc.canMove(moveDir)) {
@@ -175,39 +141,9 @@ public class Launcher {
 
                 }
 
-                // Check if launcher is not moving. If it is not, then change target.
-                if (prevPos.equals(me)) stopCount++;
-                if (stopCount > 30) {
-                    stopCount = 0;
-                    setNextMove(rc);
-                }
-
             }
-=======
-        } else if (isIsland) {
-
-<<<<<<< Updated upstream
-            // Explore neutral islands if it is an explorer
-            if (isExplorer)
-                Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL);
-            else
-                Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS, LocationType.ISLAND_ENEMIES);
-=======
-            // Go to island if launcher role is to go to island
-            Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS,
-                    LocationType.ISLAND_ENEMIES);
->>>>>>> Stashed changes
-
-        } else {
-
-            // Go to resources if launcher role is to go to resources
-            Searching.moveTowards(rc, LocationType.WELL_ADAMANTIUM, LocationType.WELL_MANA);
->>>>>>> 896d164c5ab555c39680cbfcc29cd7e05d866660
 
         }
-
-        // Update previous position of robot
-        prevPos = me;
 
         refreshIndicator(rc);
 

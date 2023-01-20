@@ -1,11 +1,11 @@
-package bot3;
+package bot4;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import battlecode.common.*;
 
-import bot3.util.*;
+import bot4.util.*;
 
 public class Communication {
     private static final int ARRAY_LENGTH = 64;

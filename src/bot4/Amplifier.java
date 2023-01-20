@@ -1,8 +1,8 @@
-package bot3;
+package bot4;
 
 import battlecode.common.*;
 
-import bot3.util.*;
+import bot4.util.*;
 
 public class Amplifier {
 

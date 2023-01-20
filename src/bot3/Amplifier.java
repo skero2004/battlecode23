@@ -11,8 +11,7 @@ public class Amplifier {
     static LocationType wellTarget = LocationType.WELL_ADAMANTIUM;
 
     static void runAmplifier(RobotController rc) throws GameActionException {
-        Searching.moveTowards(rc, LocationType.ISLAND_FRIENDS, LocationType.ISLAND_ENEMIES,
-                LocationType.ISLAND_NEUTRAL);
+        Searching.moveTowards(rc, LocationType.ISLAND_FRIENDS, LocationType.ISLAND_ENEMIES, LocationType.ISLAND_NEUTRAL);
         return;
         /*
          * 

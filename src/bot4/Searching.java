@@ -1,11 +1,11 @@
-package bot3;
+package bot4;
 
 import java.util.Arrays;
 import java.util.ArrayList;
 
 import battlecode.common.*;
 
-import bot3.util.*;
+import bot4.util.*;
 
 public class Searching {
 

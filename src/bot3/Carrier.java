@@ -11,10 +11,6 @@ public class Carrier {
 
     static boolean anchorMode = false;
     static LocationType wellTarget = null;
-<<<<<<< HEAD
-=======
-
->>>>>>> 896d164c5ab555c39680cbfcc29cd7e05d866660
     static boolean goHome = false;
 
     static void refreshIndicator(RobotController rc) {
@@ -39,10 +35,8 @@ public class Carrier {
         MapLocation me = rc.getLocation();
 
         // Set role initially
-        if (wellTarget == null)
-            init(rc);
+        if (wellTarget == null) init(rc);
 
-<<<<<<< Updated upstream
 
         if (goHome) {
 
@@ -77,62 +71,29 @@ public class Carrier {
                 if (rc.canPlaceAnchor() && rc.senseTeamOccupyingIsland(rc.senseIsland(me)) == Team.NEUTRAL) {
                     rc.placeAnchor();
                     anchorMode = false;
-=======
-        // Take anchorif it can
-        if (hqLoc != null && rc.canTakeAnchor(hqLoc, Anchor.STANDARD)) {
-            rc.takeAnchor(hqLoc, Anchor.STANDARD);
-            anchorMode = true;
-            goHome = false;
-        }
-        if (goHome) {
-            int dx = me.x - hqLoc.x, dy = me.y - hqLoc.y;
-            int squaredDist = dx * dx + dy * dy;
-
-            if (squaredDist > 2) {
-                // Move towards HQ if it has full capacity
-                Searching.moveTowards(rc, LocationType.HEADQUARTERS);
-            } else {
-
-                // Transfer resource to headquarters
-                depositResource(rc, ResourceType.ADAMANTIUM);
-                depositResource(rc, ResourceType.MANA);
-
-            }
-        } else {
-            // TODO check if in range to set robot mode
-            if (anchorMode) {
-                if (rc.canPlaceAnchor()
-                        && rc.senseTeamOccupyingIsland(rc.senseIsland(me)) == Team.NEUTRAL) {
-                    rc.placeAnchor();
-                    anchorMode = false;
-                    goHome = false;
-                } else {
-                    // If in anchor mode, move towards island
-                    int i = rc.senseIsland(rc.getLocation());
-                    if (i == -1)
-                        Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_ENEMIES);
-                    else if (rc.senseTeamOccupyingIsland(i) == rc.getTeam())
-                        Searching.sync(rc);
-
->>>>>>> Stashed changes
                 }
 
             } else {
 
-<<<<<<< Updated upstream
                 // If neither goHome mode or anchorMode, then get resources
 
-                // At the beginning of the game, don't care about role
-                if (RobotPlayer.turnCount < 100)
-                    Searching.moveTowards(rc, LocationType.WELL_ADAMANTIUM, LocationType.WELL_MANA);
-                else
-                    Searching.moveTowards(rc, wellTarget);
-
+                // Scan well location
                 if (wellLoc == null) scanWells(rc);
 
                 // Collect from well if close and inventory not full
                 if (wellLoc != null && rc.canCollectResource(wellLoc, -1))
                     rc.collectResource(wellLoc, -1);
+                else {
+
+                    // If not collecting, move
+
+                    // At the beginning of the game, don't care about role
+                    if (RobotPlayer.turnCount < 1000)
+                        Searching.moveTowards(rc, LocationType.WELL_ADAMANTIUM, LocationType.WELL_MANA);
+                    else
+                        Searching.moveTowards(rc, wellTarget);
+
+                }
 
                 // If robot carrying maximum capacity, then goHome
                 if (getTotalResources(rc) == GameConstants.CARRIER_CAPACITY)
@@ -144,24 +105,6 @@ public class Carrier {
 
         }
 
-=======
-                if (wellLoc == null)
-                    scanWells(rc);
-                // Collect from well if close and inventory not full
-                if (wellLoc != null && rc.canCollectResource(wellLoc, -1))
-                    rc.collectResource(wellLoc, -1);
-                else
-                    Searching.moveTowards(rc, wellTarget);
-
-                int total = getTotalResources(rc);
-                if (total == GameConstants.CARRIER_CAPACITY) {
-                    goHome = true;
-                }
-            }
-        }
-
-        refreshIndicator(rc);
->>>>>>> Stashed changes
     }
 
     static void scanHQ(RobotController rc) throws GameActionException {
