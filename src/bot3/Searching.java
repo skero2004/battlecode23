@@ -9,7 +9,7 @@ import bot3.util.*;
 
 public class Searching {
 
-  static final int UPDATE_FREQ = 100;
+  static final int UPDATE_FREQ = 200;
   static final int TEMPERATURE = 500;
 
   private static ArrayList<ArrayList<Vec2D>> map = null;

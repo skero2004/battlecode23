@@ -63,9 +63,6 @@ public class Launcher {
         final int ACTION_RADIUS = rc.getType().actionRadiusSquared;
         final Team OPPONENT = rc.getTeam().opponent();
 
-        // Current location
-        MapLocation me = rc.getLocation();
-
         // Assign role initially
         if (RobotPlayer.turnCount == 2) init(rc);
 
@@ -107,12 +104,6 @@ public class Launcher {
             if (rc.canAttack(target.getLocation()))
                 rc.attack(target.getLocation());
 
-            // Move towards target
-            /*Direction moveDir = me.directionTo(target.getLocation());
-            if (rc.canMove(moveDir)) {
-                rc.move(moveDir);
-            }*/
-
         } else {
 
             if (isExplorer) {
@@ -141,6 +132,11 @@ public class Launcher {
 
                 }
 
+            }
+
+            // Change role every now and then
+            if (RobotPlayer.turnCount % 200 == 0) {
+                setNextMove(rc);
             }
 
         }
