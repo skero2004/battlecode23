@@ -19,7 +19,7 @@ public class Carrier {
 
     static void init(RobotController rc) throws GameActionException {
 
-        if (rc.getID() % 5 < 3) {
+        if (rc.getID() % 2 == 0) {
             wellTarget = LocationType.WELL_ADAMANTIUM;
             rc.setIndicatorString("rsrc:ad");
         } else {
@@ -61,7 +61,6 @@ public class Carrier {
 
         } else {
 
-            // TODO check if in range to set robot mode
             if (anchorMode) {
 
                 // If in anchor mode, move towards neutral island
@@ -88,9 +87,9 @@ public class Carrier {
                     // If not collecting, move
 
                     // At the beginning of the game, don't care about role
-                    if (RobotPlayer.turnCount < 1000)
-                        Searching.moveTowards(rc, LocationType.WELL_ADAMANTIUM, LocationType.WELL_MANA);
-                    else
+                    //if (RobotPlayer.turnCount < 1000)
+                        //Searching.moveTowards(rc, LocationType.WELL_ADAMANTIUM, LocationType.WELL_MANA);
+                    //else
                         Searching.moveTowards(rc, wellTarget);
 
                 }

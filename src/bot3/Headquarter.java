@@ -1,5 +1,7 @@
 package bot3;
 
+import java.lang.Math;
+
 import battlecode.common.*;
 
 enum BuildItem {
@@ -17,13 +19,20 @@ public class Headquarter {
     static int itemsBuilt = 0;
 
     static BuildItem nextItem() {
-        BuildItem[] l = { BuildItem.CARRIER,
-                          BuildItem.LAUNCHER,
-                          BuildItem.CARRIER,
-                          BuildItem.ANCHOR,
-                          BuildItem.CARRIER,
-                          BuildItem.LAUNCHER,
-                          BuildItem.AMPLIFIER };
+        BuildItem[] l = {
+                            BuildItem.CARRIER,
+                            BuildItem.LAUNCHER,
+                            BuildItem.CARRIER,
+                            BuildItem.ANCHOR,
+                            BuildItem.LAUNCHER,
+                            BuildItem.LAUNCHER,
+                            BuildItem.CARRIER,
+                            BuildItem.LAUNCHER,
+                            BuildItem.CARRIER,
+                            BuildItem.LAUNCHER,
+                            BuildItem.LAUNCHER,
+                            BuildItem.AMPLIFIER
+                        };
         return l[itemsBuilt % l.length];
     }
 
@@ -44,11 +53,14 @@ public class Headquarter {
         Direction dir = RobotPlayer.directions[RobotPlayer.rng.nextInt(RobotPlayer.directions.length)];
         MapLocation newLoc = rc.getLocation().add(dir);
 
+        int amountMn = rc.getResourceAmount(ResourceType.MANA);
+        int amountAd = rc.getResourceAmount(ResourceType.ADAMANTIUM);
+
         boolean builtSomething = false;
         switch (nextItem()) {
             case ANCHOR:
                 statMsg = "building anchor";
-                if (getTotalAnchors(rc) > 0 || RobotPlayer.turnCount < 250) {
+                if (getTotalAnchors(rc) > 0 || RobotPlayer.turnCount < 100 || Math.abs(amountMn - amountAd) > 200) {
                     itemsBuilt++;
                     break;
                 }
@@ -64,6 +76,10 @@ public class Headquarter {
                 break;
             case CARRIER:
                 statMsg = "building carrier";
+                if (amountMn - amountAd > 150) {
+                    itemsBuilt++;
+                    break;
+                }
                 if (rc.canBuildRobot(RobotType.CARRIER, newLoc)) {
 
                     rc.buildRobot(RobotType.CARRIER, newLoc);
@@ -73,6 +89,10 @@ public class Headquarter {
                 break;
             case LAUNCHER:
                 statMsg = "building launcher";
+                if (amountAd - amountMn > 400 || RobotPlayer.turnCount < 100) {
+                    itemsBuilt++;
+                    break;
+                }
                 if (rc.canBuildRobot(RobotType.LAUNCHER, newLoc)) {
 
                     rc.buildRobot(RobotType.LAUNCHER, newLoc);

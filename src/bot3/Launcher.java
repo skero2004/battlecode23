@@ -14,30 +14,38 @@ public class Launcher {
     static void init(RobotController rc) throws GameActionException {
 
         // Initialize mode based on ID
-        if (rc.getID() % 5 == 0) {
-            goHome = false;
-            goIsland = false;
+        int mod = rc.getID() % 10;
+        if (mod == 0 || mod == 5) {
+
+            // Go to adamantium
             wellTarget = LocationType.WELL_ADAMANTIUM;
-        } else if (rc.getID() % 5 == 1) {
-            goHome = false;
-            goIsland = false;
+
+        } else if (mod == 1 || mod == 6) {
+
+            // Go to mana
             wellTarget = LocationType.WELL_MANA;
-        } else if (rc.getID() % 5 == 2) {
-            goHome = false;
+
+        } else if (mod == 2) {
+
+            // Go to island
             goIsland = true;
-            wellTarget = LocationType.WELL_ADAMANTIUM;
-        } else if (rc.getID() % 5 == 3) {
-            goHome = false;
-            goIsland = true;
-            wellTarget = LocationType.WELL_MANA;
+
+        } else if (mod == 3 || mod == 7 || mod == 8 || mod == 9) {
+
+            // Explorer
+            isExplorer = true;
+
         } else {
+
+            // Go home
             goHome = true;
+
         }
 
     }
 
     static void refreshIndicator(RobotController rc) {
-        rc.setIndicatorString("goIsland: " + goIsland + " | goHome: " + goHome);
+        rc.setIndicatorString("goIsland: " + goIsland + " | goHome: " + goHome + " | isExplorer: " + isExplorer);
     }
 
     static void setNextMove(RobotController rc) throws GameActionException {
@@ -98,6 +106,18 @@ public class Launcher {
             }
         }
 
+        RobotInfo[] visibleEnemies = rc.senseNearbyRobots(-1, OPPONENT);
+        for (RobotInfo enemy : visibleEnemies) {
+            if (enemy.getType() != RobotType.HEADQUARTERS) {
+                MapLocation enemyLocation = enemy.getLocation();
+                MapLocation robotLocation = rc.getLocation();
+                Direction moveDir = robotLocation.directionTo(enemyLocation);
+                if (rc.canMove(moveDir) && target == null) {
+                    rc.move(moveDir);
+                }
+            }
+        }
+
         if (target != null) {
 
             // If there is a target, attack
@@ -109,14 +129,14 @@ public class Launcher {
             if (isExplorer) {
 
                 // Explore neutral islands if it is an explorer
-                Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL);
+                Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_ENEMIES);
 
             } else {
 
                 // Otherwise, move towards set target
                 if (goIsland) {
 
-                    Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS, LocationType.ISLAND_ENEMIES);
+                    Searching.moveTowards(rc, LocationType.ISLAND_NEUTRAL, LocationType.ISLAND_FRIENDS);
 
                 } else if (goHome) {
 
