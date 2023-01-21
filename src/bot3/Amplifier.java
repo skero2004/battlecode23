@@ -11,8 +11,25 @@ public class Amplifier {
     static LocationType wellTarget = LocationType.WELL_ADAMANTIUM;
 
     static void runAmplifier(RobotController rc) throws GameActionException {
+
+        MapLocation me = rc.getLocation();
+        final Team OPPONENT = rc.getTeam().opponent();
+
+        // Run away from enemies
+        RobotInfo[] enemies = rc.senseNearbyRobots(-1, OPPONENT);
+        if (enemies.length > 0) {
+
+            int goX = me.x - enemies[0].location.x;
+            int goY = me.y - enemies[0].location.y;
+            Direction move = me.directionTo(me.translate(goX, goY));
+            if (rc.canMove(move)) {
+                rc.move(move);
+                return;
+            }
+
+        }
+
         Searching.moveTowards(rc, LocationType.ISLAND_FRIENDS, LocationType.ISLAND_ENEMIES, LocationType.ISLAND_NEUTRAL);
-        return;
         /*
          * 
          * // Assign role

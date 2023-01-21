@@ -15,12 +15,12 @@ public class Launcher {
 
         // Initialize mode based on ID
         int mod = rc.getID() % 10;
-        if (mod == 0 || mod == 5) {
+        if (mod == 0) {
 
             // Go to adamantium
             wellTarget = LocationType.WELL_ADAMANTIUM;
 
-        } else if (mod == 1 || mod == 6) {
+        } else if (mod == 1) {
 
             // Go to mana
             wellTarget = LocationType.WELL_MANA;
@@ -30,7 +30,7 @@ public class Launcher {
             // Go to island
             goIsland = true;
 
-        } else if (mod == 3 || mod == 7 || mod == 8 || mod == 9) {
+        } else if (mod == 3 || mod == 7 || mod == 8 || mod == 9 || mod == 5 || mod == 6) {
 
             // Explorer
             isExplorer = true;

@@ -33,10 +33,24 @@ public class Carrier {
 
         // Current location
         MapLocation me = rc.getLocation();
+        final Team OPPONENT = rc.getTeam().opponent();
 
         // Set role initially
         if (wellTarget == null) init(rc);
 
+        // Run away from enemies
+        RobotInfo[] enemies = rc.senseNearbyRobots(-1, OPPONENT);
+        if (enemies.length > 0) {
+
+            int goX = me.x - enemies[0].location.x;
+            int goY = me.y - enemies[0].location.y;
+            Direction move = me.directionTo(me.translate(goX, goY));
+            if (rc.canMove(move)) {
+                rc.move(move);
+                return;
+            }
+
+        }
 
         if (goHome) {
 
