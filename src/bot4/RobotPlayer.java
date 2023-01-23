@@ -6,6 +6,18 @@ public strictfp class RobotPlayer {
 
 	static int turnCount = 0;
 
+    static final Direction[] directions = {
+            Direction.NORTH,
+            Direction.NORTHEAST,
+            Direction.EAST,
+            Direction.SOUTHEAST,
+            Direction.SOUTH,
+            Direction.SOUTHWEST,
+            Direction.WEST,
+            Direction.NORTHWEST,
+    };
+
+
 	public static void run(RobotController rc) throws GameActionException {
 		while (true) {
 			try {
