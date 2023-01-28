@@ -15,8 +15,9 @@ public enum MissionName {
 	COLLECT_MANA(10),
 	COLLECT_ELIXIR(11),
 
-	SPEED_UP_HQ(12),
-	SCOUTING(13);
+	SCOUTING(12),
+
+	CREATE_ANCHOR(13);
 
 	public final int id;
 
