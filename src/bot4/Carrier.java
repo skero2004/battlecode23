@@ -12,10 +12,11 @@ public class Carrier {
 
 		// TODO Hardcoded locations for testing purposes
         MapLocation cur = rc.getLocation();
-		if (rc.getWeight() > 10) {
+		int amt = rc.getWeight(); // should probably check for each resource separately
+		if (amt > 10) {
 			MapLocation target = new MapLocation(4, 26);
 			if (rc.canTransferResource(target, ResourceType.ADAMANTIUM, -1)) {
-				rc.transferResource(target, ResourceType.ADAMANTIUM, -1);
+				rc.transferResource(target, ResourceType.ADAMANTIUM, amt);
 			} else {
 				Direction dir = Paths.findMove(rc, target);
 				if (rc.canMove(dir)) rc.move(dir);
