@@ -120,9 +120,11 @@ public class Plan {
 			chosenMission = new Mission(MissionName.START_UP);
 		else if (numEnemyLaunchers > 3)
 			chosenMission = new Mission(MissionName.PROTECT_HQ);
-		// Something with protect island?
+		else if (RobotPlayer.turnCount > 50 && lastMission != MissionName.PROTECT_ISLAND)
+			chosenMission = new Mission(MissionName.PROTECT_ISLAND);
 		// Something with attack HQ?
-		// Something with capture island?
+		else if (RobotPlayer.turnCount > 50 && lastMission != MissionName.CAPTURE_ISLAND)
+			chosenMission = new Mission(MissionName.CAPTURE_ISLAND);
 		// Something with ambush?
 		else if (RobotPlayer.turnCount < 200 && lastMission != MissionName.SCOUTING)
 			chosenMission = new Mission(MissionName.SCOUTING);
