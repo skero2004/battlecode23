@@ -20,6 +20,15 @@ public class Headquarters {
 			Direction.NORTHWEST,
 	};
 
+	static boolean init = true;
+	static Team myTeam = Team.NEUTRAL;
+	static void init(RobotController rc) throws GameActionException {
+		if (!init) return;
+		myTeam = rc.getTeam();
+
+		init = false;
+	}
+
 	/**
 	 * Responsibilities:
 	 * - Choose a new mission from Planning
@@ -32,6 +41,8 @@ public class Headquarters {
 	 * - Pass it to Mapping
 	 */
 	static void run(RobotController rc) throws GameActionException {
+		init(rc);
+
 		// Choose mission
 		Mission mission = Plan.chooseMission(rc);
 		rc.setIndicatorString("T: " + mission.missionName);
@@ -76,6 +87,26 @@ public class Headquarters {
 			}
 		}
 
+		// Communicate mission
+		if (mission.isValidCollectMission()) {
+			ResourceType type = mission.getCollectResourceType();
+			MapLocation loc = Communication.readWell(rc, type);
+			mission.target = loc;
+		} else if (mission.missionName == MissionName.CAPTURE_ISLAND) {
+			MapLocation loc = Communication.readIsland(rc, Team.NEUTRAL);
+			if (loc == null) {
+				Team enemy = myTeam == Team.A ? Team.B : Team.A;
+				loc = Communication.readIsland(rc, enemy);
+			}
+			mission.target = loc;
+		} else mission.target = new MapLocation(0,0); // dummy
+
+		if (loc == null) {
+			System.out.println("skipping mission " + mission.missionName + " because no target specified");
+		} else {
+			System.out.println("sending mission " + mission.missionName);
+			Communication.writeMission(rc, mission);
+		}
 	}
 
 }

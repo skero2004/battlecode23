@@ -11,9 +11,6 @@ public class Carrier {
 	static Team myTeam = Team.NEUTRAL;
 	static RobotInfo myHq;
 	static Mission myMission;
-
-	static int INVENTORY_THRESHOLD = 30;
-
 	static void init(RobotController rc) throws GameActionException {
 		if (!init) return;
 		myTeam = rc.getTeam();
@@ -28,6 +25,8 @@ public class Carrier {
 		init = false;
 	}
 
+	static int INVENTORY_THRESHOLD = 30;
+
 	static void run(RobotController rc) throws GameActionException {
 		init(rc);
 		//rc.setIndicatorString("T: " + myMission.missionName);
@@ -37,15 +36,13 @@ public class Carrier {
 			Scout.move(rc);
 			Scout.updateInfos(rc);
 		} else if (myMission.isValidCollectMission()) {
-			// execute collect mission
 			executeCollectMission(rc, myMission);
+		} else if (myMission.missionName == MissionName.CAPTURE_ISLAND) {
+			executeCaptureMission(rc, myMission);
 		}
 
-        //int amount = rc.getResourceAmount(type);
-        //if (amount > 0) {
-        //    if (rc.canTransferResource(hqLoc, type, amount)) rc.transferResource(hqLoc, type, amount);
-        //}
 	}
+
 
 	static void executeCollectMission(RobotController rc, Mission mission) throws GameActionException {
 		int ad = rc.getResourceAmount(ResourceType.ADAMANTIUM);
@@ -66,6 +63,28 @@ public class Carrier {
 			rc.setIndicatorString("tgt: " + target);
 			if (rc.canCollectResource(target, -1)) {
 				rc.collectResource(target, -1);
+			} else {
+				Direction dir = Paths.findMove(rc, target);
+				if (rc.canMove(dir)) rc.move(dir);
+			}
+		}
+	}
+
+
+	static void executeCaptureMission(RobotController rc, Mission mission) throws GameActionException {
+		if (rc.getAnchor() == null) {
+			MapLocation target = myHq.location;
+			if (rc.canTakeAnchor(target, Anchor.STANDARD)) {
+				rc.takeAnchor(target, Anchor.STANDARD);
+			} else {
+				Direction dir = Paths.findMove(rc, target);
+				if (rc.canMove(dir)) rc.move(dir);
+			}
+		} else {
+			MapLocation target = mission.target;
+			rc.setIndicatorString("tgt: " + target);
+			if (rc.canPlaceAnchor()) {
+				rc.placeAnchor();
 			} else {
 				Direction dir = Paths.findMove(rc, target);
 				if (rc.canMove(dir)) rc.move(dir);
