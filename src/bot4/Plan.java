@@ -11,6 +11,9 @@ public class Plan {
 	private static final int AMPLIFIER_AD = 30;
 	private static final int AMPLIFIER_MN = 15;
 
+	// Store previous mission to prevent same mission from running all the time
+	private static MissionName lastMission = MissionName.SCOUTING;
+
 	public class Mission {
 
 		public int startTurn = 0;
@@ -29,7 +32,7 @@ public class Plan {
 			switch (m) {
 
 				case START_UP:
-					numLauncher = 2;
+					numLauncher = 1;
 					numCarrier = 2;
 					break;
 
@@ -113,7 +116,7 @@ public class Plan {
 
 		// Logic to choose mission
 		Mission chosenMission;
-		if (RobotPlayer.turnCount < 50)
+		if (RobotPlayer.turnCount < 50 && lastMission != MissionName.START_UP)
 			chosenMission = new Mission(MissionName.START_UP);
 		else if (numEnemyLaunchers > 3)
 			chosenMission = new Mission(MissionName.PROTECT_HQ);
@@ -121,7 +124,7 @@ public class Plan {
 		// Something with attack HQ?
 		// Something with capture island?
 		// Something with ambush?
-		else if (RobotPlayer.turnCount < 200)
+		else if (RobotPlayer.turnCount < 200 && lastMission != MissionName.SCOUTING)
 			chosenMission = new Mission(MissionName.SCOUTING);
 		else
 			chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
@@ -138,6 +141,7 @@ public class Plan {
 				 amountMn < chosenMission.numAmplifier * AMPLIFIER_MN)
 			chosenMission = new Mission(MissionName.COLLECT_MANA);
 
+		lastMission = chosenMission.missionName;
 		return chosenMission;
 
 	}
