@@ -11,8 +11,13 @@ public class Plan {
 	private static final int AMPLIFIER_AD = 30;
 	private static final int AMPLIFIER_MN = 15;
 
-	// Store previous mission to prevent same mission from running all the time
-	private static MissionName lastMission = MissionName.SCOUTING;
+	private static boolean isCollectAd = false;
+	private static boolean isCollectMn = false;
+	private static boolean isScouting = false;
+	private static boolean isCaptureIsland = false;
+	private static boolean isProtectIsland = false;
+	private static boolean isProtectHQ = false;
+
 
 	public static class Mission {
 
@@ -128,24 +133,49 @@ public class Plan {
 				numEnemyLaunchers++;
 
 		// Logic to choose mission
-		Mission chosenMission;
-		if (RobotPlayer.turnCount < 100 && lastMission != MissionName.COLLECT_ADAMANTIUM)
-			chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
-		else if (RobotPlayer.turnCount < 100 && lastMission != MissionName.COLLECT_MANA)
-			chosenMission = new Mission(MissionName.COLLECT_MANA);
+		if (RobotPlayer.turnCount < 100 && RobotPlayer.turnCount % 30 == 0)
+			isCollectAd = true;	
+		if (RobotPlayer.turnCount < 100 && RobotPlayer.turnCount % 30 == 0)
+			isCollectMn = true;
+		if (numEnemyLaunchers > 3 && RobotPlayer.turnCount % 10 == 0)
+			isProtectHQ = true;
+		if (RobotPlayer.turnCount > 100 && RobotPlayer.turnCount % 50 == 0)
+			isCaptureIsland = true;
+		if (RobotPlayer.turnCount < 500 && RobotPlayer.turnCount % 50 == 0)
+			isScouting = true;
 
-		else if (numEnemyLaunchers > 3)
-			chosenMission = new Mission(MissionName.PROTECT_HQ);
-		//else if (RobotPlayer.turnCount > 50 && lastMission != MissionName.PROTECT_ISLAND)
-			//chosenMission = new Mission(MissionName.PROTECT_ISLAND);
-		// Something with attack HQ?
-		else if (RobotPlayer.turnCount > 50 && lastMission != MissionName.CAPTURE_ISLAND)
-			chosenMission = new Mission(MissionName.CAPTURE_ISLAND);
-		// Something with ambush?
-		else if (RobotPlayer.turnCount < 200 && lastMission != MissionName.SCOUTING)
-			chosenMission = new Mission(MissionName.SCOUTING);
-		else
+		// Set mission
+		Mission chosenMission;
+		if (isCollectAd) {
+
 			chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
+			isCollectAd = false;
+
+		} else if (isCollectMn) {
+
+			chosenMission = new Mission(MissionName.COLLECT_MANA);
+			isCollectMn = false;
+
+		} else if (isProtectHQ) {
+
+			chosenMission = new Mission(MissionName.PROTECT_HQ);
+			isProtectHQ = false;
+
+		} else if (isCaptureIsland) {
+
+			chosenMission = new Mission(MissionName.CAPTURE_ISLAND);
+			isCaptureIsland = false;
+
+		}
+		else if (isScouting) {
+
+			chosenMission = new Mission(MissionName.SCOUTING);
+			isScouting = false;
+
+		} else
+			chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
+
+		//TODO: Something with attackHQ, ambush, and protect island?
 
 		// Variables for amount of mana/adamantium
 		int amountMn = rc.getResourceAmount(ResourceType.MANA);
@@ -159,7 +189,6 @@ public class Plan {
 				amountMn < chosenMission.numAmplifier * AMPLIFIER_MN)
 			chosenMission = new Mission(MissionName.COLLECT_MANA);
 
-		lastMission = chosenMission.missionName;
 		return chosenMission;
 
 	}
