@@ -9,6 +9,7 @@ public class Amplifier {
 	static void run(RobotController rc) throws GameActionException {
 
 		Scout.move(rc);
+		Scout.updateInfos(rc);
 
 	}
 

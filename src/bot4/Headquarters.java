@@ -33,6 +33,7 @@ public class Headquarters {
 	static void run(RobotController rc) throws GameActionException {
 		// Choose mission
 		Mission mission = Plan.chooseMission(rc);
+		rc.setIndicatorString("T: " + mission.missionName);
 
 		// Execute mission
 		RobotType[] rt = {
@@ -40,14 +41,14 @@ public class Headquarters {
 			RobotType.CARRIER,
 			//RobotType.DESTABILIZER,
 			//RobotType.BOOSTER,
-			//RobotType.AMPLIFIER,
+			RobotType.AMPLIFIER,
 		};
 		int[] rn = {
 			mission.numLauncher,
 			mission.numCarrier,
 			//mission.numDestabilizer,
 			//mission.numBooster,
-			//mission.numAmplifier,
+			mission.numAmplifier,
 		};
 		//assert rt.length == rn.length;
 
@@ -67,14 +68,10 @@ public class Headquarters {
 		if (mission.isValidCollectMission()) {
 			ResourceType type = mission.getCollectResourceType();
 			MapLocation loc = Communication.readWell(rc, type);
-			//mission.target = loc;
-			mission.target = new MapLocation(22,27);
-			Communication.writeMission(rc, mission);
-		}
-
-		//// TODO how are we planning to distinguish new missions?
-		//Mission m2 = Communication.readMission(); 
-		//Mapping.addMission(m2);
+			mission.target = loc;
+		} else mission.target = new MapLocation(0,0); // dummy
+		System.out.println("sending mission " + mission.missionName);
+		Communication.writeMission(rc, mission);
 	}
 
 }

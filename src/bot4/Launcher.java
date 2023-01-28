@@ -3,41 +3,47 @@ package bot4;
 import battlecode.common.*;
 
 import bot4.util.*;
+import bot4.Plan.Mission;
 
 public class Launcher {
 
-	static int id = 0;
-	static Direction dir = Constants.directions[0];
-/*
-	static void init(RobotController rc) throws GameActionException {
+    static int id = 0;
+    static Direction dir = Constants.directions[0];
+    /*
+       static void init(RobotController rc) throws GameActionException {
 
-		id = rc.getID();
-		dir = Constants.directions[id % 8];
+       id = rc.getID();
+       dir = Constants.directions[id % 8];
 
-	}
-*/
+       }
+       */
 
-	static void run(RobotController rc) throws GameActionException {
+    static void run(RobotController rc) throws GameActionException {
 
         final int ACTION_RADIUS = rc.getType().actionRadiusSquared;
         final Team OPPONENT = rc.getTeam().opponent();
 
-		/*
-		// Initialize
-		if (RobotPlayer.turnCount == 1) init(rc);
+        /*
+        // Initialize
+        if (RobotPlayer.turnCount == 1) init(rc);
 
-		// Direction
-		dir = Constants.directions[id % 8];
-		if (rc.canMove(dir))
-			rc.move(dir);
-		else if (rc.getMovementCooldownTurns() - GameConstants.COOLDOWNS_PER_TURN < 0) 
-			if (rc.getID() % 2 == 0) id++;
-			else 					 id--;
+        // Direction
+        dir = Constants.directions[id % 8];
+        if (rc.canMove(dir))
+        rc.move(dir);
+        else if (rc.getMovementCooldownTurns() - GameConstants.COOLDOWNS_PER_TURN < 0) 
+        if (rc.getID() % 2 == 0) id++;
+        else 					 id--;
 
         rc.setIndicatorString("" + rc.getMovementCooldownTurns());
-		*/
+        */
 
-		Scout.move(rc);
+        //if (mission.missionName == MissionName.SCOUTING) 
+        //Mission mission = Communication.readMission(rc);
+        //rc.setIndicatorString("T: " + mission.missionName);
+
+        Scout.move(rc);
+        Scout.updateInfos(rc);
 
         // Find target enemy
         RobotInfo[] enemies = rc.senseNearbyRobots(ACTION_RADIUS, OPPONENT);
@@ -71,10 +77,10 @@ public class Launcher {
             }
         }
 
-		// If there is a target, attack
+        // If there is a target, attack
         if (target != null && rc.canAttack(target.getLocation()))
-			rc.attack(target.getLocation());
+            rc.attack(target.getLocation());
 
-	}
+    }
 
 }
