@@ -38,15 +38,8 @@ public class Communication {
 		}
 
 		void write(RobotController rc, int index, int value) throws GameActionException {
-			if (0 > index || index >= end - start) {
-				for (int i = start; i < end; ++i)
-					if (rc.readSharedArray(i) == 0) {
-						index = i;
-						break;
-					}
-			} else {
-				index += start;
-			}
+			if (0 > index || index >= end - start)
+				index = Math.abs(Randomize.rng.nextInt()) % (end - start);
 
 			queue.add(new Update(index, value));
 
