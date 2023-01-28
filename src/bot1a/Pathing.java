@@ -25,6 +25,12 @@ public class Pathing {
 			int bestDistance = Integer.MAX_VALUE;
 			MapLocation bestLocation = null;
 			for (MapLocation m : neighbors(rc)) {
+				if (!rc.canMove(current.directionTo(m))) {
+					if (rc.isLocationOccupied(m))
+						visited[current.x][current.y] = false;
+					continue;
+				}
+
 				int dist = m.distanceSquaredTo(target);
 				if (dist < bestDistance) {
 					bestDistance = dist;
@@ -40,20 +46,23 @@ public class Pathing {
 			}
 
 			if (parent[current.x][current.y] == null)
-				return Direction.CENTER;
+				return null;
 
 			return parent[current.x][current.y];
 		}
 
 		boolean visited(MapLocation m) {
-			return visited[m.x][m.y];
+			if (m.x < visited.length && m.y < visited[m.x].length)
+				return visited[m.x][m.y];
+			else
+				return true;
 		}
 
 		MapLocation[] neighbors(RobotController rc) {
 			MapLocation current = rc.getLocation();
 			ArrayList<MapLocation> n = new ArrayList<>();
 			for (Direction dir : RobotPlayer.directions)
-				if (rc.canMove(dir) && !visited(current.add(dir)))
+				if (!visited(current.add(dir)))
 					n.add(current.add(dir));
 			return n.toArray(new MapLocation[0]);
 		}
@@ -61,9 +70,19 @@ public class Pathing {
 
 	static DFS currentDFS = null;
 
-	static void moveTowards(RobotController rc, MapLocation target) throws GameActionException {
+	static Direction findMove(RobotController rc, MapLocation target) throws GameActionException {
 		if (currentDFS == null || currentDFS.target.x != target.x || currentDFS.target.y != target.y)
 			currentDFS = new DFS(rc, target);
-		rc.move(currentDFS.nextMove(rc));
+		Direction move = currentDFS.nextMove(rc);
+		if (move != null)
+			return move;
+		currentDFS = new DFS(rc, target);
+		return Direction.CENTER;
+	}
+
+	static void moveTowards(RobotController rc, MapLocation target) throws GameActionException {
+		Direction move = findMove(rc, target);
+		if (rc.canMove(move))
+			rc.move(move);
 	}
 }
