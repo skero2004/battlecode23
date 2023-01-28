@@ -50,13 +50,16 @@ public class Paths {
 			}
 
 			if (parent[current.x][current.y] == null)
-				return Direction.CENTER;
+				return null;
 
 			return parent[current.x][current.y];
 		}
 
 		boolean visited(MapLocation m) {
-			return visited[m.x][m.y];
+			if (m.x >= 0 && m.x < visited.length && m.y >= 0 && m.y < visited[m.x].length)
+				return visited[m.x][m.y];
+			else
+				return true;
 		}
 
 		MapLocation[] neighbors(RobotController rc) {
@@ -74,7 +77,11 @@ public class Paths {
 	static Direction findMove(RobotController rc, MapLocation target) throws GameActionException {
 		if (currentDFS == null || currentDFS.target.x != target.x || currentDFS.target.y != target.y)
 			currentDFS = new DFS(rc, target);
-		return currentDFS.nextMove(rc);
+		Direction move = currentDFS.nextMove(rc);
+		if (move != null)
+			return move;
+		currentDFS = new DFS(rc, target);
+		return Direction.CENTER;
 	}
 
 	/*
