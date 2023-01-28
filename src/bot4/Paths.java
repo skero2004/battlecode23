@@ -29,6 +29,12 @@ public class Paths {
 			int bestDistance = Integer.MAX_VALUE;
 			MapLocation bestLocation = null;
 			for (MapLocation m : neighbors(rc)) {
+				if (!rc.canMove(current.directionTo(m))) {
+					if (rc.isLocationOccupied(m))
+						visited[current.x][current.y] = false;
+					continue;
+				}
+
 				int dist = m.distanceSquaredTo(target);
 				if (dist < bestDistance) {
 					bestDistance = dist;
@@ -57,7 +63,7 @@ public class Paths {
 			MapLocation current = rc.getLocation();
 			ArrayList<MapLocation> n = new ArrayList<>();
 			for (Direction dir : Constants.directions)
-				if (rc.canMove(dir) && !visited(current.add(dir)))
+				if (!visited(current.add(dir)))
 					n.add(current.add(dir));
 			return n.toArray(new MapLocation[0]);
 		}
