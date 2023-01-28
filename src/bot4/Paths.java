@@ -12,7 +12,6 @@ public class Paths {
 	private static class DFS {
 		final MapLocation target;
 
-		private Stack<MapLocation> stack;
 		private boolean[][] visited;
 		private Direction[][] parent;
 
@@ -20,19 +19,12 @@ public class Paths {
 			this.target = target;
 			visited = new boolean[rc.getMapWidth()][rc.getMapHeight()];
 			parent = new Direction[rc.getMapWidth()][rc.getMapHeight()];
-			stack = new Stack<>();
-			stack.push(rc.getLocation());
 		}
 
 		Direction nextMove(RobotController rc) throws GameActionException {
 			MapLocation current = rc.getLocation();
 			if (current.x == target.x && current.y == target.y)
 				return Direction.CENTER;
-			if (stack.empty()) {
-				System.out
-						.println("Unreachable location: " + target.x + ", " + target.y + " from " + current.x + ", " + current.y);
-				return Randomize.move(rc);
-			}
 
 			int bestDistance = Integer.MAX_VALUE;
 			MapLocation bestLocation = null;
