@@ -34,7 +34,7 @@ public class Communication {
 		int read(RobotController rc, int index) throws GameActionException {
 			if (0 > index || index >= end - start)
 				index = Randomize.rng.nextInt() % (end - start);
-			return rc.readSharedArray(index);
+			return rc.readSharedArray(start + index);
 		}
 
 		void write(RobotController rc, int index, int value) throws GameActionException {
@@ -44,6 +44,8 @@ public class Communication {
 						index = i;
 						break;
 					}
+			} else {
+				index += start;
 			}
 
 			queue.add(new Update(index, value));
