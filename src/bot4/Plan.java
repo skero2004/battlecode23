@@ -103,19 +103,46 @@ public class Plan {
 
     }
 
-    public MissionName chooseMission(RobotController rc) {
+    public Mission chooseMission(RobotController rc) throws GameActionException {
 
         Team OPPONENT = rc.getTeam().opponent();
 
         if (rc.getType() != RobotType.HEADQUARTERS)
             throw new IllegalArgumentException("RobotType must be Headquarters to choose a mission!");
 
-        // Information from HQ
+		// Variables to choose mission
+		boolean isAdv = false;
+
+		// Find number of enemy launchers near HQ
+		RobotInfo[] enemies = rc.senseNearbyRobots(-1, OPPONENT);
+		int numEnemyLaunchers = 0;
+		for (RobotInfo enemy : enemies)
+			if (enemy.getType() == RobotType.LAUNCHER)
+				numEnemyLaunchers++;
+
+		// Logic to choose mission
+		Mission chosenMission;
+		if (RobotPlayer.turnCount < 50)
+			chosenMission = new Mission(isAdv, MissionName.START_UP);
+		else if (numEnemyLaunchers > 3)
+			chosenMission = new Mission(isAdv, MissionName.PROTECT_HQ);
+		// Something with protect island?
+		// Something with attack HQ?
+		// Something with capture island?
+		// Something with ambush?
+		else if (RobotPlayer.turnCount < 200)	
+			chosenMission = new Mission(isAdv, MissionName.SCOUTING);
+		else
+ 			chosenMission = new Mission(isAdv, MissionName.COLLECT_ADAMANTIUM);
+
+		// Check to see if desired mission is able to run
         int amountMn = rc.getResourceAmount(ResourceType.MANA);
         int amountAd = rc.getResourceAmount(ResourceType.ADAMANTIUM);
         int amountEx = rc.getResourceAmount(ResourceType.ELIXIR);
 
-        return MissionName.COLLECT_ADAMANTIUM;
+						
+
+        return chosenMission;
 
     }
 
