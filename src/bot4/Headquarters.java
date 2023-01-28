@@ -35,18 +35,18 @@ public class Headquarters {
         
         // Execute mission
         RobotType[] rt = {
-            RobotType.LAUNCHER,
+            //RobotType.LAUNCHER,
             RobotType.CARRIER,
-            RobotType.DESTABILIZER,
-            RobotType.BOOSTER,
-            RobotType.AMPLIFIER,
+            //RobotType.DESTABILIZER,
+            //RobotType.BOOSTER,
+            //RobotType.AMPLIFIER,
         };
         int[] rn = {
-            m1.numLauncher,
+            //m1.numLauncher,
             m1.numCarrier,
-            m1.numDestabilizer,
-            m1.numBooster,
-            m1.numAmplifier,
+            //m1.numDestabilizer,
+            //m1.numBooster,
+            //m1.numAmplifier,
         };
         //assert rt.length == rn.length;
 
