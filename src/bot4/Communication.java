@@ -31,6 +31,15 @@ public class Communication {
 			end = e;
 		}
 
+		int read(RobotController rc) throws GameActionException {
+			for (int i = 0; i < end - start; ++i) {
+				int v = read(rc, -1);
+				if (v > 0)
+					return v;
+			}
+			return 0;
+		}
+
 		int read(RobotController rc, int index) throws GameActionException {
 			if (0 > index || index >= end - start)
 				index = Math.abs(Randomize.rng.nextInt()) % (end - start);
@@ -107,7 +116,7 @@ public class Communication {
 				throw new IllegalArgumentException("Cannot write info for well of type " + type);
 		}
 
-		int value = seg.read(rc, -1);
+		int value = seg.read(rc);
 		int x = value & 63, y = value >> 6;
 		return new MapLocation(x, y);
 	}
