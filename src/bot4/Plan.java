@@ -44,7 +44,8 @@ public class Plan {
 					break;
 
 				case CAPTURE_ISLAND:
-					numLauncher = 5;
+					numLauncher = 4;
+					numCarrier = 1;
 					break;
 
 				case AMBUSH:
