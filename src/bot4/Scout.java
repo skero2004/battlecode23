@@ -1,5 +1,7 @@
 package bot4;
 
+import javax.lang.model.util.ElementScanner6;
+
 import battlecode.common.*;
 
 import bot4.util.*;
@@ -15,7 +17,13 @@ public class Scout {
 		if (vis == null)
 			vis = new boolean[rc.getMapWidth()][rc.getMapHeight()];
 
-		Direction move = Constants.directions[(int) Math.sqrt(RobotPlayer.turnCount) % 8];
+		int sign = RobotPlayer.turnCount / 300;
+
+		Direction move = Constants.directions[(int) Math.sqrt(RobotPlayer.turnCount - 300 * sign) % 8];
+
+		if (sign % 2 == 1)
+			move = Constants.directions[(int) (7 - Math.sqrt(300 - (RobotPlayer.turnCount - 300 * sign)) % 8)];
+		
 		if (rc.canMove(move))
 			rc.move(move);
 		else
