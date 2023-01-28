@@ -14,7 +14,7 @@ public class Plan {
 	// Store previous mission to prevent same mission from running all the time
 	private static MissionName lastMission = MissionName.SCOUTING;
 
-	public class Mission {
+	public static class Mission {
 
 		public int startTurn = 0;
 		public int numLauncher = 0;
@@ -95,7 +95,7 @@ public class Plan {
 
 	}
 
-	public Mission chooseMission(RobotController rc) throws GameActionException {
+	public static Mission chooseMission(RobotController rc) throws GameActionException {
 
 		Team OPPONENT = rc.getTeam().opponent();
 
@@ -135,10 +135,10 @@ public class Plan {
 
 		// If there is not enough resources, get resources
 		if (amountAd < chosenMission.numCarrier * CARRIER_AD ||
-			amountAd < chosenMission.numAmplifier * AMPLIFIER_AD)
+				amountAd < chosenMission.numAmplifier * AMPLIFIER_AD)
 			chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
 		else if (amountMn < chosenMission.numLauncher * LAUNCHER_MN ||
-				 amountMn < chosenMission.numAmplifier * AMPLIFIER_MN)
+				amountMn < chosenMission.numAmplifier * AMPLIFIER_MN)
 			chosenMission = new Mission(MissionName.COLLECT_MANA);
 
 		lastMission = chosenMission.missionName;
