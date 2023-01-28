@@ -119,7 +119,8 @@ public class Communication {
 		return new MapLocation(x, y);
 	}
 
-	static void writeIsland(RobotController rc, int index, MapLocation location, Team team) throws GameActionException {
+	static void writeIsland(RobotController rc, int index, MapLocation location, Team team)
+			throws GameActionException {
 		islands.write(rc, index, location.x + (location.y << 6) + (team.ordinal() << 12));
 	}
 
