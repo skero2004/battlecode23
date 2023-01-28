@@ -6,21 +6,23 @@ import bot4.util.*;
 
 public class Plan {
 
-	public class Mission {
+	public static class Mission {
 
-		public int startTurn = 0;
-		public int numLauncher = 0;
-		public int numCarrier = 0;
-		public int numDestabilizer = 0;
-		public int numBooster = 0;
-		public int numAmplifier = 0;
-		public MissionName missionName = null;
+		public int startTurn;
+		public int numLauncher;
+		public int numCarrier;
+		public int numDestabilizer;
+		public int numBooster;
+		public final MissionName missionName;
+		public MapLocation target;
 
 		public Mission(MissionName m) {
 			this(false, m);
 		}
 
 		public Mission(boolean isAdv, MissionName m) {
+			// TODO: set target
+			startTurn = RobotPlayer.turnCount;
 			missionName = m;
 
 			// Setup for different missions
@@ -108,7 +110,7 @@ public class Plan {
 
 	}
 
-	public Mission chooseMission(RobotController rc) throws GameActionException {
+	public static Mission chooseMission(RobotController rc) throws GameActionException {
 
 		Team OPPONENT = rc.getTeam().opponent();
 
