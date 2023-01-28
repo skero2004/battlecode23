@@ -33,7 +33,7 @@ public class Communication {
 
 		int read(RobotController rc, int index) throws GameActionException {
 			if (0 > index || index >= end - start)
-				index = Randomize.rng.nextInt() % (end - start);
+				index = Math.abs(Randomize.rng.nextInt()) % (end - start);
 			return rc.readSharedArray(start + index);
 		}
 

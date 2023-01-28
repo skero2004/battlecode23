@@ -93,6 +93,23 @@ public class Plan {
 
 		}
 
+
+		boolean isValidCollectMission() {
+			return this.missionName == MissionName.COLLECT_ADAMANTIUM
+				|| this.missionName == MissionName.COLLECT_MANA;
+		}
+
+		ResourceType getCollectResourceType() {
+			switch (this.missionName) {
+				case COLLECT_ADAMANTIUM:
+					return ResourceType.ADAMANTIUM;
+				case COLLECT_MANA:
+					return ResourceType.MANA;
+				default:
+					throw new IllegalArgumentException("Mission not implemented!");
+			}
+		}
+
 	}
 
 	public static Mission chooseMission(RobotController rc) throws GameActionException {

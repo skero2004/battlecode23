@@ -3,31 +3,51 @@ package bot4;
 import battlecode.common.*;
 
 import bot4.util.*;
+import bot4.Plan.Mission;
 
 public class Carrier {
 
+	static boolean init = true;
+	static Team myTeam = Team.NEUTRAL;
+	static RobotInfo myHq;
+
+	static int INVENTORY_THRESHOLD = 10;
+
+	static void init(RobotController rc) {
+		if (!init) return;
+		myTeam = rc.getTeam();
+		for (RobotInfo robot : rc.senseNearbyRobots()) {
+			if (robot.team == myTeam && robot.type == RobotType.HEADQUARTERS) {
+				myHq = robot;
+			}
+		}
+
+		init = false;
+	}
+
 	static void run(RobotController rc) throws GameActionException {
-		//if (true) { // TODO should get mission to check if
-		//}
+		init(rc);
 
-		// TODO Hardcoded locations for testing purposes
-        MapLocation cur = rc.getLocation();
-		int amt = rc.getWeight(); // should probably check for each resource separately
-		if (rc.getID() % 2 == 0) {
+		Mission mission = Communication.readMission(rc);
 
-			if (amt > 10) {
-				MapLocation target;
-				if (rc.getID() % 3 == 0) target = new MapLocation(4, 26);
-				else if (rc.getID() % 3 == 1) target = new MapLocation(13, 23);
-				else target = new MapLocation(25, 18);
+		if (mission.isValidCollectMission()) {
+			// execute collect mission
+			int ad = rc.getResourceAmount(ResourceType.ADAMANTIUM);
+			int mn = rc.getResourceAmount(ResourceType.MANA);
+			if (ad + mn > INVENTORY_THRESHOLD) {
+				MapLocation target = myHq.location;
+				//ResourceType type = mission.getCollectResourceType();
 				if (rc.canTransferResource(target, ResourceType.ADAMANTIUM, -1)) {
-					rc.transferResource(target, ResourceType.ADAMANTIUM, amt);
+					rc.transferResource(target, ResourceType.ADAMANTIUM, ad);
+				} else if (rc.canTransferResource(target, ResourceType.MANA, -1)) {
+					rc.transferResource(target, ResourceType.MANA, mn);
 				} else {
 					Direction dir = Paths.findMove(rc, target);
 					if (rc.canMove(dir)) rc.move(dir);
 				}
 			} else {
-				MapLocation target = new MapLocation(22, 27);
+				MapLocation target = mission.target;
+				rc.setIndicatorString("tgt: " + target);
 				if (rc.canCollectResource(target, -1)) {
 					rc.collectResource(target, -1);
 				} else {
@@ -35,30 +55,6 @@ public class Carrier {
 					if (rc.canMove(dir)) rc.move(dir);
 				}
 			}
-
-		} else {
-
-			if (amt > 10) {
-				MapLocation target;
-				if (rc.getID() % 3 == 0) target = new MapLocation(4, 26);
-				else if (rc.getID() % 3 == 1) target = new MapLocation(13, 23);
-				else target = new MapLocation(25, 18);
-				if (rc.canTransferResource(target, ResourceType.MANA, -1)) {
-					rc.transferResource(target, ResourceType.MANA, amt);
-				} else {
-					Direction dir = Paths.findMove(rc, target);
-					if (rc.canMove(dir)) rc.move(dir);
-				}
-			} else {
-				MapLocation target = new MapLocation(20, 23);
-				if (rc.canCollectResource(target, -1)) {
-					rc.collectResource(target, -1);
-				} else {
-					Direction dir = Paths.findMove(rc, target);
-					if (rc.canMove(dir)) rc.move(dir);
-				}
-			}
-
 		}
 
         //int amount = rc.getResourceAmount(type);
