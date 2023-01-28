@@ -5,13 +5,9 @@ import battlecode.common.*;
 import bot4.util.*;
 
 public class Scout {
-	private static MapLocation prev = null;
 	private static boolean[][] vis = null;
 
 	static void move(RobotController rc) throws GameActionException {
-		if (prev == null)
-			prev = rc.getLocation();
-
 		if (vis == null)
 			vis = new boolean[rc.getMapWidth()][rc.getMapHeight()];
 
@@ -30,16 +26,18 @@ public class Scout {
 	}
 
 	static void updateInfos(RobotController rc) throws GameActionException {
-		if (prev == null)
-			prev = rc.getLocation();
-
 		for (WellInfo w : rc.senseNearbyWells()) {
 			MapLocation l = w.getMapLocation();
 			if (isVisited(l))
 				continue;
 			vis[l.x][l.y] = true;
 			Communication.writeWell(rc, l, w.getResourceType());
-			prev = w.getMapLocation();
+		}
+
+		for (int i : rc.senseNearbyIslands()) {
+			MapLocation l = rc.senseNearbyIslandLocations(i)[0];
+			Team team = rc.senseTeamOccupyingIsland(i);
+			Communication.writeIsland(rc, i, l, team);
 		}
 	}
 

@@ -14,6 +14,7 @@ public class Communication {
 
 	private static class Segment {
 		private final int start, end;
+		final int length;
 
 		private static class Update {
 			int i, v;
@@ -29,10 +30,11 @@ public class Communication {
 		Segment(int s, int e) {
 			start = s;
 			end = e;
+			length = e - s;
 		}
 
 		int read(RobotController rc) throws GameActionException {
-			for (int i = 0; i < end - start; ++i) {
+			for (int i = 0; i < length; ++i) {
 				int v = read(rc, -1);
 				if (v > 0)
 					return v;
@@ -41,14 +43,14 @@ public class Communication {
 		}
 
 		int read(RobotController rc, int index) throws GameActionException {
-			if (0 > index || index >= end - start)
-				index = Math.abs(Randomize.rng.nextInt()) % (end - start);
+			if (0 > index || index >= length)
+				index = Math.abs(Randomize.rng.nextInt()) % length;
 			return rc.readSharedArray(start + index);
 		}
 
 		void write(RobotController rc, int index, int value) throws GameActionException {
-			if (0 > index || index >= end - start)
-				index = Math.abs(Randomize.rng.nextInt()) % (end - start);
+			if (0 > index || index >= length)
+				index = Math.abs(Randomize.rng.nextInt()) % length;
 
 			queue.add(new Update(start + index, value));
 
@@ -117,6 +119,8 @@ public class Communication {
 		}
 
 		int value = seg.read(rc);
+		if (value == 0)
+			return null;
 		int x = value & 63, y = value >> 6;
 		return new MapLocation(x, y);
 	}
@@ -127,6 +131,13 @@ public class Communication {
 	}
 
 	static MapLocation readIsland(RobotController rc, Team team) throws GameActionException {
-		throw new UnsupportedOperationException("readIsland is unimplemented");
+		for (int i = 0; i < islands.length; ++i) {
+			int value = islands.read(rc, i);
+			int x = value & 63, y = (value >> 6) & 63;
+			if (team.ordinal() == (value >> 12))
+				return new MapLocation(x, y);
+		}
+
+		return null;
 	}
 }
