@@ -6,82 +6,64 @@ import bot4.util.*;
 
 public class Plan {
 
-	public static class Mission {
+	private static final int LAUNCHER_MN = 45;
+	private static final int CARRIER_AD = 50;
+	private static final int AMPLIFIER_AD = 30;
+	private static final int AMPLIFIER_MN = 15;
 
-		public int startTurn;
-		public int numLauncher;
-		public int numCarrier;
-		public int numDestabilizer;
-		public int numBooster;
-		public final MissionName missionName;
-		public MapLocation target;
+	// Store previous mission to prevent same mission from running all the time
+	private static MissionName lastMission = MissionName.SCOUTING;
+
+	public class Mission {
+
+		public int startTurn = 0;
+		public int numLauncher = 0;
+		public int numCarrier = 0;
+		public int numAmplifier = 0;
+		public MissionName missionName = null;
+		public MapLocation target = null;
 
 		public Mission(MissionName m) {
-			this(false, m);
-		}
 
-		public Mission(boolean isAdv, MissionName m) {
-			// TODO: set target
 			startTurn = RobotPlayer.turnCount;
 			missionName = m;
 
 			// Setup for different missions
 			switch (m) {
 
-				case START_UP:
-					numLauncher = 2;
-					numCarrier = 2;
-					break;
-
 				case PROTECT_HQ:
 					numLauncher = 4;
-					numDestabilizer = isAdv ? 1 : 0;
-					numBooster = isAdv ? 1 : 0;
 					break;
 
 				case PROTECT_ISLAND:
 					numLauncher = 4;
-					numDestabilizer = isAdv ? 1 : 0;
-					numBooster = isAdv ? 1 : 0;
 					break;
 
 				case ATTACK_HQ:
 					numLauncher = 5;
-					numDestabilizer = isAdv ? 1 : 0;
-					numBooster = isAdv ? 1 : 0;
 					break;
 
 				case CAPTURE_ISLAND:
 					numLauncher = 5;
-					numDestabilizer = isAdv ? 1 : 0;
-					numBooster = isAdv ? 1 : 0;
 					break;
 
 				case AMBUSH:
 					numLauncher = 3;
-					numDestabilizer = isAdv ? 1 : 0;
 					break;
 
 				case CREATE_ELIXIR_WELL:
 					numLauncher = 3;
 					numCarrier = 3;
-					numDestabilizer = isAdv ? 1 : 0;
-					break;
-
-				case SPEED_UP_HQ:
-					numBooster = 1;
 					break;
 
 				case UPGRADE_ADAMANTIUM_WELL:
 					numLauncher = 3;
 					numCarrier = 3;
-					numDestabilizer = isAdv ? 1 : 0;
 					break;
 
 				case UPGRADE_MANA_WELL:
 					numLauncher = 3;
 					numCarrier = 3;
-					numDestabilizer = isAdv ? 1 : 0;
 					break;
 
 				case COLLECT_ADAMANTIUM:
@@ -104,21 +86,21 @@ public class Plan {
 					numAmplifier = 1;
 					break;
 
+				case CREATE_ANCHOR:
+					break;
+
 			}
 
 		}
 
 	}
 
-	public static Mission chooseMission(RobotController rc) throws GameActionException {
+	public Mission chooseMission(RobotController rc) throws GameActionException {
 
 		Team OPPONENT = rc.getTeam().opponent();
 
 		if (rc.getType() != RobotType.HEADQUARTERS)
 			throw new IllegalArgumentException("RobotType must be Headquarters to choose a mission!");
-
-		// Variables to choose mission
-		boolean isAdv = false;
 
 		// Find number of enemy launchers near HQ
 		RobotInfo[] enemies = rc.senseNearbyRobots(-1, OPPONENT);
@@ -129,24 +111,37 @@ public class Plan {
 
 		// Logic to choose mission
 		Mission chosenMission;
-		if (RobotPlayer.turnCount < 50)
-			chosenMission = new Mission(isAdv, MissionName.START_UP);
-		else if (numEnemyLaunchers > 3)
-			chosenMission = new Mission(isAdv, MissionName.PROTECT_HQ);
-		// Something with protect island?
-		// Something with attack HQ?
-		// Something with capture island?
-		// Something with ambush?
-		else if (RobotPlayer.turnCount < 200)
-			chosenMission = new Mission(isAdv, MissionName.SCOUTING);
-		else
-			chosenMission = new Mission(isAdv, MissionName.COLLECT_ADAMANTIUM);
+		if (RobotPlayer.turnCount < 100 && lastMission != MissionName.COLLECT_ADAMANTIUM)
+			chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
+		else if (RobotPlayer.turnCount < 100 && lastMission != MissionName.COLLECT_MANA)
+			chosenMission = new Mission(MissionName.COLLECT_MANA);
 
-		// Check to see if desired mission is able to run
+		else if (numEnemyLaunchers > 3)
+			chosenMission = new Mission(MissionName.PROTECT_HQ);
+		else if (RobotPlayer.turnCount > 50 && lastMission != MissionName.PROTECT_ISLAND)
+			chosenMission = new Mission(MissionName.PROTECT_ISLAND);
+		// Something with attack HQ?
+		else if (RobotPlayer.turnCount > 50 && lastMission != MissionName.CAPTURE_ISLAND)
+			chosenMission = new Mission(MissionName.CAPTURE_ISLAND);
+		// Something with ambush?
+		else if (RobotPlayer.turnCount < 200 && lastMission != MissionName.SCOUTING)
+			chosenMission = new Mission(MissionName.SCOUTING);
+		else
+			chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
+
+		// Variables for amount of mana/adamantium
 		int amountMn = rc.getResourceAmount(ResourceType.MANA);
 		int amountAd = rc.getResourceAmount(ResourceType.ADAMANTIUM);
-		int amountEx = rc.getResourceAmount(ResourceType.ELIXIR);
 
+		// If there is not enough resources, get resources
+		if (amountAd < chosenMission.numCarrier * CARRIER_AD ||
+			amountAd < chosenMission.numAmplifier * AMPLIFIER_AD)
+			chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
+		else if (amountMn < chosenMission.numLauncher * LAUNCHER_MN ||
+				 amountMn < chosenMission.numAmplifier * AMPLIFIER_MN)
+			chosenMission = new Mission(MissionName.COLLECT_MANA);
+
+		lastMission = chosenMission.missionName;
 		return chosenMission;
 
 	}

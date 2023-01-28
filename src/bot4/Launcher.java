@@ -71,25 +71,9 @@ public class Launcher {
             }
         }
 
-        RobotInfo[] visibleEnemies = rc.senseNearbyRobots(-1, OPPONENT);
-        for (RobotInfo enemy : visibleEnemies) {
-            if (enemy.getType() != RobotType.HEADQUARTERS) {
-                MapLocation enemyLocation = enemy.getLocation();
-                MapLocation robotLocation = rc.getLocation();
-                Direction moveDir = robotLocation.directionTo(enemyLocation);
-                if (rc.canMove(moveDir) && target == null) {
-                    rc.move(moveDir);
-                }
-            }
-        }
-
-        if (target != null) {
-
-            // If there is a target, attack
-            if (rc.canAttack(target.getLocation()))
-                rc.attack(target.getLocation());
-
-        }
+		// If there is a target, attack
+        if (target != null && rc.canAttack(target.getLocation()))
+			rc.attack(target.getLocation());
 
 	}
 
