@@ -14,12 +14,14 @@ public class Plan {
 		public int numDestabilizer = 0;
 		public int numBooster = 0;
 		public int numAmplifier = 0;
+		public MissionName missionName = null;
 
 		public Mission(MissionName m) {
 			this(false, m);
 		}
 
 		public Mission(boolean isAdv, MissionName m) {
+			missionName = m;
 
 			// Setup for different missions
 			switch (m) {
