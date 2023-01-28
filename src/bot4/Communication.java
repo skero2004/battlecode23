@@ -50,7 +50,7 @@ public class Communication {
 			if (0 > index || index >= end - start)
 				index = Math.abs(Randomize.rng.nextInt()) % (end - start);
 
-			queue.add(new Update(index, value));
+			queue.add(new Update(start + index, value));
 
 			flush(rc);
 		}
