@@ -31,11 +31,6 @@ public class Plan {
 			// Setup for different missions
 			switch (m) {
 
-				case START_UP:
-					numLauncher = 1;
-					numCarrier = 2;
-					break;
-
 				case PROTECT_HQ:
 					numLauncher = 4;
 					break;
@@ -116,8 +111,11 @@ public class Plan {
 
 		// Logic to choose mission
 		Mission chosenMission;
-		if (RobotPlayer.turnCount < 50 && lastMission != MissionName.START_UP)
-			chosenMission = new Mission(MissionName.START_UP);
+		if (RobotPlayer.turnCount < 100 && lastMission != MissionName.COLLECT_ADAMANTIUM)
+			chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
+		else if (RobotPlayer.turnCount < 100 && lastMission != MissionName.COLLECT_MANA)
+			chosenMission = new Mission(MissionName.COLLECT_MANA);
+
 		else if (numEnemyLaunchers > 3)
 			chosenMission = new Mission(MissionName.PROTECT_HQ);
 		else if (RobotPlayer.turnCount > 50 && lastMission != MissionName.PROTECT_ISLAND)
