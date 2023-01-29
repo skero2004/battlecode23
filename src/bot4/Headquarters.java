@@ -96,7 +96,6 @@ public class Headquarters {
 		switch (mission.missionName) {
 			case CREATE_ANCHOR:
 				if (rc.canBuildAnchor(Anchor.STANDARD)) {
-					Plan.isCreateAnchor = false;
 					rc.buildAnchor(Anchor.STANDARD);
 				} else {
 					return false;
