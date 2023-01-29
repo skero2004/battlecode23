@@ -23,7 +23,7 @@ public class Headquarters {
 	static void run(RobotController rc) throws GameActionException {
 		Mission mission = Plan.chooseMission(rc);
 
-		rc.setIndicatorString("M: " + mission.missionName);
+		rc.setIndicatorString("M: " + mission.missionName + " " + missionCount);
 		if (!target(rc, mission)) {
 			System.out.println("Failed " + mission.missionName + ": failed target");
 			return;
@@ -82,7 +82,7 @@ public class Headquarters {
 				RobotType.CARRIER,
 				// RobotType.DESTABILIZER,
 				// RobotType.BOOSTER,
-				// RobotType.AMPLIFIER,
+				RobotType.AMPLIFIER,
 		};
 
 		int[] rn = {
@@ -90,7 +90,7 @@ public class Headquarters {
 				mission.numCarrier,
 				// mission.numDestabilizer,
 				// mission.numBooster,
-				// mission.numAmplifier,
+				mission.numAmplifier,
 		};
 
 		switch (mission.missionName) {
