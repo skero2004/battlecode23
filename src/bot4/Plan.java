@@ -159,15 +159,14 @@ public class Plan {
 				return new Mission(m);
 		}
 
-		switch (Headquarters.missionCount % 3) {
-			case 0:
-				return new Mission(MissionName.SCOUTING);
-			case 1:
-				return new Mission(MissionName.COLLECT_ADAMANTIUM);
-			default:
-				return new Mission(MissionName.COLLECT_MANA);
-		}
-
+		if (Headquarters.missionCount % 3 == 1
+				&& Communication.readWell(rc, ResourceType.ADAMANTIUM) != null)
+			return new Mission(MissionName.COLLECT_ADAMANTIUM);
+		else if (Headquarters.missionCount % 3 == 2
+				&& Communication.readWell(rc, ResourceType.MANA) != null)
+			return new Mission(MissionName.COLLECT_MANA);
+		else
+			return new Mission(MissionName.SCOUTING);
 	}
 
 }

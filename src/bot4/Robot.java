@@ -23,7 +23,7 @@ public abstract class Robot {
 
 	void run(RobotController rc) throws GameActionException {
 		if (rc.getType() != RobotType.HEADQUARTERS) {
-			if (myHq == null)
+			if (myHq == null || myMission == null || turnCount % 100 == 0)
 				init(rc);
 			rc.setIndicatorString("M: " + myMission.missionName + ", T: " + myMission.target);
 			Scout.updateInfos(rc);
