@@ -47,6 +47,7 @@ public class Carrier {
 			executeCaptureMission(rc, myMission);
 		}
 
+		Scout.updateInfos(rc);
 	}
 
 	static void executeCollectMission(RobotController rc, Mission mission) throws GameActionException {

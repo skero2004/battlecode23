@@ -8,7 +8,7 @@ import bot4.util.*;
 
 public class Scout {
 
-	private static boolean[][] vis = null;
+	private static boolean[][] vis = new boolean[GameConstants.MAP_MAX_WIDTH][GameConstants.MAP_MAX_HEIGHT];
 	private static boolean isReturn = false;
 	private static HashMap<WellInfo, MapLocation> wellMemory = new HashMap<>();
 	private static HashMap<Integer, MapLocation> islandLocs = new HashMap<>();
@@ -19,9 +19,6 @@ public class Scout {
 	}
 
 	static void move(RobotController rc, RobotInfo myHq) throws GameActionException {
-		if (vis == null)
-			vis = new boolean[rc.getMapWidth()][rc.getMapHeight()];
-
 		int sign = RobotPlayer.turnCount / 300;
 
 		if (isReturn && myHq != null) {
