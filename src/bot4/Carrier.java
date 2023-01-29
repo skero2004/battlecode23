@@ -32,52 +32,31 @@ public class Carrier extends Robot {
 		int ad = rc.getResourceAmount(ResourceType.ADAMANTIUM);
 		int mn = rc.getResourceAmount(ResourceType.MANA);
 		if (ad + mn > INVENTORY_THRESHOLD) {
-			MapLocation target = myHq.location;
-			if (rc.canTransferResource(target, ResourceType.ADAMANTIUM, ad)) {
-				rc.transferResource(target, ResourceType.ADAMANTIUM, ad);
-			} else if (rc.canTransferResource(target, ResourceType.MANA, mn)) {
-				rc.transferResource(target, ResourceType.MANA, mn);
-			} else {
-				Direction dir = Paths.findMove(rc, target);
-				if (rc.canMove(dir))
-					rc.move(dir);
-			}
+			if (rc.canTransferResource(myHq, ResourceType.ADAMANTIUM, ad))
+				rc.transferResource(myHq, ResourceType.ADAMANTIUM, ad);
+			else if (rc.canTransferResource(myHq, ResourceType.MANA, mn))
+				rc.transferResource(myHq, ResourceType.MANA, mn);
+			else
+				move(rc);
 		} else {
-			MapLocation target = myMission.target;
-			rc.setIndicatorString("tgt: " + target);
-			if (rc.canCollectResource(target, -1)) {
-				rc.collectResource(target, -1);
-			} else {
-				Direction dir = Paths.findMove(rc, target);
-				if (rc.canMove(dir))
-					rc.move(dir);
-			}
+			if (rc.canCollectResource(myMission.target, -1))
+				rc.collectResource(myMission.target, -1);
+			else
+				move(rc);
 		}
 	}
 
 	void executeCaptureMission(RobotController rc) throws GameActionException {
 		if (rc.getAnchor() == null) {
-			// If no anchor held, then get anchor
-			MapLocation target = myHq.location;
-			if (rc.canTakeAnchor(target, Anchor.STANDARD)) {
-				rc.takeAnchor(target, Anchor.STANDARD);
-			} else {
-				Direction dir = Paths.findMove(rc, target);
-				if (rc.canMove(dir))
-					rc.move(dir);
-			}
+			if (rc.canTakeAnchor(myHq, Anchor.STANDARD))
+				rc.takeAnchor(myHq, Anchor.STANDARD);
+			else
+				move(rc);
 		} else {
-			// If carrier has an anchor, then go to target
-			MapLocation target = myMission.target;
-			rc.setIndicatorString("tgt: " + target);
-			if (rc.canPlaceAnchor()) {
+			if (rc.canPlaceAnchor())
 				rc.placeAnchor();
-			} else {
-				Direction dir = Paths.findMove(rc, target);
-				if (rc.canMove(dir))
-					rc.move(dir);
-			}
+			else
+				move(rc);
 		}
 	}
-
 }

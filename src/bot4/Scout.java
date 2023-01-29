@@ -42,8 +42,6 @@ public class Scout {
 				Randomize.move(rc);
 
 		}
-		rc.setIndicatorString(wellMemory.values().toString() + " " + isReturn + " " + myHq);
-
 	}
 
 	static void updateInfos(RobotController rc) throws GameActionException {

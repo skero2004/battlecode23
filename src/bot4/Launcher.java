@@ -2,24 +2,30 @@ package bot4;
 
 import battlecode.common.*;
 
-import bot4.Plan.Mission;
-
 public class Launcher extends Robot {
 
 	void execute(RobotController rc) throws GameActionException {
-		final int ACTION_RADIUS = rc.getType().actionRadiusSquared;
-		final Team OPPONENT = rc.getTeam().opponent();
+		attackEnemies(rc);
 
-		// Move according to assigned mission
-		// System.out.println("launcher mission: " + myMission.missionName + " " +
-		// myMission.target);
-		// if (myMission.missionName == MissionName.SCOUTING) {
+		switch (myMission.missionName) {
+			case SCOUTING:
+				Scout.move(rc);
+				Scout.updateInfos(rc);
+				break;
 
-		Scout.move(rc, myHq);
+			default:
+				if (rc.getLocation().distanceSquaredTo(myMission.target) > 3)
+					move(rc);
+				else
+					Scout.move(rc);
 
-		// } else if (myMission.missionName == MissionName.ATTACK_ISLAND) {
-		// executeAttackIslandMission(rc, myMission);
-		// }
+				break;
+		}
+	}
+
+	void attackEnemies(RobotController rc) throws GameActionException {
+		int ACTION_RADIUS = rc.getType().actionRadiusSquared;
+		Team OPPONENT = rc.getTeam().opponent();
 
 		// Find target enemy
 		RobotInfo[] enemies = rc.senseNearbyRobots(ACTION_RADIUS, OPPONENT);
@@ -56,20 +62,5 @@ public class Launcher extends Robot {
 		// If there is a target, attack
 		if (target != null && rc.canAttack(target.getLocation()))
 			rc.attack(target.getLocation());
-
 	}
-
-	void executeAttackIslandMission(RobotController rc, Mission mission) throws GameActionException {
-
-		MapLocation target = mission.target;
-		rc.setIndicatorString("tgt: " + target);
-		Direction dir = Paths.findMove(rc, target);
-		if (rc.canMove(dir))
-			rc.move(dir);
-
-		// TODO: (probably) change target once island is capured (or too many friend
-		// launchers?)
-
-	}
-
 }

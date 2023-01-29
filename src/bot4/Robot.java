@@ -8,13 +8,13 @@ public abstract class Robot {
 
 	static int turnCount = 0;
 
-	RobotInfo myHq;
+	MapLocation myHq;
 	Mission myMission;
 
 	void init(RobotController rc) throws GameActionException {
 		for (RobotInfo robot : rc.senseNearbyRobots()) {
 			if (robot.team == rc.getTeam() && robot.type == RobotType.HEADQUARTERS) {
-				myHq = robot;
+				myHq = robot.getLocation();
 			}
 		}
 
@@ -32,6 +32,12 @@ public abstract class Robot {
 		execute(rc);
 
 		++turnCount;
+	}
+
+	void move(RobotController rc) throws GameActionException {
+		Direction dir = Paths.findMove(rc, myMission.target);
+		if (rc.canMove(dir))
+			rc.move(dir);
 	}
 
 	abstract void execute(RobotController rc) throws GameActionException;

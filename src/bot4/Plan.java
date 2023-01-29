@@ -139,24 +139,27 @@ public class Plan {
 		if (numEnemyLaunchers > 3)
 			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
 		// if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
-		// if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
-		if (Headquarters.missionCount >= 200 && Headquarters.missionCount % 99 == 0
+		if (rc.getRoundNum() % 150 == 0)
+			isMissionActive[MissionName.ATTACK_HQ.ordinal()] = true;
+		if (Headquarters.missionCount >= 200
+				&& Headquarters.missionCount % 99 == 0
 				&& rc.getNumAnchors(Anchor.STANDARD) < 4)
 			isMissionActive[MissionName.CREATE_ANCHOR.ordinal()] = true;
-		if (rc.getNumAnchors(Anchor.STANDARD) > 0)
+		if (rc.getNumAnchors(Anchor.STANDARD) > 0
+				&& Communication.readIsland(rc, Team.NEUTRAL) != null)
 			isMissionActive[MissionName.CAPTURE_ISLAND.ordinal()] = true;
-		if (Headquarters.missionCount >= 50 && Headquarters.missionCount % 20 == 0)
+		if (Headquarters.missionCount >= 50
+				&& Headquarters.missionCount % 20 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
 		// TODO: Protect island???
 
 		// Return the correct mission. Defaults to rotation between scouting, collect
 		// adamantium, and collect mana.
 		for (MissionName m : MissionName.values()) {
-
 			if (isMissionActive[m.ordinal()])
 				return new Mission(m);
-
 		}
+
 		switch (Headquarters.missionCount % 3) {
 			case 0:
 				return new Mission(MissionName.SCOUTING);
