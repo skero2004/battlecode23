@@ -13,6 +13,7 @@ public class Plan {
 
 	// These change to true in this file, but false in HQ (once mission is
 	// completed)
+	public static boolean[] isMissionActive = new boolean[MissionName.values().length];
 	public static boolean isCaptureIsland = false;
 	public static boolean isProtectIsland = false;
 	public static boolean isProtectHQ = false;
@@ -162,20 +163,12 @@ public class Plan {
 					return new Mission(MissionName.COLLECT_MANA);
 			}
 
-		} else if (isProtectHQ) {
-			return new Mission(MissionName.PROTECT_HQ);
-		} else if (isProtectIsland) {
-			return new Mission(MissionName.PROTECT_ISLAND);
-		} else if (isCaptureIsland) {
-			return new Mission(MissionName.CAPTURE_ISLAND);
-		} else if (isAttackIsland) {
-			return new Mission(MissionName.ATTACK_ISLAND);
-		} else if (isCreateAnchor) {
-			return new Mission(MissionName.CREATE_ANCHOR);
-		} else if (isCaptureIsland) {
-			return new Mission(MissionName.CAPTURE_ISLAND);
-		} else {
-			return new Mission(MissionName.SEND_AMPLIFIER);
+		}
+		for (MissionName m : MissionName.values()) {
+
+			if (isMissionActive[m.ordinal()])
+				return new Mission(m);
+
 		}
 
 	}

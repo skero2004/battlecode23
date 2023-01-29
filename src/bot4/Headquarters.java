@@ -77,7 +77,7 @@ public class Headquarters {
 				RobotType.CARRIER,
 				// RobotType.DESTABILIZER,
 				// RobotType.BOOSTER,
-				RobotType.AMPLIFIER,
+				//RobotType.AMPLIFIER,
 		};
 
 		int[] rn = {
@@ -85,7 +85,7 @@ public class Headquarters {
 				mission.numCarrier,
 				// mission.numDestabilizer,
 				// mission.numBooster,
-				mission.numAmplifier,
+				//mission.numAmplifier,
 		};
 
 		switch (mission.missionName) {
