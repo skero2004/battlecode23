@@ -75,9 +75,9 @@ public class Communication {
 	}
 
 	static Segment missions = new Segment(0, 1); // mission type, mission target
-	static Segment adamantium = new Segment(1, 4); // well location
-	static Segment mana = new Segment(4, 7); // well location
-	static Segment islands = new Segment(7, 42);
+	static Segment adamantium = new Segment(1, 11); // well location
+	static Segment mana = new Segment(11, 21); // well location
+	static Segment islands = new Segment(21, 56); // island location and type
 
 	static void writeMission(RobotController rc, Mission mission) throws GameActionException {
 		int value = mission.missionName.ordinal() + (mission.target.x << 4) + (mission.target.y << 10);

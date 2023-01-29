@@ -11,8 +11,13 @@ public class Scout {
 	private static boolean[][] vis = null;
 	private static boolean isReturn = false;
 	private static HashMap<WellInfo, MapLocation> wellMemory = new HashMap<>();
+	private static HashMap<Integer, MapLocation> islandLocs = new HashMap<>();
+	private static HashMap<Integer, Team> islandTeams = new HashMap<>();
 
-	static void move(RobotController rc) throws GameActionException { move(rc, null); }
+	static void move(RobotController rc) throws GameActionException {
+		move(rc, null);
+	}
+
 	static void move(RobotController rc, RobotInfo myHq) throws GameActionException {
 		if (vis == null)
 			vis = new boolean[rc.getMapWidth()][rc.getMapHeight()];
@@ -23,9 +28,10 @@ public class Scout {
 
 			MapLocation target = myHq.location;
 			Direction dir = Paths.findMove(rc, target);
-			if (rc.canMove(dir)) rc.move(dir);
+			if (rc.canMove(dir))
+				rc.move(dir);
 
-		} else  {
+		} else {
 
 			Direction move = Constants.directions[(int) Math.sqrt(RobotPlayer.turnCount - 300 * sign) % 8];
 
@@ -52,14 +58,16 @@ public class Scout {
 				continue;
 			vis[l.x][l.y] = true;
 			wellMemory.put(w, l);
-			//Communication.writeWell(rc, l, w.getResourceType());
+			// Communication.writeWell(rc, l, w.getResourceType());
 		}
 
 		int[] islands = rc.senseNearbyIslands();
 		for (int i : islands) {
 			MapLocation l = rc.senseNearbyIslandLocations(i)[0];
 			Team team = rc.senseTeamOccupyingIsland(i);
-			Communication.writeIsland(rc, i, l, team);
+			islandLocs.put(i, l);
+			islandTeams.put(i, team);
+			// Communication.writeIsland(rc, i, l, team);
 		}
 
 		if (rc.canWriteSharedArray(0, 0)) {
@@ -68,11 +76,18 @@ public class Scout {
 				Communication.writeWell(rc, wellMemory.get(w), w.getResourceType());
 			wellMemory.clear();
 
-			if (isReturn) isReturn = false;
+			for (Integer i : islandTeams.keySet())
+				Communication.writeIsland(rc, i, islandLocs.get(i), islandTeams.get(i));
+			islandLocs.clear();
+			islandTeams.clear();
+
+			if (isReturn)
+				isReturn = false;
 
 		}
 
-		if (wellMemory.size() >= 2) isReturn = true;
+		if (wellMemory.size() + islandTeams.size() >= 2)
+			isReturn = true;
 
 	}
 
