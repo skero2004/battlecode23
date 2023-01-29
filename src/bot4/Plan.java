@@ -11,13 +11,12 @@ public class Plan {
 	private static final int AMPLIFIER_AD = 30;
 	private static final int AMPLIFIER_MN = 15;
 
-	private static boolean isCollectAd = false;
-	private static boolean isCollectMn = false;
-	private static boolean isScouting = false;
 	private static boolean isCaptureIsland = false;
 	private static boolean isProtectIsland = false;
 	private static boolean isProtectHQ = false;
-
+	private static boolean isAmplifier = false;
+	private static boolean isAttackIsland = false;
+	private static boolean isCreateAnchor = false;
 
 	public static class Mission {
 
@@ -37,25 +36,28 @@ public class Plan {
 			switch (m) {
 
 				case PROTECT_HQ:
-					numLauncher = 4;
+					numLauncher = 3;
 					break;
 
 				case PROTECT_ISLAND:
-					numLauncher = 4;
+					numLauncher = 3;
 					break;
 
 				case ATTACK_HQ:
-					numLauncher = 5;
+					numLauncher = 3;
 					break;
 
 				case CAPTURE_ISLAND:
-					numLauncher = 4;
+					numLauncher = 2;
 					numCarrier = 1;
 					break;
 
 				case AMBUSH:
 					numLauncher = 3;
 					break;
+
+				case ATTACK_ISLAND:
+					numLauncher = 3;
 
 				case CREATE_ELIXIR_WELL:
 					numLauncher = 3;
@@ -73,12 +75,12 @@ public class Plan {
 					break;
 
 				case COLLECT_ADAMANTIUM:
-					numLauncher = 2;
+					numLauncher = 1;
 					numCarrier = 2;
 					break;
 
 				case COLLECT_MANA:
-					numLauncher = 2;
+					numLauncher = 1;
 					numCarrier = 2;
 					break;
 
@@ -88,9 +90,12 @@ public class Plan {
 					break;
 
 				case SCOUTING:
+					numLauncher = 2;
 					numCarrier = 2;
-					numAmplifier = 1;
 					break;
+
+				case SEND_AMPLIFIER:
+					numAmplifier = 1;
 
 				case CREATE_ANCHOR:
 					break;
@@ -132,82 +137,46 @@ public class Plan {
 			if (enemy.getType() == RobotType.LAUNCHER)
 				numEnemyLaunchers++;
 
-		switch (rc.getRoundNum() % 3) {
-			case 0:
-				return new Mission(MissionName.SCOUTING);
-			case 1:
-				return new Mission(MissionName.COLLECT_ADAMANTIUM);
-			default:
-				return new Mission(MissionName.COLLECT_MANA);
+		// Logic to choose mission (default is loop of scout -> adamantium -> mana)
+		if (numEnemyLaunchers > 3) isProtectIsland = true;
+		if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
+		if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
+		if (rc.getRoundNum() > 500 && rc.getRoundNum() % 100 == 0 && rc.getNumAnchors(Anchor.STANDARD) < 4) isCreateAnchor = true;
+		if (rc.getRoundNum() > 500 && rc.getRoundNum() % 200 == 0 && rc.getNumAnchors(Anchor.STANDARD) > 0) isCaptureIsland = true;
+		// TODO: Protect island???
+
+		// Return the correct mission. Defaults to rotation between scouting, collect adamantium, and collect mana.
+		if (!isCaptureIsland && !isProtectHQ && !isProtectIsland && !isAmplifier) {
+			switch (rc.getRoundNum() % 3) {
+				case 0:
+					return new Mission(MissionName.SCOUTING);
+				case 1:
+					return new Mission(MissionName.COLLECT_ADAMANTIUM);
+				default:
+					return new Mission(MissionName.COLLECT_MANA);
+			}
+
+		} else if (isProtectHQ) {
+			return new Mission(MissionName.PROTECT_HQ);
+		} else if (isProtectIsland) {
+			isProtectIsland = false;
+			return new Mission(MissionName.PROTECT_ISLAND);
+		} else if (isCaptureIsland) {
+			isCaptureIsland = false;
+			return new Mission(MissionName.CAPTURE_ISLAND);
+		} else if (isAttackIsland) {
+			isAttackIsland = false;
+			return new Mission(MissionName.ATTACK_ISLAND);
+		} else if (isCreateAnchor) {
+			isCreateAnchor = false;
+			return new Mission(MissionName.CREATE_ANCHOR);
+		} else if (isCaptureIsland) {
+			isCaptureIsland = false;
+			return new Mission(MissionName.CAPTURE_ISLAND);
+		} else {
+			isAmplifier = false;
+			return new Mission(MissionName.SEND_AMPLIFIER);
 		}
-
-		//// Logic to choose mission
-		//if (RobotPlayer.turnCount < 100 && RobotPlayer.turnCount % 30 == 0)
-		//	isCollectAd = true;	
-		//if (RobotPlayer.turnCount < 100 && RobotPlayer.turnCount % 30 == 0)
-		//	isCollectMn = true;
-		//if (numEnemyLaunchers > 3 && RobotPlayer.turnCount % 10 == 0)
-		//	isProtectHQ = true;
-		//if (RobotPlayer.turnCount > 100 && RobotPlayer.turnCount % 50 == 0)
-		//	isCaptureIsland = true;
-		//if (RobotPlayer.turnCount < 500 && RobotPlayer.turnCount % 50 == 0)
-		//	isScouting = true;
-
-		//// Set mission
-		//Mission chosenMission;
-		//if (isCollectAd) {
-
-		//	chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
-		//	isCollectAd = false;
-
-		//} else if (isCollectMn) {
-
-		//	chosenMission = new Mission(MissionName.COLLECT_MANA);
-		//	isCollectMn = false;
-
-		//} else if (isProtectHQ) {
-
-		//	chosenMission = new Mission(MissionName.PROTECT_HQ);
-		//	isProtectHQ = false;
-
-		//} else if (isCaptureIsland) {
-
-		//	chosenMission = new Mission(MissionName.CAPTURE_ISLAND);
-		//	isCaptureIsland = false;
-
-		//}
-		//else if (isScouting) {
-
-		//	chosenMission = new Mission(MissionName.SCOUTING);
-		//	isScouting = false;
-
-		//} else
-		//	chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
-
-		////TODO: Something with attackHQ, ambush, and protect island?
-
-
-
-
-		// old stuff?
-		//else if (numEnemyLaunchers > 3)
-		//	chosenMission = new Mission(MissionName.PROTECT_HQ);
-		////else if (RobotPlayer.turnCount > 50 && lastMission != MissionName.PROTECT_ISLAND)
-		//	//chosenMission = new Mission(MissionName.PROTECT_ISLAND);
-		//// Something with attack HQ?
-		//else if (RobotPlayer.turnCount > 50 && lastMission != MissionName.CAPTURE_ISLAND)
-		//	chosenMission = new Mission(MissionName.CAPTURE_ISLAND);
-		//// Something with ambush?
-		//else if (RobotPlayer.turnCount < 200 && lastMission != MissionName.SCOUTING)
-		//	chosenMission = new Mission(MissionName.SCOUTING);
-		//else
-		//	chosenMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
-
-		//// Variables for amount of mana/adamantium
-		//int amountMn = rc.getResourceAmount(ResourceType.MANA);
-		//int amountAd = rc.getResourceAmount(ResourceType.ADAMANTIUM);
-
-		//return chosenMission;
 
 	}
 
