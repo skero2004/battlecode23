@@ -136,7 +136,7 @@ public class Plan {
 		// if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
 		// if (rc.getRoundNum() % 150 == 0 && Communication.readIsland(rc,
 		// rc.getTeam().opponent()) != null)
-		isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
+		// isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
 		if (Headquarters.missionCount >= 200
 				&& Headquarters.missionCount % 99 == 0
 				&& rc.getNumAnchors(Anchor.STANDARD) < 4)
