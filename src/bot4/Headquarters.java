@@ -18,42 +18,28 @@ public class Headquarters {
 	 * - Retrieve map info from Communication
 	 * - Pass it to Mapping
 	 */
+	static int missionCount = 0;
+
 	static void run(RobotController rc) throws GameActionException {
-		Mission mission; // = Plan.chooseMission(rc);
-		switch (RobotPlayer.turnCount % 5) {
-			case 0:
-				mission = new Mission(MissionName.SCOUTING);
-				break;
-			case 1:
-				mission = new Mission(MissionName.COLLECT_MANA);
-				break;
-			case 2:
-				mission = new Mission(MissionName.COLLECT_ADAMANTIUM);
-				break;
-			case 3:
-				mission = new Mission(MissionName.CREATE_ANCHOR);
-				break;
-			case 4:
-				mission = new Mission(MissionName.CAPTURE_ISLAND);
-				break;
-			default:
-				throw new IllegalStateException("Math just broke");
-		}
+		Mission mission = Plan.chooseMission(rc);
 
 		rc.setIndicatorString("M: " + mission.missionName);
-
 		if (!target(rc, mission)) {
-			System.out.println("Skipping mission " + mission.missionName + " because no target specified");
+			System.out.println("Skipped " + mission.missionName + ": failed target");
 			return;
 		}
 
-		Communication.writeMission(rc, mission);
+		if (!write(rc, mission)) {
+			System.out.println("Skipped " + mission.missionName + ": failed write");
+			return;
+		}
 
 		if (!build(rc, mission)) {
-			System.out.println("Skipping mission " + mission.missionName + " because could not build enough robots/anchors");
+			System.out.println("Skipped " + mission.missionName + ": failed build");
 			return;
 		}
 
+		++missionCount;
 	}
 
 	private static boolean target(RobotController rc, Mission mission) throws GameActionException {
@@ -71,6 +57,16 @@ public class Headquarters {
 			default:
 				mission.target = new MapLocation(Randomize.rng.nextInt(rc.getMapWidth()),
 						Randomize.rng.nextInt(rc.getMapHeight()));
+				return true;
+		}
+	}
+
+	private static boolean write(RobotController rc, Mission mission) throws GameActionException {
+		switch (mission.missionName) {
+			case CREATE_ANCHOR:
+				return true;
+			default:
+				Communication.writeMission(rc, mission);
 				return true;
 		}
 	}

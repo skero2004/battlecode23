@@ -14,7 +14,8 @@ public class Carrier {
 
 	static void init(RobotController rc) throws GameActionException {
 
-		if (!init) return;
+		if (!init)
+			return;
 		myTeam = rc.getTeam();
 		for (RobotInfo robot : rc.senseNearbyRobots()) {
 			if (robot.team == myTeam && robot.type == RobotType.HEADQUARTERS) {
@@ -30,15 +31,14 @@ public class Carrier {
 	static int INVENTORY_THRESHOLD = 30;
 
 	static void run(RobotController rc) throws GameActionException {
-
 		// Carrier gets mission
 		init(rc);
-		//rc.setIndicatorString("T: " + myMission.missionName);
+		// rc.setIndicatorString("T: " + myMission.missionName);
 
-		System.out.println("carrier mission: " + myMission.missionName + " " + myMission.target);
+		rc.setIndicatorString("M: " + myMission.missionName + ", T: " + myMission.target);
 		if (myMission.missionName == MissionName.SCOUTING) {
 
-			Scout.move(rc, myHq);
+			Scout.move(rc);
 			Scout.updateInfos(rc);
 
 		} else if (myMission.isValidCollectMission()) {
@@ -49,20 +49,20 @@ public class Carrier {
 
 	}
 
-
 	static void executeCollectMission(RobotController rc, Mission mission) throws GameActionException {
 		int ad = rc.getResourceAmount(ResourceType.ADAMANTIUM);
 		int mn = rc.getResourceAmount(ResourceType.MANA);
 		if (ad + mn > INVENTORY_THRESHOLD) {
 			MapLocation target = myHq.location;
-			//ResourceType type = mission.getCollectResourceType();
+			// ResourceType type = mission.getCollectResourceType();
 			if (rc.canTransferResource(target, ResourceType.ADAMANTIUM, ad)) {
 				rc.transferResource(target, ResourceType.ADAMANTIUM, ad);
 			} else if (rc.canTransferResource(target, ResourceType.MANA, mn)) {
 				rc.transferResource(target, ResourceType.MANA, mn);
 			} else {
 				Direction dir = Paths.findMove(rc, target);
-				if (rc.canMove(dir)) rc.move(dir);
+				if (rc.canMove(dir))
+					rc.move(dir);
 			}
 		} else {
 			MapLocation target = mission.target;
@@ -71,23 +71,24 @@ public class Carrier {
 				rc.collectResource(target, -1);
 			} else {
 				Direction dir = Paths.findMove(rc, target);
-				if (rc.canMove(dir)) rc.move(dir);
+				if (rc.canMove(dir))
+					rc.move(dir);
 			}
 		}
 	}
 
-
 	static void executeCaptureMission(RobotController rc, Mission mission) throws GameActionException {
 
 		if (rc.getAnchor() == null) {
-			
+
 			// If no anchor held, then get anchor
 			MapLocation target = myHq.location;
 			if (rc.canTakeAnchor(target, Anchor.STANDARD)) {
 				rc.takeAnchor(target, Anchor.STANDARD);
 			} else {
 				Direction dir = Paths.findMove(rc, target);
-				if (rc.canMove(dir)) rc.move(dir);
+				if (rc.canMove(dir))
+					rc.move(dir);
 			}
 		} else {
 
@@ -98,7 +99,8 @@ public class Carrier {
 				rc.placeAnchor();
 			} else {
 				Direction dir = Paths.findMove(rc, target);
-				if (rc.canMove(dir)) rc.move(dir);
+				if (rc.canMove(dir))
+					rc.move(dir);
 			}
 
 		}

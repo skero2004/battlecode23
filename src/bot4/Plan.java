@@ -11,7 +11,8 @@ public class Plan {
 	private static final int AMPLIFIER_AD = 30;
 	private static final int AMPLIFIER_MN = 15;
 
-	// These change to true in this file, but false in HQ (once mission is completed)
+	// These change to true in this file, but false in HQ (once mission is
+	// completed)
 	public static boolean isCaptureIsland = false;
 	public static boolean isProtectIsland = false;
 	public static boolean isProtectHQ = false;
@@ -49,7 +50,7 @@ public class Plan {
 					break;
 
 				case CAPTURE_ISLAND:
-					numLauncher = 2;
+					numLauncher = 3;
 					numCarrier = 1;
 					break;
 
@@ -91,8 +92,8 @@ public class Plan {
 					break;
 
 				case SCOUTING:
-					numLauncher = 2;
-					numCarrier = 2;
+					numLauncher = 5;
+					numAmplifier = 1;
 					break;
 
 				case SEND_AMPLIFIER:
@@ -105,10 +106,9 @@ public class Plan {
 
 		}
 
-
 		boolean isValidCollectMission() {
 			return this.missionName == MissionName.COLLECT_ADAMANTIUM
-				|| this.missionName == MissionName.COLLECT_MANA;
+					|| this.missionName == MissionName.COLLECT_MANA;
 		}
 
 		ResourceType getCollectResourceType() {
@@ -139,16 +139,21 @@ public class Plan {
 				numEnemyLaunchers++;
 
 		// Logic to choose mission (default is loop of scout -> adamantium -> mana)
-		if (numEnemyLaunchers > 3) isProtectIsland = true;
-		//if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
-		//if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
-		if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 100 == 0 && rc.getNumAnchors(Anchor.STANDARD) < 4) isCreateAnchor = true;
-		//if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 200 == 0 && rc.getNumAnchors(Anchor.STANDARD) > 0) isCaptureIsland = true;
+		if (numEnemyLaunchers > 3)
+			isProtectIsland = true;
+		// if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
+		// if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
+		if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 100 == 0 && rc.getNumAnchors(Anchor.STANDARD) < 4)
+			isCreateAnchor = true;
+		// if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 200 == 0 &&
+		// rc.getNumAnchors(Anchor.STANDARD) > 0) isCaptureIsland = true;
 		// TODO: Protect island???
 
 		System.out.println(isCreateAnchor);
-		// Return the correct mission. Defaults to rotation between scouting, collect adamantium, and collect mana.
-		if (!isCaptureIsland && !isProtectHQ && !isProtectIsland && !isAmplifier && !isAttackIsland && !isCreateAnchor) {
+		// Return the correct mission. Defaults to rotation between scouting, collect
+		// adamantium, and collect mana.
+		if (!isCaptureIsland && !isProtectHQ && !isProtectIsland && !isAmplifier && !isAttackIsland
+				&& !isCreateAnchor) {
 			switch (rc.getRoundNum() % 3) {
 				case 0:
 					return new Mission(MissionName.SCOUTING);
