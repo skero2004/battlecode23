@@ -101,7 +101,7 @@ public class Headquarters {
 			mission.target = loc;
 		} else mission.target = new MapLocation(0,0); // dummy
 
-		if (loc == null) {
+		if (mission.target == null) {
 			System.out.println("skipping mission " + mission.missionName + " because no target specified");
 		} else {
 			System.out.println("sending mission " + mission.missionName);
