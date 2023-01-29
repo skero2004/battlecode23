@@ -25,17 +25,22 @@ public class Headquarters {
 
 		rc.setIndicatorString("M: " + mission.missionName);
 		if (!target(rc, mission)) {
-			System.out.println("Skipped " + mission.missionName + ": failed target");
+			System.out.println("Failed " + mission.missionName + ": failed target");
 			return;
 		}
 
 		if (!write(rc, mission)) {
-			System.out.println("Skipped " + mission.missionName + ": failed write");
+			System.out.println("Failed " + mission.missionName + ": failed write");
 			return;
 		}
 
 		if (!build(rc, mission)) {
-			System.out.println("Skipped " + mission.missionName + ": failed build");
+			System.out.println("Failed " + mission.missionName + ": failed build");
+			return;
+		}
+
+		if (!update(rc, mission)) {
+			System.out.println("Failed " + mission.missionName + ": failed update");
 			return;
 		}
 
@@ -77,7 +82,7 @@ public class Headquarters {
 				RobotType.CARRIER,
 				// RobotType.DESTABILIZER,
 				// RobotType.BOOSTER,
-				//RobotType.AMPLIFIER,
+				// RobotType.AMPLIFIER,
 		};
 
 		int[] rn = {
@@ -85,7 +90,7 @@ public class Headquarters {
 				mission.numCarrier,
 				// mission.numDestabilizer,
 				// mission.numBooster,
-				//mission.numAmplifier,
+				// mission.numAmplifier,
 		};
 
 		switch (mission.missionName) {
@@ -105,7 +110,8 @@ public class Headquarters {
 		for (int i = 0; i < rt.length; ++i) {
 			for (int j = 0; j < rn[i]; ++j) {
 				// Pick a direction to build in.
-				Direction dir = Constants.directions[Randomize.rng.nextInt(Constants.directions.length)];
+				Direction dir = Constants.directions[Randomize.rng
+						.nextInt(Constants.directions.length)];
 				MapLocation newLoc = cur.add(dir);
 				if (rc.canBuildRobot(rt[i], newLoc)) {
 					rc.buildRobot(rt[i], newLoc);
@@ -113,6 +119,11 @@ public class Headquarters {
 			}
 		}
 
+		return true;
+	}
+
+	private static boolean update(RobotController rc, Mission mission) throws GameActionException {
+		Plan.isMissionActive[mission.missionName.ordinal()] = false;
 		return true;
 	}
 
