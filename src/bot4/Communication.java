@@ -31,7 +31,7 @@ public class Communication {
 		Queue<Update> queue = new ArrayDeque<Update>();
 
 		Segment(int s, int e) {
-			assert s >= 0 && e < ARRAY_LENGTH;
+			assert s >= 0 && e <= ARRAY_LENGTH;
 			start = s;
 			length = e - s;
 		}
@@ -84,7 +84,7 @@ public class Communication {
 	static Segment missions = new Segment(0, 1); // mission type, mission target
 	static Segment adamantium = new Segment(1, 13); // well location
 	static Segment mana = new Segment(13, 25); // well location
-	static Segment islands = new Segment(25, 61); // island location and type
+	static Segment islands = new Segment(25, 64); // island location and type
 
 	static void writeMission(RobotController rc, Mission mission) throws GameActionException {
 		int value = mission.missionName.ordinal() + (mission.target.x << 4) + (mission.target.y << 10);
@@ -187,7 +187,6 @@ public class Communication {
 		for (MapLocation m : locations) {
 			p -= Math.exp(-curr.distanceSquaredTo(m));
 			if (p <= 0) {
-				System.out.println("thing: " + i);
 				return m;
 			}
 			++i;
