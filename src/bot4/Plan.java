@@ -134,9 +134,8 @@ public class Plan {
 		if (numEnemyLaunchers > 3)
 			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
 		// if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
-		// if (rc.getRoundNum() % 150 == 0 && Communication.readIsland(rc,
-		// rc.getTeam().opponent()) != null)
-		// isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
+		if (Communication.readIsland(rc, rc.getTeam().opponent()) != null)
+			isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
 		if (Headquarters.missionCount >= 200
 				&& Headquarters.missionCount % 99 == 0
 				&& rc.getNumAnchors(Anchor.STANDARD) < 4)

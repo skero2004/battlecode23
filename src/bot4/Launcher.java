@@ -9,20 +9,16 @@ public class Launcher extends Robot {
 		attackEnemies(rc);
 
 		switch (myMission.missionName) {
-			default:
+			case SCOUTING:
 				Scout.move(rc);
 				Scout.updateInfos(rc);
 				break;
 
-			/*
-			 * case SCOUTING:
-			 * if (rc.getLocation().distanceSquaredTo(myMission.target) > 1)
-			 * move(rc);
-			 * else
-			 * Scout.move(rc);
-			 * 
-			 * break;
-			 */
+			default:
+				if (rc.getLocation().distanceSquaredTo(myMission.target) > 2)
+					move(rc);
+				else
+					Scout.move(rc);
 		}
 	}
 

@@ -35,7 +35,11 @@ public abstract class Robot {
 	}
 
 	void move(RobotController rc) throws GameActionException {
-		Direction dir = Paths.findMove(rc, myMission.target);
+		move(rc, myMission.target);
+	}
+
+	void move(RobotController rc, MapLocation target) throws GameActionException {
+		Direction dir = Paths.findMove(rc, target);
 		if (rc.canMove(dir))
 			rc.move(dir);
 	}

@@ -37,7 +37,7 @@ public class Carrier extends Robot {
 			else if (rc.canTransferResource(myHq, ResourceType.MANA, mn))
 				rc.transferResource(myHq, ResourceType.MANA, mn);
 			else
-				move(rc);
+				move(rc, myHq);
 		} else {
 			if (rc.canCollectResource(myMission.target, -1))
 				rc.collectResource(myMission.target, -1);
@@ -51,7 +51,7 @@ public class Carrier extends Robot {
 			if (rc.canTakeAnchor(myHq, Anchor.STANDARD))
 				rc.takeAnchor(myHq, Anchor.STANDARD);
 			else
-				move(rc);
+				move(rc, myHq);
 		} else {
 			if (rc.canPlaceAnchor())
 				rc.placeAnchor();
