@@ -19,6 +19,7 @@ public class Carrier extends Robot {
 				break;
 
 			case CAPTURE_ISLAND:
+			case ATTACK_ISLAND:
 				executeCaptureMission(rc);
 				break;
 

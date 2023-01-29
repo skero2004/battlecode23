@@ -133,16 +133,20 @@ public class Plan {
 		// Logic to choose mission (default is loop of scout -> adamantium -> mana)
 		if (numEnemyLaunchers > 3)
 			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
-		// if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
-		if (Communication.readIsland(rc, rc.getTeam().opponent()) != null)
+
+		if (Headquarters.missionCount % 7 == 0
+				&& Communication.readIsland(rc, rc.getTeam().opponent()) != null)
 			isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
-		if (Headquarters.missionCount >= 200
-				&& Headquarters.missionCount % 99 == 0
+
+		if (Headquarters.missionCount >= 100
+				&& (Headquarters.missionCount % 99 == 0 || rc.canBuildAnchor(Anchor.STANDARD))
 				&& rc.getNumAnchors(Anchor.STANDARD) < 4)
 			isMissionActive[MissionName.CREATE_ANCHOR.ordinal()] = true;
+
 		if (rc.getNumAnchors(Anchor.STANDARD) > 0
 				&& Communication.readIsland(rc, Team.NEUTRAL) != null)
 			isMissionActive[MissionName.CAPTURE_ISLAND.ordinal()] = true;
+
 		if (Headquarters.missionCount >= 50
 				&& Headquarters.missionCount % 20 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
