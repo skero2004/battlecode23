@@ -13,58 +13,64 @@ public class Communication {
 	private static final int OUTDATED_TURNS = 2000;
 
 	private static class Segment {
-		private final int start, end;
+		private final int start;
 		final int length;
 
 		private static class Update {
-			int i, v;
+			final int t, i, v;
 
-			Update(int i, int v) {
+			Update(int i, int v, int t) {
 				this.i = i;
 				this.v = v;
+				this.t = t;
 			}
 		};
 
 		Queue<Update> queue = new ArrayDeque<Update>();
 
 		Segment(int s, int e) {
+			assert s >= 0 && e < ARRAY_LENGTH;
 			start = s;
-			end = e;
 			length = e - s;
 		}
 
 		int read(RobotController rc) throws GameActionException {
 			for (int i = 0; i < length; ++i) {
-				int v = read(rc, -1);
-				if (v > 0)
-					return v;
+				int index = Randomize.rng.nextInt(length);
+				int value = read(rc, index);
+				if (value != 0)
+					return value;
 			}
 			return 0;
 		}
 
 		int read(RobotController rc, int index) throws GameActionException {
-			if (0 > index || index >= length)
-				index = Randomize.rng.nextInt(length);
+			assert 0 <= index && index < length;
 			return rc.readSharedArray(start + index);
 		}
 
+		void write(RobotController rc, int value) throws GameActionException {
+			int index = Randomize.rng.nextInt(length);
+			write(rc, index, value);
+		}
+
 		void write(RobotController rc, int index, int value) throws GameActionException {
-			if (0 > index || index >= length)
-				index = Randomize.rng.nextInt(length);
-			queue.add(new Update(index, value));
+			assert 0 <= index && index < length;
+			queue.add(new Update(index, value, RobotPlayer.turnCount));
 			flush(rc);
 		}
 
-		void write(RobotController rc, int value) throws GameActionException {
-			write(rc, -1, value);
-		}
-
-		void flush(RobotController rc) throws GameActionException {
+		boolean flush(RobotController rc) throws GameActionException {
 			while (!queue.isEmpty()) {
-				Update u = queue.remove();
-				if (rc.canWriteSharedArray(start + u.i, u.v))
-					rc.writeSharedArray(start + u.i, u.v);
+				if (rc.canWriteSharedArray(0, 0)) {
+					Update u = queue.remove();
+					if (u.t + OUTDATED_TURNS >= RobotPlayer.turnCount)
+						rc.writeSharedArray(start + u.i, u.v);
+				} else {
+					return false;
+				}
 			}
+			return true;
 		}
 	}
 
@@ -139,5 +145,13 @@ public class Communication {
 		}
 
 		return null;
+	}
+
+	static boolean flush(RobotController rc) throws GameActionException {
+		for (Segment seg : new Segment[] { missions, adamantium, mana, islands }) {
+			if (!seg.flush(rc))
+				return false;
+		}
+		return true;
 	}
 }
