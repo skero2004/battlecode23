@@ -11,7 +11,9 @@ public class Carrier {
 	static Team myTeam = Team.NEUTRAL;
 	static RobotInfo myHq;
 	static Mission myMission;
+
 	static void init(RobotController rc) throws GameActionException {
+
 		if (!init) return;
 		myTeam = rc.getTeam();
 		for (RobotInfo robot : rc.senseNearbyRobots()) {
@@ -21,20 +23,24 @@ public class Carrier {
 		}
 
 		myMission = Communication.readMission(rc);
-
 		init = false;
+
 	}
 
 	static int INVENTORY_THRESHOLD = 30;
 
 	static void run(RobotController rc) throws GameActionException {
+
+		// Carrier gets mission
 		init(rc);
 		//rc.setIndicatorString("T: " + myMission.missionName);
 
-		System.out.println("my mission: " + myMission.missionName + " " + myMission.target);
+		System.out.println("carrier mission: " + myMission.missionName + " " + myMission.target);
 		if (myMission.missionName == MissionName.SCOUTING) {
+
 			Scout.move(rc);
 			Scout.updateInfos(rc);
+
 		} else if (myMission.isValidCollectMission()) {
 			executeCollectMission(rc, myMission);
 		} else if (myMission.missionName == MissionName.CAPTURE_ISLAND) {
@@ -72,7 +78,10 @@ public class Carrier {
 
 
 	static void executeCaptureMission(RobotController rc, Mission mission) throws GameActionException {
+
 		if (rc.getAnchor() == null) {
+			
+			// If no anchor held, then get anchor
 			MapLocation target = myHq.location;
 			if (rc.canTakeAnchor(target, Anchor.STANDARD)) {
 				rc.takeAnchor(target, Anchor.STANDARD);
@@ -81,6 +90,8 @@ public class Carrier {
 				if (rc.canMove(dir)) rc.move(dir);
 			}
 		} else {
+
+			// If carrier has an anchor, then go to target
 			MapLocation target = mission.target;
 			rc.setIndicatorString("tgt: " + target);
 			if (rc.canPlaceAnchor()) {
@@ -89,7 +100,9 @@ public class Carrier {
 				Direction dir = Paths.findMove(rc, target);
 				if (rc.canMove(dir)) rc.move(dir);
 			}
+
 		}
+
 	}
 
 }
