@@ -140,16 +140,15 @@ public class Plan {
 
 		// Logic to choose mission (default is loop of scout -> adamantium -> mana)
 		if (numEnemyLaunchers > 3)
-			isProtectIsland = true;
-		// if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
-		// if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
+			isProtectHQ = true;
+		//if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
+		//if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
 		if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 100 == 0 && rc.getNumAnchors(Anchor.STANDARD) < 4)
 			isCreateAnchor = true;
-		// if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 200 == 0 &&
-		// rc.getNumAnchors(Anchor.STANDARD) > 0) isCaptureIsland = true;
+		if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 200 == 0 &&
+			rc.getNumAnchors(Anchor.STANDARD) > 0) isCaptureIsland = true;
 		// TODO: Protect island???
 
-		System.out.println(isCreateAnchor);
 		// Return the correct mission. Defaults to rotation between scouting, collect
 		// adamantium, and collect mana.
 		if (!isCaptureIsland && !isProtectHQ && !isProtectIsland && !isAmplifier && !isAttackIsland
