@@ -31,7 +31,7 @@ public class Paths {
 			for (MapLocation m : neighbors(rc)) {
 				if (!rc.canMove(current.directionTo(m))) {
 					if (rc.isLocationOccupied(m))
-						; // visited[current.x][current.y] = false;
+						visited[current.x][current.y] = false;
 					continue;
 				}
 

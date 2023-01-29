@@ -1,6 +1,7 @@
 package bot4;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Queue;
 
 import battlecode.common.*;
@@ -50,6 +51,11 @@ public class Communication {
 		}
 
 		void write(RobotController rc, int value) throws GameActionException {
+			for (int i = 0; i < length; ++i)
+				if (read(rc, i) == 0) {
+					write(rc, i, value);
+					return;
+				}
 			int index = Randomize.rng.nextInt(length);
 			write(rc, index, value);
 		}
@@ -75,9 +81,9 @@ public class Communication {
 	}
 
 	static Segment missions = new Segment(0, 1); // mission type, mission target
-	static Segment adamantium = new Segment(1, 11); // well location
-	static Segment mana = new Segment(11, 21); // well location
-	static Segment islands = new Segment(21, 56); // island location and type
+	static Segment adamantium = new Segment(1, 13); // well location
+	static Segment mana = new Segment(13, 25); // well location
+	static Segment islands = new Segment(25, 60); // island location and type
 
 	static void writeMission(RobotController rc, Mission mission) throws GameActionException {
 		int value = mission.missionName.ordinal() + (mission.target.x << 4) + (mission.target.y << 10);
@@ -124,11 +130,13 @@ public class Communication {
 				throw new IllegalArgumentException("Cannot write info for well of type " + type);
 		}
 
-		int value = seg.read(rc) - 1;
-		if (value < 0)
-			return null;
-		int x = value & 63, y = value >> 6;
-		return new MapLocation(x, y);
+		ArrayList<MapLocation> options = new ArrayList<>();
+		for (int i = 0; i < seg.length; ++i) {
+			int value = seg.read(rc, i) - 1;
+			int x = value & 63, y = (value >> 6) & 63;
+			options.add(new MapLocation(x, y));
+		}
+		return nearest(rc, options.toArray(new MapLocation[0]));
 	}
 
 	static void writeIsland(RobotController rc, int index, MapLocation location, Team team)
@@ -137,14 +145,16 @@ public class Communication {
 	}
 
 	static MapLocation readIsland(RobotController rc, Team team) throws GameActionException {
+		ArrayList<MapLocation> options = new ArrayList<>();
 		for (int i = 0; i < islands.length; ++i) {
 			int value = islands.read(rc, i) - 1;
 			int x = value & 63, y = (value >> 6) & 63;
 			if (team.ordinal() == (value >> 12))
-				return new MapLocation(x, y);
+				options.add(new MapLocation(x, y));
+
 		}
 
-		return null;
+		return nearest(rc, options.toArray(new MapLocation[0]));
 	}
 
 	static boolean flush(RobotController rc) throws GameActionException {
@@ -153,5 +163,16 @@ public class Communication {
 				return false;
 		}
 		return true;
+	}
+
+	private static MapLocation nearest(RobotController rc, MapLocation... locations) {
+		if (locations.length == 0)
+			return null;
+		MapLocation curr = rc.getLocation();
+		MapLocation best = locations[0];
+		for (MapLocation m : locations)
+			if (curr.distanceSquaredTo(m) < curr.distanceSquaredTo(best))
+				best = m;
+		return best;
 	}
 }

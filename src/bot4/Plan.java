@@ -159,10 +159,10 @@ public class Plan {
 				return new Mission(m);
 		}
 
-		if (Headquarters.missionCount % 3 == 1
+		if (Headquarters.missionCount % 5 <= 2
 				&& Communication.readWell(rc, ResourceType.ADAMANTIUM) != null)
 			return new Mission(MissionName.COLLECT_ADAMANTIUM);
-		else if (Headquarters.missionCount % 3 == 2
+		else if (Headquarters.missionCount % 5 <= 4
 				&& Communication.readWell(rc, ResourceType.MANA) != null)
 			return new Mission(MissionName.COLLECT_MANA);
 		else

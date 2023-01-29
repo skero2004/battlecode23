@@ -8,11 +8,6 @@ public class Carrier extends Robot {
 
 	void execute(RobotController rc) throws GameActionException {
 		switch (myMission.missionName) {
-			case SCOUTING:
-				Scout.move(rc);
-				Scout.updateInfos(rc);
-				break;
-
 			case COLLECT_MANA:
 			case COLLECT_ADAMANTIUM:
 				executeCollectMission(rc);
