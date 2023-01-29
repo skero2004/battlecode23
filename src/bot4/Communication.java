@@ -44,16 +44,14 @@ public class Communication {
 
 		int read(RobotController rc, int index) throws GameActionException {
 			if (0 > index || index >= length)
-				index = Math.abs(Randomize.rng.nextInt()) % length;
+				index = Randomize.rng.nextInt(length);
 			return rc.readSharedArray(start + index);
 		}
 
 		void write(RobotController rc, int index, int value) throws GameActionException {
 			if (0 > index || index >= length)
-				index = Math.abs(Randomize.rng.nextInt()) % length;
-
-			queue.add(new Update(start + index, value));
-
+				index = Randomize.rng.nextInt(length);
+			queue.add(new Update(index, value));
 			flush(rc);
 		}
 
@@ -64,8 +62,8 @@ public class Communication {
 		void flush(RobotController rc) throws GameActionException {
 			while (!queue.isEmpty()) {
 				Update u = queue.remove();
-				if (rc.canWriteSharedArray(0, 0))
-					rc.writeSharedArray(u.i, u.v);
+				if (rc.canWriteSharedArray(start + u.i, u.v))
+					rc.writeSharedArray(start + u.i, u.v);
 			}
 		}
 	}
@@ -77,11 +75,13 @@ public class Communication {
 
 	static void writeMission(RobotController rc, Mission mission) throws GameActionException {
 		int value = mission.missionName.ordinal() + (mission.target.x << 4) + (mission.target.y << 10);
-		missions.write(rc, 0, value);
+		missions.write(rc, 0, 1 + value);
 	}
 
 	static Mission readMission(RobotController rc) throws GameActionException {
-		int value = missions.read(rc, 0);
+		int value = missions.read(rc, 0) - 1;
+		if (value < 0)
+			return null;
 		MissionName name = MissionName.values()[value & 15];
 		int x = (value >> 4) & 63, y = (value >> 10) & 63;
 		MapLocation target = new MapLocation(x, y);
@@ -102,7 +102,7 @@ public class Communication {
 			default:
 				throw new IllegalArgumentException("Cannot write info for well of type " + type);
 		}
-		seg.write(rc, location.x + (location.y << 6));
+		seg.write(rc, 1 + location.x + (location.y << 6));
 	}
 
 	static MapLocation readWell(RobotController rc, ResourceType type) throws GameActionException {
@@ -118,8 +118,8 @@ public class Communication {
 				throw new IllegalArgumentException("Cannot write info for well of type " + type);
 		}
 
-		int value = seg.read(rc);
-		if (value == 0)
+		int value = seg.read(rc) - 1;
+		if (value < 0)
 			return null;
 		int x = value & 63, y = value >> 6;
 		return new MapLocation(x, y);
@@ -127,12 +127,12 @@ public class Communication {
 
 	static void writeIsland(RobotController rc, int index, MapLocation location, Team team)
 			throws GameActionException {
-		islands.write(rc, index, location.x + (location.y << 6) + (team.ordinal() << 12));
+		islands.write(rc, index, 1 + location.x + (location.y << 6) + (team.ordinal() << 12));
 	}
 
 	static MapLocation readIsland(RobotController rc, Team team) throws GameActionException {
 		for (int i = 0; i < islands.length; ++i) {
-			int value = islands.read(rc, i);
+			int value = islands.read(rc, i) - 1;
 			int x = value & 63, y = (value >> 6) & 63;
 			if (team.ordinal() == (value >> 12))
 				return new MapLocation(x, y);
