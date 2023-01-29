@@ -4,10 +4,9 @@ import battlecode.common.*;
 
 import bot4.util.*;
 
-public class Amplifier {
+public class Amplifier extends Robot {
 
-	static void run(RobotController rc) throws GameActionException {
+	void execute(RobotController rc) throws GameActionException {
 		Scout.move(rc);
-		Scout.updateInfos(rc);
 	}
 }

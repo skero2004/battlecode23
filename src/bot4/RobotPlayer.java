@@ -3,36 +3,36 @@ package bot4;
 import battlecode.common.*;
 
 public strictfp class RobotPlayer {
-
-	static int turnCount = 0;
-
 	public static void run(RobotController rc) throws GameActionException {
+		Robot robot;
+		switch (rc.getType()) {
+			case HEADQUARTERS:
+				robot = new Headquarters();
+				break;
+			case CARRIER:
+				robot = new Carrier();
+				break;
+			case LAUNCHER:
+				robot = new Launcher();
+				break;
+			case BOOSTER:
+				robot = new Booster();
+				break;
+			case DESTABILIZER:
+				robot = new Destabilizer();
+				break;
+			case AMPLIFIER:
+				robot = new Amplifier();
+				break;
+			default:
+				throw new IllegalStateException("Unknown robot type: " + rc.getType());
+		}
+
 		while (true) {
 			try {
-				switch (rc.getType()) {
-					case HEADQUARTERS:
-						Headquarters.run(rc);
-						break;
-					case CARRIER:
-						Carrier.run(rc);
-						break;
-					case LAUNCHER:
-						Launcher.run(rc);
-						break;
-					case BOOSTER:
-						Booster.run(rc);
-						break;
-					case DESTABILIZER:
-						Destabilizer.run(rc);
-						break;
-					case AMPLIFIER:
-						Amplifier.run(rc);
-						break;
-				}
-				++turnCount;
+				robot.run(rc);
 			} catch (Exception e) {
-				System.out.println();
-				System.out.println(rc.getType() + " Exception");
+				System.out.println("\n" + rc.getType() + " Exception");
 				e.printStackTrace();
 			} finally {
 				Clock.yield();

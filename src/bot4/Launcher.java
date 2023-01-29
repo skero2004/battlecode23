@@ -2,36 +2,13 @@ package bot4;
 
 import battlecode.common.*;
 
-import bot4.util.*;
 import bot4.Plan.Mission;
 
-public class Launcher {
+public class Launcher extends Robot {
 
-	static boolean init = true;
-	static Team myTeam = Team.NEUTRAL;
-	static RobotInfo myHq;
-	static Mission myMission;
-
-	static void init(RobotController rc) throws GameActionException {
-		if (!init)
-			return;
-		myTeam = rc.getTeam();
-		for (RobotInfo robot : rc.senseNearbyRobots()) {
-			if (robot.team == myTeam && robot.type == RobotType.HEADQUARTERS)
-				myHq = robot;
-		}
-
-		// myMission = Communication.readMission(rc);
-		init = false;
-
-	}
-
-	static void run(RobotController rc) throws GameActionException {
-
+	void execute(RobotController rc) throws GameActionException {
 		final int ACTION_RADIUS = rc.getType().actionRadiusSquared;
 		final Team OPPONENT = rc.getTeam().opponent();
-
-		init(rc);
 
 		// Move according to assigned mission
 		// System.out.println("launcher mission: " + myMission.missionName + " " +
@@ -39,7 +16,6 @@ public class Launcher {
 		// if (myMission.missionName == MissionName.SCOUTING) {
 
 		Scout.move(rc, myHq);
-		Scout.updateInfos(rc);
 
 		// } else if (myMission.missionName == MissionName.ATTACK_ISLAND) {
 		// executeAttackIslandMission(rc, myMission);
@@ -83,7 +59,7 @@ public class Launcher {
 
 	}
 
-	static void executeAttackIslandMission(RobotController rc, Mission mission) throws GameActionException {
+	void executeAttackIslandMission(RobotController rc, Mission mission) throws GameActionException {
 
 		MapLocation target = mission.target;
 		rc.setIndicatorString("tgt: " + target);

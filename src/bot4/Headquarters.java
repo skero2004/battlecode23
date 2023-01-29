@@ -5,7 +5,7 @@ import battlecode.common.*;
 import bot4.util.*;
 import bot4.Plan.Mission;
 
-public class Headquarters {
+public class Headquarters extends Robot {
 
 	/**
 	 * Responsibilities:
@@ -20,7 +20,7 @@ public class Headquarters {
 	 */
 	static int missionCount = 0;
 
-	static void run(RobotController rc) throws GameActionException {
+	void execute(RobotController rc) throws GameActionException {
 		Mission mission = Plan.chooseMission(rc);
 
 		rc.setIndicatorString("M: " + mission.missionName + " " + missionCount);
@@ -47,7 +47,7 @@ public class Headquarters {
 		++missionCount;
 	}
 
-	private static boolean target(RobotController rc, Mission mission) throws GameActionException {
+	private boolean target(RobotController rc, Mission mission) throws GameActionException {
 		switch (mission.missionName) {
 			case COLLECT_ADAMANTIUM:
 			case COLLECT_MANA:
@@ -66,7 +66,7 @@ public class Headquarters {
 		}
 	}
 
-	private static boolean write(RobotController rc, Mission mission) throws GameActionException {
+	private boolean write(RobotController rc, Mission mission) throws GameActionException {
 		switch (mission.missionName) {
 			case CREATE_ANCHOR:
 				return true;
@@ -76,7 +76,7 @@ public class Headquarters {
 		}
 	}
 
-	private static boolean build(RobotController rc, Mission mission) throws GameActionException {
+	private boolean build(RobotController rc, Mission mission) throws GameActionException {
 		RobotType[] rt = {
 				RobotType.LAUNCHER,
 				RobotType.CARRIER,
@@ -121,7 +121,7 @@ public class Headquarters {
 		return true;
 	}
 
-	private static boolean update(RobotController rc, Mission mission) throws GameActionException {
+	private boolean update(RobotController rc, Mission mission) throws GameActionException {
 		Plan.isMissionActive[mission.missionName.ordinal()] = false;
 		return true;
 	}

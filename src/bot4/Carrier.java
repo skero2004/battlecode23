@@ -5,57 +5,37 @@ import battlecode.common.*;
 import bot4.util.*;
 import bot4.Plan.Mission;
 
-public class Carrier {
+public class Carrier extends Robot {
 
-	static boolean init = true;
-	static Team myTeam = Team.NEUTRAL;
-	static RobotInfo myHq;
-	static Mission myMission;
+	static final int INVENTORY_THRESHOLD = 30;
 
-	static void init(RobotController rc) throws GameActionException {
+	void execute(RobotController rc) throws GameActionException {
+		switch (myMission.missionName) {
+			case SCOUTING:
+				Scout.move(rc);
+				Scout.updateInfos(rc);
+				break;
 
-		if (!init)
-			return;
-		myTeam = rc.getTeam();
-		for (RobotInfo robot : rc.senseNearbyRobots()) {
-			if (robot.team == myTeam && robot.type == RobotType.HEADQUARTERS) {
-				myHq = robot;
-			}
+			case COLLECT_MANA:
+			case COLLECT_ADAMANTIUM:
+				executeCollectMission(rc);
+				break;
+
+			case CAPTURE_ISLAND:
+				executeCaptureMission(rc);
+				break;
+
+			default:
+				executeCaptureMission(rc);
+				break;
 		}
-
-		myMission = Communication.readMission(rc);
-		init = false;
-
 	}
 
-	static int INVENTORY_THRESHOLD = 30;
-
-	static void run(RobotController rc) throws GameActionException {
-		// Carrier gets mission
-		init(rc);
-		// rc.setIndicatorString("T: " + myMission.missionName);
-
-		rc.setIndicatorString("M: " + myMission.missionName + ", T: " + myMission.target);
-		if (myMission.missionName == MissionName.SCOUTING) {
-
-			Scout.move(rc);
-			Scout.updateInfos(rc);
-
-		} else if (myMission.isValidCollectMission()) {
-			executeCollectMission(rc, myMission);
-		} else if (myMission.missionName == MissionName.CAPTURE_ISLAND) {
-			executeCaptureMission(rc, myMission);
-		}
-
-		Scout.updateInfos(rc);
-	}
-
-	static void executeCollectMission(RobotController rc, Mission mission) throws GameActionException {
+	void executeCollectMission(RobotController rc) throws GameActionException {
 		int ad = rc.getResourceAmount(ResourceType.ADAMANTIUM);
 		int mn = rc.getResourceAmount(ResourceType.MANA);
 		if (ad + mn > INVENTORY_THRESHOLD) {
 			MapLocation target = myHq.location;
-			// ResourceType type = mission.getCollectResourceType();
 			if (rc.canTransferResource(target, ResourceType.ADAMANTIUM, ad)) {
 				rc.transferResource(target, ResourceType.ADAMANTIUM, ad);
 			} else if (rc.canTransferResource(target, ResourceType.MANA, mn)) {
@@ -66,7 +46,7 @@ public class Carrier {
 					rc.move(dir);
 			}
 		} else {
-			MapLocation target = mission.target;
+			MapLocation target = myMission.target;
 			rc.setIndicatorString("tgt: " + target);
 			if (rc.canCollectResource(target, -1)) {
 				rc.collectResource(target, -1);
@@ -78,10 +58,8 @@ public class Carrier {
 		}
 	}
 
-	static void executeCaptureMission(RobotController rc, Mission mission) throws GameActionException {
-
+	void executeCaptureMission(RobotController rc) throws GameActionException {
 		if (rc.getAnchor() == null) {
-
 			// If no anchor held, then get anchor
 			MapLocation target = myHq.location;
 			if (rc.canTakeAnchor(target, Anchor.STANDARD)) {
@@ -92,9 +70,8 @@ public class Carrier {
 					rc.move(dir);
 			}
 		} else {
-
 			// If carrier has an anchor, then go to target
-			MapLocation target = mission.target;
+			MapLocation target = myMission.target;
 			rc.setIndicatorString("tgt: " + target);
 			if (rc.canPlaceAnchor()) {
 				rc.placeAnchor();
@@ -103,9 +80,7 @@ public class Carrier {
 				if (rc.canMove(dir))
 					rc.move(dir);
 			}
-
 		}
-
 	}
 
 }

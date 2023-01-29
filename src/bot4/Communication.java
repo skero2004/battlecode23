@@ -56,7 +56,7 @@ public class Communication {
 
 		void write(RobotController rc, int index, int value) throws GameActionException {
 			assert 0 <= index && index < length;
-			queue.add(new Update(index, value, RobotPlayer.turnCount));
+			queue.add(new Update(index, value, Robot.turnCount));
 			flush(rc);
 		}
 
@@ -64,7 +64,7 @@ public class Communication {
 			while (!queue.isEmpty()) {
 				if (rc.canWriteSharedArray(0, 0)) {
 					Update u = queue.remove();
-					if (u.t + OUTDATED_TURNS >= RobotPlayer.turnCount)
+					if (u.t + OUTDATED_TURNS >= Robot.turnCount)
 						rc.writeSharedArray(start + u.i, u.v);
 				} else {
 					return false;

@@ -4,9 +4,9 @@ import battlecode.common.*;
 
 import bot4.util.*;
 
-public class Booster {
+public class Booster extends Robot {
 
-	static void run(RobotController rc) throws GameActionException {
+	void execute(RobotController rc) throws GameActionException {
 
 	}
 

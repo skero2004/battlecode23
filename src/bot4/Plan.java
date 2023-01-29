@@ -28,7 +28,7 @@ public class Plan {
 
 		public Mission(MissionName m) {
 
-			startTurn = RobotPlayer.turnCount;
+			startTurn = Robot.turnCount;
 			missionName = m;
 
 			// Setup for different missions
@@ -90,7 +90,7 @@ public class Plan {
 
 				case SCOUTING:
 					numLauncher = 2;
-					//numAmplifier = 1;
+					// numAmplifier = 1;
 					break;
 
 				case SEND_AMPLIFIER:
@@ -138,13 +138,14 @@ public class Plan {
 		// Logic to choose mission (default is loop of scout -> adamantium -> mana)
 		if (numEnemyLaunchers > 3)
 			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
-		//if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
-		//if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
-		if (Headquarters.missionCount >= 200 && Headquarters.missionCount % 99 == 0 && rc.getNumAnchors(Anchor.STANDARD) < 4)
+		// if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
+		// if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
+		if (Headquarters.missionCount >= 200 && Headquarters.missionCount % 99 == 0
+				&& rc.getNumAnchors(Anchor.STANDARD) < 4)
 			isMissionActive[MissionName.CREATE_ANCHOR.ordinal()] = true;
-		if (Headquarters.missionCount % 49 == 1 && rc.getNumAnchors(Anchor.STANDARD) > 0) 
+		if (Headquarters.missionCount % 49 == 1 && rc.getNumAnchors(Anchor.STANDARD) > 0)
 			isMissionActive[MissionName.CAPTURE_ISLAND.ordinal()] = true;
-		if (Headquarters.missionCount >= 50 && Headquarters.missionCount % 20 == 0) 
+		if (Headquarters.missionCount >= 50 && Headquarters.missionCount % 20 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
 		// TODO: Protect island???
 
