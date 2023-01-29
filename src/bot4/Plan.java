@@ -56,7 +56,7 @@ public class Plan {
 					break;
 
 				case ATTACK_ISLAND:
-					numLauncher = 3;
+					numLauncher = 5;
 
 				case CREATE_ELIXIR_WELL:
 					numLauncher = 3;

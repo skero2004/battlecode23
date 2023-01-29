@@ -2,6 +2,7 @@ package bot4;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Queue;
 
 import battlecode.common.*;
@@ -83,7 +84,7 @@ public class Communication {
 	static Segment missions = new Segment(0, 1); // mission type, mission target
 	static Segment adamantium = new Segment(1, 13); // well location
 	static Segment mana = new Segment(13, 25); // well location
-	static Segment islands = new Segment(25, 60); // island location and type
+	static Segment islands = new Segment(25, 61); // island location and type
 
 	static void writeMission(RobotController rc, Mission mission) throws GameActionException {
 		int value = mission.missionName.ordinal() + (mission.target.x << 4) + (mission.target.y << 10);
@@ -138,7 +139,7 @@ public class Communication {
 			int x = value & 63, y = (value >> 6) & 63;
 			options.add(new MapLocation(x, y));
 		}
-		return nearest(rc, options.toArray(new MapLocation[0]));
+		return choice(rc, options.toArray(new MapLocation[0]));
 	}
 
 	static void writeIsland(RobotController rc, int index, MapLocation location, Team team)
@@ -158,7 +159,7 @@ public class Communication {
 
 		}
 
-		return nearest(rc, options.toArray(new MapLocation[0]));
+		return choice(rc, options.toArray(new MapLocation[0]));
 	}
 
 	static boolean flush(RobotController rc) throws GameActionException {
@@ -169,14 +170,28 @@ public class Communication {
 		return true;
 	}
 
-	private static MapLocation nearest(RobotController rc, MapLocation... locations) {
+	private static MapLocation choice(RobotController rc, MapLocation... locations) {
 		if (locations.length == 0)
 			return null;
 		MapLocation curr = rc.getLocation();
-		MapLocation best = locations[0];
+		Arrays.sort(locations, (MapLocation a,
+				MapLocation b) -> curr.distanceSquaredTo(a) < curr.distanceSquaredTo(b) ? -1 : 1);
+
+		double mx = 0;
 		for (MapLocation m : locations)
-			if (curr.distanceSquaredTo(m) < curr.distanceSquaredTo(best))
-				best = m;
-		return best;
+			mx += Math.exp(-curr.distanceSquaredTo(m));
+
+		double p = Randomize.rng.nextDouble() * mx;
+
+		int i = 0;
+		for (MapLocation m : locations) {
+			p -= Math.exp(-curr.distanceSquaredTo(m));
+			if (p <= 0) {
+				System.out.println("thing: " + i);
+				return m;
+			}
+			++i;
+		}
+		return null;
 	}
 }
