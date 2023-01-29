@@ -15,9 +15,9 @@ public class Plan {
 
 	// These change to true in this file, but false in HQ (once mission is
 	// completed)
-	public static boolean[] isMissionActive = new boolean[MissionName.values().length];
+	static boolean[] isMissionActive = new boolean[MissionName.values().length];
 
-	public static class Mission {
+	static class Mission {
 
 		public int startTurn = 0;
 		public int numLauncher = 0;
@@ -103,11 +103,6 @@ public class Plan {
 
 		}
 
-		boolean isValidCollectMission() {
-			return this.missionName == MissionName.COLLECT_ADAMANTIUM
-					|| this.missionName == MissionName.COLLECT_MANA;
-		}
-
 		ResourceType getCollectResourceType() {
 			switch (this.missionName) {
 				case COLLECT_ADAMANTIUM:
@@ -139,8 +134,9 @@ public class Plan {
 		if (numEnemyLaunchers > 3)
 			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
 		// if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
-		if (rc.getRoundNum() % 150 == 0)
-			isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
+		// if (rc.getRoundNum() % 150 == 0 && Communication.readIsland(rc,
+		// rc.getTeam().opponent()) != null)
+		isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
 		if (Headquarters.missionCount >= 200
 				&& Headquarters.missionCount % 99 == 0
 				&& rc.getNumAnchors(Anchor.STANDARD) < 4)

@@ -1,6 +1,7 @@
 package bot4;
 
 import battlecode.common.*;
+import bot4.util.Randomize;
 
 public class Launcher extends Robot {
 
@@ -8,18 +9,20 @@ public class Launcher extends Robot {
 		attackEnemies(rc);
 
 		switch (myMission.missionName) {
-			case SCOUTING:
+			default:
 				Scout.move(rc);
 				Scout.updateInfos(rc);
 				break;
 
-			default:
-				if (rc.getLocation().distanceSquaredTo(myMission.target) > 3)
-					move(rc);
-				else
-					Scout.move(rc);
-
-				break;
+			/*
+			 * case SCOUTING:
+			 * if (rc.getLocation().distanceSquaredTo(myMission.target) > 1)
+			 * move(rc);
+			 * else
+			 * Scout.move(rc);
+			 * 
+			 * break;
+			 */
 		}
 	}
 
@@ -59,8 +62,14 @@ public class Launcher extends Robot {
 			}
 		}
 
-		// If there is a target, attack
 		if (target != null && rc.canAttack(target.getLocation()))
 			rc.attack(target.getLocation());
+
+		MapLocation clouds[] = rc.senseNearbyCloudLocations(ACTION_RADIUS);
+		if (clouds != null && clouds.length > 0) {
+			MapLocation targetLoc = clouds[Randomize.rng.nextInt(clouds.length)];
+			if (rc.canAttack(targetLoc))
+				rc.attack(targetLoc);
+		}
 	}
 }
