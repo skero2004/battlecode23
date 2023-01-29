@@ -143,7 +143,7 @@ public class Plan {
 		if (Headquarters.missionCount >= 200 && Headquarters.missionCount % 99 == 0
 				&& rc.getNumAnchors(Anchor.STANDARD) < 4)
 			isMissionActive[MissionName.CREATE_ANCHOR.ordinal()] = true;
-		if (Headquarters.missionCount % 49 == 1 && rc.getNumAnchors(Anchor.STANDARD) > 0)
+		if (rc.getNumAnchors(Anchor.STANDARD) > 0)
 			isMissionActive[MissionName.CAPTURE_ISLAND.ordinal()] = true;
 		if (Headquarters.missionCount >= 50 && Headquarters.missionCount % 20 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
