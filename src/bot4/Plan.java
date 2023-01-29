@@ -159,7 +159,7 @@ public class Plan {
 				return new Mission(m);
 		}
 
-		if (Headquarters.missionCount % 5 <= 2
+		if (Headquarters.missionCount % 7 <= 2
 				&& Communication.readWell(rc, ResourceType.ADAMANTIUM) != null)
 			return new Mission(MissionName.COLLECT_ADAMANTIUM);
 		else if (Headquarters.missionCount % 5 <= 4

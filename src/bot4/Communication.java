@@ -133,6 +133,8 @@ public class Communication {
 		ArrayList<MapLocation> options = new ArrayList<>();
 		for (int i = 0; i < seg.length; ++i) {
 			int value = seg.read(rc, i) - 1;
+			if (value < 0)
+				continue;
 			int x = value & 63, y = (value >> 6) & 63;
 			options.add(new MapLocation(x, y));
 		}
@@ -148,6 +150,8 @@ public class Communication {
 		ArrayList<MapLocation> options = new ArrayList<>();
 		for (int i = 0; i < islands.length; ++i) {
 			int value = islands.read(rc, i) - 1;
+			if (value < 0)
+				continue;
 			int x = value & 63, y = (value >> 6) & 63;
 			if (team.ordinal() == (value >> 12))
 				options.add(new MapLocation(x, y));

@@ -10,6 +10,8 @@ public class Carrier extends Robot {
 		switch (myMission.missionName) {
 			case COLLECT_MANA:
 			case COLLECT_ADAMANTIUM:
+				if (turnCount % 100 == 0)
+					myMission.target = Communication.readWell(rc, myMission.getCollectResourceType());
 				executeCollectMission(rc);
 				break;
 
