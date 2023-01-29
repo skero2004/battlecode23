@@ -20,7 +20,7 @@ public class Launcher {
 	//			myHq = robot;
 	//	}
 
-		myMission = Communication.readMission(rc);
+		//myMission = Communication.readMission(rc);
 		init = false;
 
 	}
@@ -31,7 +31,7 @@ public class Launcher {
         final Team OPPONENT = rc.getTeam().opponent();
 
 		// Move according to assigned mission
-		System.out.println("launcher mission: " + myMission.missionName + " " + myMission.target);
+		//System.out.println("launcher mission: " + myMission.missionName + " " + myMission.target);
 	//	if (myMission.missionName == MissionName.SCOUTING) {
 
 			Scout.move(rc);

@@ -11,12 +11,13 @@ public class Plan {
 	private static final int AMPLIFIER_AD = 30;
 	private static final int AMPLIFIER_MN = 15;
 
-	private static boolean isCaptureIsland = false;
-	private static boolean isProtectIsland = false;
-	private static boolean isProtectHQ = false;
-	private static boolean isAmplifier = false;
-	private static boolean isAttackIsland = false;
-	private static boolean isCreateAnchor = false;
+	// These change to true in this file, but false in HQ (once mission is completed)
+	public static boolean isCaptureIsland = false;
+	public static boolean isProtectIsland = false;
+	public static boolean isProtectHQ = false;
+	public static boolean isAmplifier = false;
+	public static boolean isAttackIsland = false;
+	public static boolean isCreateAnchor = false;
 
 	public static class Mission {
 
@@ -139,14 +140,15 @@ public class Plan {
 
 		// Logic to choose mission (default is loop of scout -> adamantium -> mana)
 		if (numEnemyLaunchers > 3) isProtectIsland = true;
-		if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
-		if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
-		if (rc.getRoundNum() > 500 && rc.getRoundNum() % 100 == 0 && rc.getNumAnchors(Anchor.STANDARD) < 4) isCreateAnchor = true;
-		if (rc.getRoundNum() > 500 && rc.getRoundNum() % 200 == 0 && rc.getNumAnchors(Anchor.STANDARD) > 0) isCaptureIsland = true;
+		//if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
+		//if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
+		if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 100 == 0 && rc.getNumAnchors(Anchor.STANDARD) < 4) isCreateAnchor = true;
+		//if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 200 == 0 && rc.getNumAnchors(Anchor.STANDARD) > 0) isCaptureIsland = true;
 		// TODO: Protect island???
 
+		System.out.println(isCreateAnchor);
 		// Return the correct mission. Defaults to rotation between scouting, collect adamantium, and collect mana.
-		if (!isCaptureIsland && !isProtectHQ && !isProtectIsland && !isAmplifier) {
+		if (!isCaptureIsland && !isProtectHQ && !isProtectIsland && !isAmplifier && !isAttackIsland && !isCreateAnchor) {
 			switch (rc.getRoundNum() % 3) {
 				case 0:
 					return new Mission(MissionName.SCOUTING);
@@ -159,22 +161,16 @@ public class Plan {
 		} else if (isProtectHQ) {
 			return new Mission(MissionName.PROTECT_HQ);
 		} else if (isProtectIsland) {
-			isProtectIsland = false;
 			return new Mission(MissionName.PROTECT_ISLAND);
 		} else if (isCaptureIsland) {
-			isCaptureIsland = false;
 			return new Mission(MissionName.CAPTURE_ISLAND);
 		} else if (isAttackIsland) {
-			isAttackIsland = false;
 			return new Mission(MissionName.ATTACK_ISLAND);
 		} else if (isCreateAnchor) {
-			isCreateAnchor = false;
 			return new Mission(MissionName.CREATE_ANCHOR);
 		} else if (isCaptureIsland) {
-			isCaptureIsland = false;
 			return new Mission(MissionName.CAPTURE_ISLAND);
 		} else {
-			isAmplifier = false;
 			return new Mission(MissionName.SEND_AMPLIFIER);
 		}
 

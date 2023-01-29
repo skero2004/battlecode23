@@ -47,6 +47,15 @@ public class Headquarters {
 		Mission mission = Plan.chooseMission(rc);
 		rc.setIndicatorString("T: " + mission.missionName);
 
+		// Create anchor if mission tells it to
+		if (mission.missionName == MissionName.CREATE_ANCHOR) {
+			if (rc.canBuildAnchor(Anchor.STANDARD)) {
+				Plan.isCreateAnchor = false;
+				rc.buildAnchor(Anchor.STANDARD);
+			}
+			return;
+		}
+			
 		// Execute mission
 		RobotType[] rt = {
 				RobotType.LAUNCHER,
