@@ -92,7 +92,8 @@ public class Headquarters {
 			ResourceType type = mission.getCollectResourceType();
 			MapLocation loc = Communication.readWell(rc, type);
 			mission.target = loc;
-		} else if (mission.missionName == MissionName.CAPTURE_ISLAND) {
+		} else if (mission.missionName == MissionName.CAPTURE_ISLAND ||
+				   mission.missionName == MissionName.ATTACK_ISLAND) {
 			MapLocation loc = Communication.readIsland(rc, Team.NEUTRAL);
 			if (loc == null) {
 				Team enemy = myTeam == Team.A ? Team.B : Team.A;

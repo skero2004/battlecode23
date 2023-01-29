@@ -7,43 +7,39 @@ import bot4.Plan.Mission;
 
 public class Launcher {
 
-    static int id = 0;
-    static Direction dir = Constants.directions[0];
-    /*
-       static void init(RobotController rc) throws GameActionException {
+	static boolean init = true;
+	static Team myTeam = Team.NEUTRAL;
+	static RobotInfo myHq;
+	static Mission myMission;
 
-       id = rc.getID();
-       dir = Constants.directions[id % 8];
+	static void init(RobotController rc) throws GameActionException {
+		if (!init) return;
+	//	myTeam = rc.getTeam();
+	//	for (RobotInfo robot : rc.senseNearbyRobots()) {
+	//		if (robot.team == myTeam && robot.type == RobotType.HEADQUARTERS)
+	//			myHq = robot;
+	//	}
 
-       }
-       */
+		myMission = Communication.readMission(rc);
+		init = false;
+
+	}
 
     static void run(RobotController rc) throws GameActionException {
 
         final int ACTION_RADIUS = rc.getType().actionRadiusSquared;
         final Team OPPONENT = rc.getTeam().opponent();
 
-        /*
-        // Initialize
-        if (RobotPlayer.turnCount == 1) init(rc);
+		// Move according to assigned mission
+		System.out.println("launcher mission: " + myMission.missionName + " " + myMission.target);
+	//	if (myMission.missionName == MissionName.SCOUTING) {
 
-        // Direction
-        dir = Constants.directions[id % 8];
-        if (rc.canMove(dir))
-        rc.move(dir);
-        else if (rc.getMovementCooldownTurns() - GameConstants.COOLDOWNS_PER_TURN < 0) 
-        if (rc.getID() % 2 == 0) id++;
-        else 					 id--;
+			Scout.move(rc);
+			Scout.updateInfos(rc);
 
-        rc.setIndicatorString("" + rc.getMovementCooldownTurns());
-        */
-
-        //if (mission.missionName == MissionName.SCOUTING) 
-        //Mission mission = Communication.readMission(rc);
-        //rc.setIndicatorString("T: " + mission.missionName);
-
-        Scout.move(rc);
-        Scout.updateInfos(rc);
+	//	} else if (myMission.missionName == MissionName.ATTACK_ISLAND) {
+	//		executeAttackIslandMission(rc, myMission);
+	//	}
 
         // Find target enemy
         RobotInfo[] enemies = rc.senseNearbyRobots(ACTION_RADIUS, OPPONENT);
@@ -82,5 +78,16 @@ public class Launcher {
             rc.attack(target.getLocation());
 
     }
+
+	static void executeAttackIslandMission(RobotController rc, Mission mission) throws GameActionException {
+
+		MapLocation target = mission.target;
+		rc.setIndicatorString("tgt: " + target);
+		Direction dir = Paths.findMove(rc, target);
+		if (rc.canMove(dir)) rc.move(dir);
+
+		// TODO: (probably) change target once island is capured (or too many friend launchers?)
+
+	}
 
 }
