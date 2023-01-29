@@ -6,6 +6,9 @@ import bot4.util.Randomize;
 public class Launcher extends Robot {
 
 	void execute(RobotController rc) throws GameActionException {
+		if (turnCount % 200 == 0)
+			init(rc);
+
 		attackEnemies(rc);
 
 		switch (myMission.missionName) {

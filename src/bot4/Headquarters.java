@@ -93,6 +93,30 @@ public class Headquarters extends Robot {
 				mission.numAmplifier,
 		};
 
+		int[] mn = {
+				45,
+				0,
+				// ?,
+				// ?,
+				15,
+		};
+
+		int[] ad = {
+				0,
+				50,
+				// ?,
+				// ?,
+				30,
+		};
+
+		int totalAd = 0, totalMn = 0;
+		for (int i = 0; i < rt.length; ++i) {
+			for (int j = 0; j < rn[i]; ++j) {
+				totalAd += ad[i];
+				totalMn += mn[i];
+			}
+		}
+
 		switch (mission.missionName) {
 			case CREATE_ANCHOR:
 				if (rc.canBuildAnchor(Anchor.STANDARD)) {
