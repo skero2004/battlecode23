@@ -4,9 +4,9 @@ public enum MissionName {
 
 	// More important missions at the top
 	PROTECT_HQ,
-	ATTACK_HQ,
 	PROTECT_ISLAND,
 	CAPTURE_ISLAND,
+	ATTACK_HQ,
 	ATTACK_ISLAND,
 	AMBUSH,
 	CREATE_ELIXIR_WELL,

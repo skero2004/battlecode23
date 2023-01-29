@@ -1,5 +1,7 @@
 package bot4;
 
+import java.util.Arrays;
+
 import battlecode.common.*;
 
 import bot4.util.*;
@@ -14,12 +16,6 @@ public class Plan {
 	// These change to true in this file, but false in HQ (once mission is
 	// completed)
 	public static boolean[] isMissionActive = new boolean[MissionName.values().length];
-	public static boolean isCaptureIsland = false;
-	public static boolean isProtectIsland = false;
-	public static boolean isProtectHQ = false;
-	public static boolean isAmplifier = false;
-	public static boolean isAttackIsland = false;
-	public static boolean isCreateAnchor = false;
 
 	public static class Mission {
 
@@ -141,19 +137,18 @@ public class Plan {
 
 		// Logic to choose mission (default is loop of scout -> adamantium -> mana)
 		if (numEnemyLaunchers > 3)
-			isProtectHQ = true;
+			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
 		//if (rc.getRoundNum() % 100 == 0) isAmplifier = true;
 		//if (rc.getRoundNum() % 150 == 0) isAttackIsland = true;
 		if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 100 == 0 && rc.getNumAnchors(Anchor.STANDARD) < 4)
-			isCreateAnchor = true;
+			isMissionActive[MissionName.CREATE_ANCHOR.ordinal()] = true;
 		if (rc.getRoundNum() >= 500 && rc.getRoundNum() % 200 == 0 &&
-			rc.getNumAnchors(Anchor.STANDARD) > 0) isCaptureIsland = true;
+			rc.getNumAnchors(Anchor.STANDARD) > 0) isMissionActive[MissionName.CAPTURE_ISLAND.ordinal()] = true;
 		// TODO: Protect island???
 
 		// Return the correct mission. Defaults to rotation between scouting, collect
 		// adamantium, and collect mana.
-		if (!isCaptureIsland && !isProtectHQ && !isProtectIsland && !isAmplifier && !isAttackIsland
-				&& !isCreateAnchor) {
+		if (!Arrays.asList(isMissionActive).contains(true)) {
 			switch (rc.getRoundNum() % 3) {
 				case 0:
 					return new Mission(MissionName.SCOUTING);
@@ -170,6 +165,7 @@ public class Plan {
 				return new Mission(m);
 
 		}
+		return new Mission(MissionName.SCOUTING);
 
 	}
 
