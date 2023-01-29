@@ -2,9 +2,6 @@ package bot4;
 
 import battlecode.common.*;
 
-import bot4.util.*;
-import bot4.Plan.Mission;
-
 public class Carrier extends Robot {
 
 	static final int INVENTORY_THRESHOLD = 30;
@@ -26,7 +23,7 @@ public class Carrier extends Robot {
 				break;
 
 			default:
-				executeCaptureMission(rc);
+				init(rc);
 				break;
 		}
 	}
