@@ -14,11 +14,11 @@ public class Launcher {
 
 	static void init(RobotController rc) throws GameActionException {
 		if (!init) return;
-	//	myTeam = rc.getTeam();
-	//	for (RobotInfo robot : rc.senseNearbyRobots()) {
-	//		if (robot.team == myTeam && robot.type == RobotType.HEADQUARTERS)
-	//			myHq = robot;
-	//	}
+		myTeam = rc.getTeam();
+		for (RobotInfo robot : rc.senseNearbyRobots()) {
+			if (robot.team == myTeam && robot.type == RobotType.HEADQUARTERS)
+				myHq = robot;
+		}
 
 		//myMission = Communication.readMission(rc);
 		init = false;
@@ -30,11 +30,13 @@ public class Launcher {
         final int ACTION_RADIUS = rc.getType().actionRadiusSquared;
         final Team OPPONENT = rc.getTeam().opponent();
 
+		init(rc);
+
 		// Move according to assigned mission
 		//System.out.println("launcher mission: " + myMission.missionName + " " + myMission.target);
 	//	if (myMission.missionName == MissionName.SCOUTING) {
 
-			Scout.move(rc);
+			Scout.move(rc, myHq);
 			Scout.updateInfos(rc);
 
 	//	} else if (myMission.missionName == MissionName.ATTACK_ISLAND) {

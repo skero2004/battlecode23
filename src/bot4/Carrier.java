@@ -38,7 +38,7 @@ public class Carrier {
 		System.out.println("carrier mission: " + myMission.missionName + " " + myMission.target);
 		if (myMission.missionName == MissionName.SCOUTING) {
 
-			Scout.move(rc);
+			Scout.move(rc, myHq);
 			Scout.updateInfos(rc);
 
 		} else if (myMission.isValidCollectMission()) {
