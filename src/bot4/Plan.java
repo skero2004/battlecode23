@@ -56,7 +56,7 @@ public class Plan {
 					break;
 
 				case ATTACK_ISLAND:
-					numLauncher = 3;
+					numLauncher = 5;
 					break;
 
 				case CREATE_ELIXIR_WELL:
@@ -153,10 +153,9 @@ public class Plan {
 				&& Communication.readIsland(rc, Team.NEUTRAL) != null)
 			isMissionActive[MissionName.CAPTURE_ISLAND.ordinal()] = true;
 
-		if (Headquarters.missionCount >= 50
-				&& Headquarters.missionCount % 20 == 0)
+		if (//Headquarters.missionCount >= 50
+			Headquarters.missionCount % 19 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
-		// TODO: Protect island???
 
 		// Return the correct mission. Defaults to rotation between scouting, collect
 		// adamantium, and collect mana.
@@ -168,7 +167,7 @@ public class Plan {
 		if (Headquarters.missionCount % 7 <= 2
 				&& Communication.readWell(rc, ResourceType.ADAMANTIUM) != null)
 			return new Mission(MissionName.COLLECT_ADAMANTIUM);
-		else if (Headquarters.missionCount % 5 <= 4
+		else if (Headquarters.missionCount % 7 <= 4
 				&& Communication.readWell(rc, ResourceType.MANA) != null)
 			return new Mission(MissionName.COLLECT_MANA);
 		else

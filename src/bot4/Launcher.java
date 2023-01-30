@@ -18,7 +18,7 @@ public class Launcher extends Robot {
 				break;
 
 			default:
-				if (rc.getLocation().distanceSquaredTo(myMission.target) > 2)
+				if (rc.getLocation().distanceSquaredTo(myMission.target) > 8)
 					move(rc);
 				else
 					Scout.move(rc);
