@@ -51,7 +51,7 @@ public class Carrier extends Robot {
 			else
 				move(rc, myHq);
 		} else {
-			if (rc.canPlaceAnchor())
+			if (rc.canPlaceAnchor() && rc.senseTeamOccupyingIsland(rc.senseIsland(rc.getLocation())) == Team.NEUTRAL)
 				rc.placeAnchor();
 			else
 				move(rc);

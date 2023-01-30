@@ -57,7 +57,13 @@ public class Headquarters extends Robot {
 				mission.target = Communication.readIsland(rc, Team.NEUTRAL);
 				return mission.target != null;
 			case ATTACK_ISLAND:
-				mission.target = Communication.readIsland(rc, rc.getTeam().opponent());
+				if (Communication.readIsland(rc, rc.getTeam().opponent()) != null)
+					mission.target = Communication.readIsland(rc, rc.getTeam().opponent());
+				else
+					mission.target = Communication.readIsland(rc, Team.NEUTRAL);
+				return mission.target != null;
+			case PROTECT_ISLAND:
+				mission.target = Communication.readIsland(rc, rc.getTeam());
 				return mission.target != null;
 			default:
 				mission.target = new MapLocation(Randomize.rng.nextInt(rc.getMapWidth()),

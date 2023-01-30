@@ -56,7 +56,8 @@ public class Plan {
 					break;
 
 				case ATTACK_ISLAND:
-					numLauncher = 5;
+					numLauncher = 3;
+					break;
 
 				case CREATE_ELIXIR_WELL:
 					numLauncher = 3;
@@ -90,11 +91,11 @@ public class Plan {
 
 				case SCOUTING:
 					numLauncher = 2;
-					// numAmplifier = 1;
 					break;
 
 				case SEND_AMPLIFIER:
 					numAmplifier = 1;
+					break;
 
 				case CREATE_ANCHOR:
 					break;
@@ -134,9 +135,14 @@ public class Plan {
 		if (numEnemyLaunchers > 3)
 			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
 
-		if (Headquarters.missionCount % 7 == 0
-				&& Communication.readIsland(rc, rc.getTeam().opponent()) != null)
+		if (Headquarters.missionCount >= 100
+				&& Headquarters.missionCount % 4 == 0)
 			isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
+
+		if (Headquarters.missionCount >= 100 
+				&& Headquarters.missionCount % 5 == 0
+				&& Communication.readIsland(rc, rc.getTeam()) != null)
+			isMissionActive[MissionName.PROTECT_ISLAND.ordinal()] = true;
 
 		if (Headquarters.missionCount >= 100
 				&& (Headquarters.missionCount % 99 == 0 || rc.canBuildAnchor(Anchor.STANDARD))
