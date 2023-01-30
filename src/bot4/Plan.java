@@ -56,7 +56,7 @@ public class Plan {
 					break;
 
 				case ATTACK_ISLAND:
-					numLauncher = 5;
+					numLauncher = 3;
 					break;
 
 				case CREATE_ELIXIR_WELL:
@@ -136,11 +136,11 @@ public class Plan {
 			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
 
 		if (Headquarters.missionCount >= 100
-				&& Headquarters.missionCount % 4 == 0)
+				&& Headquarters.missionCount % 5 == 0)
 			isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
 
 		if (Headquarters.missionCount >= 100 
-				&& Headquarters.missionCount % 5 == 0
+				&& Headquarters.missionCount % 4 == 0
 				&& Communication.readIsland(rc, rc.getTeam()) != null)
 			isMissionActive[MissionName.PROTECT_ISLAND.ordinal()] = true;
 
@@ -153,8 +153,8 @@ public class Plan {
 				&& Communication.readIsland(rc, Team.NEUTRAL) != null)
 			isMissionActive[MissionName.CAPTURE_ISLAND.ordinal()] = true;
 
-		if (//Headquarters.missionCount >= 50
-			Headquarters.missionCount % 19 == 0)
+		if (Headquarters.missionCount >= 50
+				&& Headquarters.missionCount % 19 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
 
 		// Return the correct mission. Defaults to rotation between scouting, collect

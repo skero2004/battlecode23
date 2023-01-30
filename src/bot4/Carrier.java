@@ -1,12 +1,25 @@
 package bot4;
 
 import battlecode.common.*;
+import bot4.Plan.Mission;
+import bot4.util.MissionName;
 
 public class Carrier extends Robot {
 
 	static final int INVENTORY_THRESHOLD = 30;
 
 	void execute(RobotController rc) throws GameActionException {
+
+		//TODO: IDK WTH IS GOING ON BUT CARRIERS ARE ASSIGNED ATTACK ISLAND BOOOOO
+		if (myMission.missionName == MissionName.ATTACK_ISLAND)
+			if (Headquarters.missionCount % 2 == 0) {
+				myMission = new Mission(MissionName.COLLECT_MANA);
+				myMission.target = Communication.readWell(rc, ResourceType.ADAMANTIUM);
+			} else {
+				myMission = new Mission(MissionName.COLLECT_MANA);
+				myMission.target = Communication.readWell(rc, ResourceType.MANA);
+			}
+				
 		switch (myMission.missionName) {
 			case COLLECT_MANA:
 			case COLLECT_ADAMANTIUM:
