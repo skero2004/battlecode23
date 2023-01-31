@@ -15,6 +15,10 @@ public class Launcher extends Robot {
 		return c;
 	}
 
+	boolean sameMission(int id1, int id2) {
+		return (id1 % 5 == 0) == (id2 % 5 == 0);
+	}
+
 	void execute(RobotController rc) throws GameActionException {
 		if (myMission.missionName != MissionName.ATTACK_ISLAND || turnCount % 200 == 0) {
 			myMission = new Mission(MissionName.ATTACK_ISLAND);
@@ -28,30 +32,32 @@ public class Launcher extends Robot {
 
 		attackEnemies(rc);
 
-		switch (myMission.missionName) {
-			case SCOUTING:
-				if (!followLeader(rc))
-					Scout.move(rc);
-				break;
+		if (!followLeader(rc)) {
+			switch (myMission.missionName) {
+				case SCOUTING:
+					if (!followLeader(rc))
+						Scout.move(rc);
+					break;
 
-			case ATTACK_HQ:
-				if (rc.getLocation().distanceSquaredTo(myMission.target) > 18)
-					move(rc);
-				else if (rc.getLocation().distanceSquaredTo(myMission.target) <= 12) {
-					Direction d = rc.getLocation().directionTo(myMission.target).opposite();
-					if (rc.canMove(d))
-						rc.move(d);
+				case ATTACK_HQ:
+					if (rc.getLocation().distanceSquaredTo(myMission.target) > 18)
+						move(rc);
+					else if (rc.getLocation().distanceSquaredTo(myMission.target) <= 12) {
+						Direction d = rc.getLocation().directionTo(myMission.target).opposite();
+						if (rc.canMove(d))
+							rc.move(d);
+						else
+							Scout.move(rc);
+					}
+
+					break;
+
+				default:
+					if (rc.getLocation().distanceSquaredTo(myMission.target) > 12)
+						move(rc);
 					else
 						Scout.move(rc);
-				}
-
-				break;
-
-			default:
-				if (rc.getLocation().distanceSquaredTo(myMission.target) > 12)
-					move(rc);
-				else
-					Scout.move(rc);
+			}
 		}
 	}
 
@@ -64,7 +70,7 @@ public class Launcher extends Robot {
 		}
 		if (leader == null || leader.getID() > rc.getID())
 			return false;
-		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 12)
+		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 4)
 			stepTowards(rc, leader.getLocation());
 		else
 			Randomize.move(rc);

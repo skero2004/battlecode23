@@ -29,6 +29,8 @@ public abstract class Robot {
 			rc.setIndicatorString("M: " + myMission.missionName + ", T: " + myMission.target);
 			Scout.updateInfos(rc);
 		}
+		Map.WIDTH = rc.getMapWidth();
+		Map.HEIGHT = rc.getMapHeight();
 
 		execute(rc);
 
@@ -55,7 +57,7 @@ public abstract class Robot {
 		Direction dir = rc.getLocation().directionTo(target);
 		if (rc.canMove(dir))
 			rc.move(dir);
-		else
+		else if (rc.canMove(dir.opposite()))
 			rc.move(dir.opposite());
 	}
 

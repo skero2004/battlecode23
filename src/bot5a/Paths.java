@@ -29,8 +29,7 @@ public class Paths {
 			MapLocation bestLocation = null;
 			for (MapLocation m : neighbors(rc)) {
 				if (!rc.canMove(current.directionTo(m))) {
-					if (rc.isLocationOccupied(m))
-						visited[current.x][current.y] = false;
+					// if (rc.isLocationOccupied(m)) visited[current.x][current.y] = false;
 					continue;
 				}
 

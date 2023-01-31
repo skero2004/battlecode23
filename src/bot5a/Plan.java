@@ -48,27 +48,8 @@ public class Plan {
 					numCarrier = 1;
 					break;
 
-				case AMBUSH:
-					numLauncher = 3;
-					break;
-
 				case ATTACK_ISLAND:
 					numLauncher = 3;
-					break;
-
-				case CREATE_ELIXIR_WELL:
-					numLauncher = 3;
-					numCarrier = 3;
-					break;
-
-				case UPGRADE_ADAMANTIUM_WELL:
-					numLauncher = 3;
-					numCarrier = 3;
-					break;
-
-				case UPGRADE_MANA_WELL:
-					numLauncher = 3;
-					numCarrier = 3;
 					break;
 
 				case COLLECT_ADAMANTIUM:
@@ -78,11 +59,6 @@ public class Plan {
 
 				case COLLECT_MANA:
 					numLauncher = 1;
-					numCarrier = 2;
-					break;
-
-				case COLLECT_ELIXIR:
-					numLauncher = 2;
 					numCarrier = 2;
 					break;
 
@@ -96,6 +72,9 @@ public class Plan {
 
 				case CREATE_ANCHOR:
 					break;
+
+				case FIND_SYMMETRY:
+					numAmplifier = 1;
 
 			}
 
@@ -142,7 +121,7 @@ public class Plan {
 				&& Communication.readIsland(rc, rc.getTeam()) != null)
 			isMissionActive[MissionName.PROTECT_ISLAND.ordinal()] = true;
 
-		if (rc.getRobotCount() >= 80
+		if (rc.getRobotCount() >= 40
 				&& (Headquarters.missionCount % 99 == 0 || rc.canBuildAnchor(Anchor.STANDARD))
 				&& rc.getNumAnchors(Anchor.STANDARD) < 4)
 			isMissionActive[MissionName.CREATE_ANCHOR.ordinal()] = true;
@@ -154,6 +133,9 @@ public class Plan {
 		if (Headquarters.missionCount >= 50
 				&& Headquarters.missionCount % 19 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
+
+		if (Map.SYMMETRY == null && Headquarters.missionCount % 3000 == 0)
+			isMissionActive[MissionName.FIND_SYMMETRY.ordinal()] = true;
 
 		// Return the correct mission. Defaults to rotation between scouting, collect
 		// adamantium, and collect mana.

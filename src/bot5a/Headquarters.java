@@ -3,6 +3,7 @@ package bot5a;
 import battlecode.common.*;
 
 import bot5a.util.*;
+import bot5a.Map.Symmetry;
 import bot5a.Plan.Mission;
 
 public class Headquarters extends Robot {
@@ -45,6 +46,23 @@ public class Headquarters extends Robot {
 		}
 
 		++missionCount;
+
+		if (Map.SYMMETRY == null) {
+			int m = rc.readSharedArray(63);
+			switch (m) {
+				case 7 - 1:
+					Map.SYMMETRY = Symmetry.VERTICAL;
+					break;
+				case 7 - 2:
+					Map.SYMMETRY = Symmetry.HORIZONTAL;
+					break;
+				case 7 - 4:
+					Map.SYMMETRY = Symmetry.ROTATIONAL;
+					break;
+			}
+		}
+		if (Map.SYMMETRY != null)
+			rc.setIndicatorString("Symmetry: " + Map.SYMMETRY);
 	}
 
 	private boolean target(RobotController rc, Mission mission) throws GameActionException {
@@ -65,6 +83,12 @@ public class Headquarters extends Robot {
 			case PROTECT_ISLAND:
 				mission.target = Communication.readIsland(rc, rc.getTeam());
 				return mission.target != null;
+			case ATTACK_HQ:
+				mission.target = Map.reflect(rc.getLocation(), Map.SYMMETRY);
+				return mission.target != null;
+			case FIND_SYMMETRY:
+				mission.target = new MapLocation(61, 61);
+				return true;
 			default:
 				mission.target = new MapLocation(Randomize.rng.nextInt(rc.getMapWidth()),
 						Randomize.rng.nextInt(rc.getMapHeight()));
