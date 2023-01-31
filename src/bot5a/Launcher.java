@@ -28,19 +28,30 @@ public class Launcher extends Robot {
 
 		attackEnemies(rc);
 
-		if (!followLeader(rc)) {
-			switch (myMission.missionName) {
-				case SCOUTING:
+		switch (myMission.missionName) {
+			case SCOUTING:
+				if (!followLeader(rc))
 					Scout.move(rc);
-					Scout.updateInfos(rc);
-					break;
+				break;
 
-				default:
-					if (rc.getLocation().distanceSquaredTo(myMission.target) > 9)
-						move(rc);
+			case ATTACK_HQ:
+				if (rc.getLocation().distanceSquaredTo(myMission.target) > 18)
+					move(rc);
+				else if (rc.getLocation().distanceSquaredTo(myMission.target) <= 12) {
+					Direction d = rc.getLocation().directionTo(myMission.target).opposite();
+					if (rc.canMove(d))
+						rc.move(d);
 					else
 						Scout.move(rc);
-			}
+				}
+
+				break;
+
+			default:
+				if (rc.getLocation().distanceSquaredTo(myMission.target) > 12)
+					move(rc);
+				else
+					Scout.move(rc);
 		}
 	}
 
@@ -53,10 +64,10 @@ public class Launcher extends Robot {
 		}
 		if (leader == null || leader.getID() > rc.getID())
 			return false;
-		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 9)
+		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 12)
 			stepTowards(rc, leader.getLocation());
 		else
-			Scout.move(rc);
+			Randomize.move(rc);
 		return true;
 	}
 
