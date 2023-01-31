@@ -105,10 +105,9 @@ public class Plan {
 		int numEnemyLaunchers = 0;
 		for (RobotInfo enemy : enemies)
 			if (enemy.getType() == RobotType.LAUNCHER)
-				numEnemyLaunchers++;
 
 		// Logic to choose mission (default is loop of scout -> adamantium -> mana)
-		if (numEnemyLaunchers > 3)
+		if (enemies.length >= 2)
 			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
 
 		if (Headquarters.missionCount >= 100
@@ -131,7 +130,7 @@ public class Plan {
 			isMissionActive[MissionName.CAPTURE_ISLAND.ordinal()] = true;
 
 		if (Headquarters.missionCount >= 50
-				&& Headquarters.missionCount % 19 == 0)
+				&& Headquarters.missionCount % 31 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
 
 		// Return the correct mission. Defaults to rotation between scouting, collect
@@ -141,14 +140,23 @@ public class Plan {
 				return new Mission(m);
 		}
 
-		if (Headquarters.missionCount % 5 <= 1
+		int mod = 5;
+		if (Headquarters.missionCount % mod == 0
 				&& Communication.readWell(rc, ResourceType.ADAMANTIUM) != null)
 			return new Mission(MissionName.COLLECT_ADAMANTIUM);
-		else if (Headquarters.missionCount % 5 <= 2
+		else if (Headquarters.missionCount % mod == 1
 				&& Communication.readWell(rc, ResourceType.MANA) != null)
 			return new Mission(MissionName.COLLECT_MANA);
-		else
+		else {
+
+			Mission m = new Mission(MissionName.SCOUTING);
+			if (Communication.readWell(rc, ResourceType.ADAMANTIUM) != null && Communication.readWell(rc, ResourceType.MANA) != null)
+				m.numCarrier = 0;
+				
 			return new Mission(MissionName.SCOUTING);
+
+		}
+
 	}
 
 }
