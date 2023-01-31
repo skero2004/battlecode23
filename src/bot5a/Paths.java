@@ -22,7 +22,7 @@ public class Paths {
 
 		Direction nextMove(RobotController rc) throws GameActionException {
 			MapLocation current = rc.getLocation();
-			// visited[current.x][current.y] = true;
+			visited[current.x][current.y] = true;
 			if (current.x == target.x && current.y == target.y)
 				return Direction.CENTER;
 
@@ -34,9 +34,8 @@ public class Paths {
 					continue;
 				}
 
-				// if (rc.senseMapInfo(m).getCurrentDirection() ==
-				// current.directionTo(m).opposite())
-				// continue;
+				if (rc.senseMapInfo(m).getCurrentDirection() == current.directionTo(m).opposite())
+					continue;
 
 				int dist = m.distanceSquaredTo(target);
 				if (dist < bestDistance) {

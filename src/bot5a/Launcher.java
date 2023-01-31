@@ -14,7 +14,8 @@ public class Launcher extends Robot {
 
 		switch (myMission.missionName) {
 			case SCOUTING:
-				Scout.move(rc);
+				if (!followLeader(rc))
+					Scout.move(rc);
 				break;
 
 			case ATTACK_HQ:
@@ -38,10 +39,12 @@ public class Launcher extends Robot {
 			case COLLECT_ADAMANTIUM:
 			case COLLECT_MANA:
 			case PROTECT_HQ:
-				if (rc.getLocation().distanceSquaredTo(myMission.target) > 8)
-					move(rc);
-				else
-					Scout.move(rc);
+				if (!followLeader(rc)) {
+					if (rc.getLocation().distanceSquaredTo(myMission.target) > 8)
+						move(rc);
+					else
+						Scout.move(rc);
+				}
 				break;
 
 			default:
@@ -88,33 +91,39 @@ public class Launcher extends Robot {
 
 		rc.setIndicatorString("i: " + tryIndex + " guess: " + myMission.target);
 		move(rc);
-		if (rc.getLocation().distanceSquaredTo(myMission.target) <= 8 || turnCount % 200 == 0) {
+		if (rc.getLocation().distanceSquaredTo(myMission.target) <= 8) {
 			tryIndex++;
 		}
 		return false;
 	}
 
-	MapLocation[] last5 = new MapLocation[5];
+	MapLocation[] last5 = new MapLocation[20];
 	int cooldown = 0;
 
 	private boolean isStuck(RobotController rc) throws GameActionException {
 		// if (true) return false;
 		int dx = 0;
 		int dy = 0;
+		boolean notStuck = false;
 		MapLocation cur = rc.getLocation();
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 20; ++i)
 			if (last5[i] != null) {
-				dx += cur.x - last5[i].x;
-				dy += cur.y - last5[i].y;
+				dx += Math.abs(cur.x - last5[i].x);
+				dy += Math.abs(cur.y - last5[i].y);
+			} else {
+				notStuck = true;
 			}
-		for (int i = 1; i < 5; ++i) {
+		for (int i = 1; i < 20; ++i) {
 			last5[i] = last5[i - 1];
 		}
 		last5[0] = cur;
-		if (cooldown == 0 && dx * dx + dy * dy <= 100)
-			cooldown = 10;
+		if (notStuck)
+			return false;
+		if (cooldown == 0 && dx * dx + dy * dy <= 10)
+			cooldown = 20;
 		if (cooldown > 0) {
-			Scout.move(rc);
+			rc.setIndicatorString("stuck");
+			move(rc, myHq);
 			--cooldown;
 			return true;
 		}
@@ -130,8 +139,6 @@ public class Launcher extends Robot {
 		}
 		if (leader == null || leader.getID() > rc.getID())
 			return false;
-		if (isStuck(rc))
-			return true; // TEST: unstuck leader logic
 		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 12)
 			stepTowards(rc, leader.getLocation());
 		else
@@ -188,5 +195,3 @@ public class Launcher extends Robot {
 		}
 	}
 }
-
-
