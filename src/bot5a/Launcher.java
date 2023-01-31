@@ -171,6 +171,8 @@ public class Launcher extends Robot {
 				if (score > bestScore) {
 					bestScore = score;
 					target = enemy;
+				} else if (score == bestScore && enemy.getID() < target.getID()) {
+					target = enemy; // TEST: tie break by lowest
 				}
 			}
 		}
@@ -186,3 +188,5 @@ public class Launcher extends Robot {
 		}
 	}
 }
+
+

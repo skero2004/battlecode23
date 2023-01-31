@@ -14,7 +14,7 @@ public class Carrier extends Robot {
 		if (myMission.missionName == MissionName.ATTACK_ISLAND || myMission.missionName == MissionName.PROTECT_HQ) {
 
 			if (Headquarters.missionCount % 2 == 0) {
-				myMission = new Mission(MissionName.COLLECT_MANA);
+				myMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
 				myMission.target = Communication.readWell(rc, ResourceType.ADAMANTIUM);
 			} else {
 				myMission = new Mission(MissionName.COLLECT_MANA);
