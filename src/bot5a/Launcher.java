@@ -44,16 +44,17 @@ public class Launcher extends Robot {
 		//
 		//
 
-		seekAndDestroy(rc);
-
 		attackEnemies(rc);
 
 		switch (myMission.missionName) {
 			case SCOUTING:
-				Scout.move(rc);
+				seekAndDestroy(rc);
+				// Scout.move(rc);
 				break;
 
 			case ATTACK_HQ:
+				if (!seekAndDestroy(rc))
+					break;
 				if (rc.getLocation().distanceSquaredTo(myMission.target) > 18)
 					move(rc);
 				else if (rc.getLocation().distanceSquaredTo(myMission.target) <= 12) {
@@ -66,14 +67,45 @@ public class Launcher extends Robot {
 
 				break;
 
-			default:
+			case ATTACK_ISLAND:
+			case CAPTURE_ISLAND:
+			case PROTECT_ISLAND:
+			case COLLECT_ADAMANTIUM:
+			case COLLECT_MANA:
+			case PROTECT_HQ:
 				if (!followLeader(rc)) {
 					if (rc.getLocation().distanceSquaredTo(myMission.target) > 8)
 						move(rc);
 					else
 						Scout.move(rc);
 				}
+				break;
+
+			default:
+				seekAndDestroy(rc);
 		}
+	}
+
+	int tryIndex = 0;
+
+	private boolean seekAndDestroy(RobotController rc) throws GameActionException {
+		if (myMission.missionName != MissionName.ATTACK_HQ)
+			myMission = new Mission(MissionName.ATTACK_HQ);
+		for (RobotInfo r : rc.senseNearbyRobots()) {
+			if (r.getType() == RobotType.HEADQUARTERS && r.getTeam() == rc.getTeam().opponent()) {
+				myMission.target = r.getLocation();
+				return true;
+			}
+		}
+
+		myMission.target = Map.reflect(myHq, Symmetry.values()[tryIndex % 3]);
+
+		rc.setIndicatorString("i: " + tryIndex + " guess: " + myMission.target);
+		move(rc);
+		if (rc.getLocation().distanceSquaredTo(myMission.target) <= 8 || turnCount % 200 == 0) {
+			tryIndex++;
+		}
+		return false;
 	}
 
 	private boolean followLeader(RobotController rc) throws GameActionException {
@@ -85,7 +117,7 @@ public class Launcher extends Robot {
 		}
 		if (leader == null || leader.getID() > rc.getID())
 			return false;
-		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 7)
+		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 12)
 			stepTowards(rc, leader.getLocation());
 		else
 			Randomize.move(rc);
