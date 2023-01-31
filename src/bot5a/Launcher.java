@@ -46,6 +46,8 @@ public class Launcher extends Robot {
 
 		attackEnemies(rc);
 
+		retarget(rc);
+
 		switch (myMission.missionName) {
 			case SCOUTING:
 				seekAndDestroy(rc);
@@ -86,7 +88,26 @@ public class Launcher extends Robot {
 		}
 	}
 
-	int tryIndex = 0;
+	int tryIndex = 2;
+
+	private void retarget(RobotController rc) throws GameActionException {
+		Mission mission = Communication.readMission(rc);
+		if (mission.missionName == MissionName.PROTECT_HQ) {
+			myMission = mission;
+			return;
+		}
+
+		int f = 0, e = 0;
+		for (RobotInfo r : rc.senseNearbyRobots()) {
+			if (r.getTeam() == r.getTeam())
+				++f;
+			else
+				++e;
+		}
+
+		if (f >= 2 * e)
+			myMission = new Mission(MissionName.ATTACK_HQ);
+	}
 
 	private boolean seekAndDestroy(RobotController rc) throws GameActionException {
 		if (myMission.missionName != MissionName.ATTACK_HQ)
