@@ -7,43 +7,7 @@ import bot5a.Plan.Mission;
 
 public class Launcher extends Robot {
 
-	int countEnemies(RobotController rc) {
-		int c = 0;
-		for (RobotInfo r : rc.senseNearbyRobots()) {
-			if (r.getTeam() != rc.getTeam())
-				++c;
-		}
-		return c;
-	}
-
-	boolean sameMission(int id1, int id2) {
-		if (id1 % 5 != 0)
-			return id2 % 5 != 0;
-		return id2 % 5 == 0 && id1 % 2 == id2 % 2;
-	}
-
 	void execute(RobotController rc) throws GameActionException {
-		// if (rc.getID() % 5 != 0) {
-		// if (myMission.missionName != MissionName.ATTACK_ISLAND || turnCount % 200 ==
-		// 0) {
-		// myMission = new Mission(MissionName.ATTACK_ISLAND);
-		// if (Communication.readIsland(rc, rc.getTeam().opponent()) != null)
-		// myMission.target = Communication.readIsland(rc, rc.getTeam().opponent());
-		// else if (Communication.readIsland(rc, Team.NEUTRAL) != null)
-		// myMission.target = Communication.readIsland(rc, Team.NEUTRAL);
-		// }
-		// } else {
-		// if (rc.getID() % 2 == 0) {
-		// myMission = new Mission(MissionName.COLLECT_MANA);
-		// myMission.target = Communication.readWell(rc, ResourceType.MANA);
-		// } else {
-		// myMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
-		// myMission.target = Communication.readWell(rc, ResourceType.ADAMANTIUM);
-		// }
-		// }
-		//
-		//
-
 		attackEnemies(rc);
 
 		retarget(rc);
@@ -128,6 +92,26 @@ public class Launcher extends Robot {
 		return false;
 	}
 
+	MapLocation[] last5;
+	int cooldown = 0;
+	private boolean isStuck(RobotController rc) throws GameActionException {
+		int dx = 0;
+		int dy = 0;
+		MapLocation cur = rc.getLocation();
+		for (int i = 0; i < 5; ++i) if (last5[i] != null) {
+			dx += cur.x - last5[i].x;
+			dy += cur.y - last5[i].y;
+		}
+		for (int i = 1; i < 5; ++i) { last5[i] = last5[i-1]; } last5[0] = cur;
+		if (cooldown == 0 && dx * dx + dy * dy <= 100) cooldown = 10;
+		if (cooldown > 0) {
+			Randomize.move(rc);
+			--cooldown;
+			return true;
+		}
+		return false;
+	}
+
 	private boolean followLeader(RobotController rc) throws GameActionException {
 		RobotInfo leader = null;
 		for (RobotInfo r : rc.senseNearbyRobots()) {
@@ -137,6 +121,7 @@ public class Launcher extends Robot {
 		}
 		if (leader == null || leader.getID() > rc.getID())
 			return false;
+		if (isStuck(rc)) return true; // TEST: unstuck leader logic
 		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 12)
 			stepTowards(rc, leader.getLocation());
 		else
