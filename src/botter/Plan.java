@@ -42,16 +42,16 @@ public class Plan {
 					break;
 
 				case ATTACK_HQ:
-					numLauncher = 3;
+					numLauncher = 4;
 					break;
 
 				case CAPTURE_ISLAND:
-					numLauncher = 3;
+					numLauncher = 4;
 					numCarrier = 1;
 					break;
 
 				case ATTACK_ISLAND:
-					numLauncher = 3;
+					numLauncher = 4;
 					break;
 
 				case COLLECT_ADAMANTIUM:
@@ -66,7 +66,7 @@ public class Plan {
 
 				case SCOUTING:
 					numCarrier = 1;
-					numLauncher = 1;
+					numLauncher = 4;
 					break;
 
 				case SEND_AMPLIFIER:
@@ -164,11 +164,11 @@ public class Plan {
 
 		if (Headquarters.missionCount >= 100
 				&& Communication.readIsland(rc, rc.getTeam().opponent()) != null
-				&& Headquarters.missionCount % 5 == 0)
+				&& Headquarters.missionCount % 4 == 0)
 			isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
 
 		if (Headquarters.missionCount >= 100
-				&& Headquarters.missionCount % 4 == 0
+				&& Headquarters.missionCount % 7 == 0
 				&& Communication.readIsland(rc, rc.getTeam()) != null)
 			isMissionActive[MissionName.PROTECT_ISLAND.ordinal()] = true;
 
@@ -182,7 +182,7 @@ public class Plan {
 			isMissionActive[MissionName.CAPTURE_ISLAND.ordinal()] = true;
 
 		if (Headquarters.missionCount >= 50
-				&& Headquarters.missionCount % 31 == 0)
+				&& Headquarters.missionCount % 41 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
 
 		// Return the correct mission. Defaults to rotation between scouting, collect
