@@ -21,6 +21,7 @@ public class Scout {
 	static int sign = Randomize.rng.nextInt(2);
 
 	static void move(RobotController rc, RobotInfo myHq) throws GameActionException {
+
 		if (Randomize.rng.nextInt(200) == 0)
 			sign = 1 - sign;
 
@@ -32,6 +33,8 @@ public class Scout {
 				rc.move(dir);
 
 		} else {
+
+			// new Launcher().move(rc, new MapLocation(Map.WIDTH / 2, Map.HEIGHT / 2));
 
 			Direction move = Constants.directions[(int) Math.sqrt(Robot.turnCount % 300) % 8];
 
@@ -68,8 +71,8 @@ public class Scout {
 		}
 
 		// Only write if it won't commit suicide
-		//RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
-		if (rc.canWriteSharedArray(0, 0)/* && enemies.length <= 2*/) {
+		// RobotInfo[] enemies = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
+		if (rc.canWriteSharedArray(0, 0)/* && enemies.length <= 2 */) {
 
 			for (WellInfo w : wellMemory.keySet())
 				Communication.writeWell(rc, wellMemory.get(w), w.getResourceType());

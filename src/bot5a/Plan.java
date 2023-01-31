@@ -95,7 +95,6 @@ public class Plan {
 	}
 
 	public static Mission chooseMission(RobotController rc) throws GameActionException {
-
 		Team OPPONENT = rc.getTeam().opponent();
 
 		if (rc.getType() != RobotType.HEADQUARTERS)
@@ -135,9 +134,6 @@ public class Plan {
 				&& Headquarters.missionCount % 19 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
 
-		if (Map.SYMMETRY == null && Headquarters.missionCount % 3000 == 0)
-			isMissionActive[MissionName.FIND_SYMMETRY.ordinal()] = true;
-
 		// Return the correct mission. Defaults to rotation between scouting, collect
 		// adamantium, and collect mana.
 		for (MissionName m : MissionName.values()) {
@@ -148,7 +144,7 @@ public class Plan {
 		if (Headquarters.missionCount % 5 <= 1
 				&& Communication.readWell(rc, ResourceType.ADAMANTIUM) != null)
 			return new Mission(MissionName.COLLECT_ADAMANTIUM);
-		else if (Headquarters.missionCount % 5 <= 3
+		else if (Headquarters.missionCount % 5 <= 2
 				&& Communication.readWell(rc, ResourceType.MANA) != null)
 			return new Mission(MissionName.COLLECT_MANA);
 		else

@@ -2,6 +2,7 @@ package bot5a;
 
 import battlecode.common.*;
 import bot5a.util.*;
+import bot5a.Map.Symmetry;
 import bot5a.Plan.Mission;
 
 public class Launcher extends Robot {
@@ -16,48 +17,62 @@ public class Launcher extends Robot {
 	}
 
 	boolean sameMission(int id1, int id2) {
-		return (id1 % 5 == 0) == (id2 % 5 == 0);
+		if (id1 % 5 != 0)
+			return id2 % 5 != 0;
+		return id2 % 5 == 0 && id1 % 2 == id2 % 2;
 	}
 
 	void execute(RobotController rc) throws GameActionException {
-		if (myMission.missionName != MissionName.ATTACK_ISLAND || turnCount % 200 == 0) {
-			myMission = new Mission(MissionName.ATTACK_ISLAND);
-			if (Communication.readIsland(rc, rc.getTeam().opponent()) != null)
-				myMission.target = Communication.readIsland(rc, rc.getTeam().opponent());
-			else if (Communication.readIsland(rc, Team.NEUTRAL) != null)
-				myMission.target = Communication.readIsland(rc, Team.NEUTRAL);
-			else
-				myMission = new Mission(MissionName.SCOUTING);
-		}
+		// if (rc.getID() % 5 != 0) {
+		// if (myMission.missionName != MissionName.ATTACK_ISLAND || turnCount % 200 ==
+		// 0) {
+		// myMission = new Mission(MissionName.ATTACK_ISLAND);
+		// if (Communication.readIsland(rc, rc.getTeam().opponent()) != null)
+		// myMission.target = Communication.readIsland(rc, rc.getTeam().opponent());
+		// else if (Communication.readIsland(rc, Team.NEUTRAL) != null)
+		// myMission.target = Communication.readIsland(rc, Team.NEUTRAL);
+		// }
+		// } else {
+		// if (rc.getID() % 2 == 0) {
+		// myMission = new Mission(MissionName.COLLECT_MANA);
+		// myMission.target = Communication.readWell(rc, ResourceType.MANA);
+		// } else {
+		// myMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
+		// myMission.target = Communication.readWell(rc, ResourceType.ADAMANTIUM);
+		// }
+		// }
+		//
+		//
+
+		seekAndDestroy(rc);
 
 		attackEnemies(rc);
 
-		if (!followLeader(rc)) {
-			switch (myMission.missionName) {
-				case SCOUTING:
-					if (!followLeader(rc))
+		switch (myMission.missionName) {
+			case SCOUTING:
+				Scout.move(rc);
+				break;
+
+			case ATTACK_HQ:
+				if (rc.getLocation().distanceSquaredTo(myMission.target) > 18)
+					move(rc);
+				else if (rc.getLocation().distanceSquaredTo(myMission.target) <= 12) {
+					Direction d = rc.getLocation().directionTo(myMission.target).opposite();
+					if (rc.canMove(d))
+						rc.move(d);
+					else
 						Scout.move(rc);
-					break;
+				}
 
-				case ATTACK_HQ:
-					if (rc.getLocation().distanceSquaredTo(myMission.target) > 18)
-						move(rc);
-					else if (rc.getLocation().distanceSquaredTo(myMission.target) <= 12) {
-						Direction d = rc.getLocation().directionTo(myMission.target).opposite();
-						if (rc.canMove(d))
-							rc.move(d);
-						else
-							Scout.move(rc);
-					}
+				break;
 
-					break;
-
-				default:
-					if (rc.getLocation().distanceSquaredTo(myMission.target) > 12)
+			default:
+				if (!followLeader(rc)) {
+					if (rc.getLocation().distanceSquaredTo(myMission.target) > 8)
 						move(rc);
 					else
 						Scout.move(rc);
-			}
+				}
 		}
 	}
 
@@ -70,7 +85,7 @@ public class Launcher extends Robot {
 		}
 		if (leader == null || leader.getID() > rc.getID())
 			return false;
-		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 4)
+		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 7)
 			stepTowards(rc, leader.getLocation());
 		else
 			Randomize.move(rc);
