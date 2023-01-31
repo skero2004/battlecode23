@@ -172,7 +172,7 @@ public class Plan {
 				&& Communication.readIsland(rc, rc.getTeam()) != null)
 			isMissionActive[MissionName.PROTECT_ISLAND.ordinal()] = true;
 
-		if ((rc.getRobotCount() >= 30 || Headquarters.missionCount >= 100)
+		if ((rc.getRobotCount() >= 30 || Headquarters.missionCount >= 500)
 				&& (Headquarters.missionCount % 43 == 0 || rc.canBuildAnchor(Anchor.STANDARD))
 				&& rc.getNumAnchors(Anchor.STANDARD) < 4)
 			isMissionActive[MissionName.CREATE_ANCHOR.ordinal()] = true;
