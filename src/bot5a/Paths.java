@@ -22,6 +22,7 @@ public class Paths {
 
 		Direction nextMove(RobotController rc) throws GameActionException {
 			MapLocation current = rc.getLocation();
+			visited[current.x][current.y] = true;
 			if (current.x == target.x && current.y == target.y)
 				return Direction.CENTER;
 
@@ -41,7 +42,7 @@ public class Paths {
 			}
 
 			if (bestLocation != null) {
-				visited[bestLocation.x][bestLocation.y] = true;
+				// visited[bestLocation.x][bestLocation.y] = true;
 				Direction move = current.directionTo(bestLocation);
 				parent[bestLocation.x][bestLocation.y] = move.opposite();
 				return move;
