@@ -83,6 +83,9 @@ public class Headquarters extends Robot {
 			case PROTECT_ISLAND:
 				mission.target = Communication.readIsland(rc, rc.getTeam());
 				return mission.target != null;
+			case PROTECT_HQ:
+				mission.target = rc.getLocation();
+				return mission.target != null;
 			case ATTACK_HQ:
 				mission.target = Map.reflect(rc.getLocation(), Map.SYMMETRY);
 				return mission.target != null;

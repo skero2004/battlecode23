@@ -14,7 +14,6 @@ public class Launcher extends Robot {
 
 		switch (myMission.missionName) {
 			case SCOUTING:
-				seekAndDestroy(rc);
 				Scout.move(rc);
 				break;
 
@@ -39,12 +38,10 @@ public class Launcher extends Robot {
 			case COLLECT_ADAMANTIUM:
 			case COLLECT_MANA:
 			case PROTECT_HQ:
-				if (!followLeader(rc)) {
-					if (rc.getLocation().distanceSquaredTo(myMission.target) > 8)
-						move(rc);
-					else
-						Scout.move(rc);
-				}
+				if (rc.getLocation().distanceSquaredTo(myMission.target) > 8)
+					move(rc);
+				else
+					Scout.move(rc);
 				break;
 
 			default:
@@ -55,11 +52,6 @@ public class Launcher extends Robot {
 	int tryIndex = 2;
 
 	private void retarget(RobotController rc) throws GameActionException {
-		Mission mission = Communication.readMission(rc);
-		if (mission.missionName == MissionName.PROTECT_HQ) {
-			myMission = mission;
-			return;
-		}
 
 		int f = 0, e = 0;
 		for (RobotInfo r : rc.senseNearbyRobots()) {
@@ -69,8 +61,17 @@ public class Launcher extends Robot {
 				++e;
 		}
 
-		if (f >= 2 * e)
+		if (f >= 2 * e) {
 			myMission = new Mission(MissionName.ATTACK_HQ);
+			return;
+		}
+
+		Mission mission = Communication.readMission(rc);
+		if (mission.missionName.ordinal() < myMission.missionName.ordinal())
+			myMission = mission;
+
+		if (myMission.target.distanceSquaredTo(rc.getLocation()) > 15)
+			return;
 	}
 
 	private boolean seekAndDestroy(RobotController rc) throws GameActionException {
@@ -97,6 +98,7 @@ public class Launcher extends Robot {
 	int cooldown = 0;
 
 	private boolean isStuck(RobotController rc) throws GameActionException {
+		// if (true) return false;
 		int dx = 0;
 		int dy = 0;
 		MapLocation cur = rc.getLocation();
