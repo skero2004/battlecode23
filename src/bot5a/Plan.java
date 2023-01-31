@@ -1,10 +1,10 @@
-package bot5;
+package bot5a;
 
 import java.util.Arrays;
 
 import battlecode.common.*;
 
-import bot5.util.*;
+import bot5a.util.*;
 
 public class Plan {
 
@@ -23,8 +23,6 @@ public class Plan {
 		public int numLauncher = 0;
 		public int numCarrier = 0;
 		public int numAmplifier = 0;
-		public boolean buildOne = false;
-		public boolean buildAll = false;
 		public MissionName missionName = null;
 		public MapLocation target = null;
 
@@ -37,18 +35,15 @@ public class Plan {
 			switch (m) {
 
 				case PROTECT_HQ:
-					buildAll = true;
-					numLauncher = 5;
+					numLauncher = 3;
 					break;
 
 				case PROTECT_ISLAND:
-					buildOne = true;
 					numLauncher = 3;
 					break;
 
 				case ATTACK_HQ:
-					buildAll = true;
-					numLauncher = 8;
+					numLauncher = 3;
 					break;
 
 				case CAPTURE_ISLAND:
@@ -103,7 +98,6 @@ public class Plan {
 					break;
 
 				case CREATE_ANCHOR:
-					buildAll = true;
 					break;
 
 			}
@@ -121,56 +115,6 @@ public class Plan {
 			}
 		}
 
-		boolean canBuild(RobotController rc) {
-
-			RobotType[] rt = {
-					RobotType.LAUNCHER,
-					RobotType.CARRIER,
-					// RobotType.DESTABILIZER,
-					// RobotType.BOOSTER,
-					RobotType.AMPLIFIER,
-			};
-
-			int[] rn = {
-					numLauncher,
-					numCarrier,
-					// mission.numDestabilizer,
-					// mission.numBooster,
-					numAmplifier,
-			};
-
-			int[] mn = {
-					LAUNCHER_MN,
-					0,
-					// ?,
-					// ?,
-					AMPLIFIER_MN,
-			};
-
-			int[] ad = {
-					0,
-					CARRIER_AD,
-					// ?,
-					// ?,
-					AMPLIFIER_AD,
-			};
-
-			int totalAd = 0, totalMn = 0;
-			for (int i = 0; i < rt.length; ++i) {
-				for (int j = 0; j < rn[i]; ++j) {
-					totalAd += ad[i];
-					totalMn += mn[i];
-				}
-			}
-
-			if (missionName == MissionName.CREATE_ANCHOR) {
-				totalAd += 80;
-				totalMn += 80;
-			}
-
-			return rc.getResourceAmount(ResourceType.MANA) >= totalMn
-					&& rc.getResourceAmount(ResourceType.ADAMANTIUM) > totalAd;
-		}
 	}
 
 	public static Mission chooseMission(RobotController rc) throws GameActionException {
@@ -200,7 +144,7 @@ public class Plan {
 				&& Communication.readIsland(rc, rc.getTeam()) != null)
 			isMissionActive[MissionName.PROTECT_ISLAND.ordinal()] = true;
 
-		if (Headquarters.missionCount >= 100
+		if (rc.getRobotCount() >= 80
 				&& (Headquarters.missionCount % 99 == 0 || rc.canBuildAnchor(Anchor.STANDARD))
 				&& rc.getNumAnchors(Anchor.STANDARD) < 4)
 			isMissionActive[MissionName.CREATE_ANCHOR.ordinal()] = true;

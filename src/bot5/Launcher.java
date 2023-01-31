@@ -8,6 +8,8 @@ import bot5.Plan.Mission;;
 public class Launcher extends Robot {
 
 	void execute(RobotController rc) throws GameActionException {
+		if (turnCount % 200 == 0)
+			init(rc);
 		Mission listenMission = Communication.readMission(rc);
 		if (listenMission != null && listenMission.missionName == MissionName.ATTACK_HQ)
 			myMission = listenMission;
@@ -20,7 +22,7 @@ public class Launcher extends Robot {
 				Scout.updateInfos(rc);
 				break;
 
-			default:
+			case ATTACK_HQ:
 				if (rc.getLocation().distanceSquaredTo(myMission.target) > 18)
 					move(rc);
 				else if (rc.getLocation().distanceSquaredTo(myMission.target) <= 12) {
@@ -30,6 +32,12 @@ public class Launcher extends Robot {
 					else
 						Scout.move(rc);
 				}
+
+			default:
+				if (rc.getLocation().distanceSquaredTo(myMission.target) > 12)
+					move(rc);
+				else
+					Scout.move(rc);
 		}
 	}
 

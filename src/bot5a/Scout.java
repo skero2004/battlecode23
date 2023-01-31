@@ -1,10 +1,10 @@
-package bot5;
+package bot5a;
 
 import java.util.HashMap;
 
 import battlecode.common.*;
 
-import bot5.util.*;
+import bot5a.util.*;
 
 public class Scout {
 
@@ -21,7 +21,7 @@ public class Scout {
 	static int sign = Randomize.rng.nextInt(2);
 
 	static void move(RobotController rc, RobotInfo myHq) throws GameActionException {
-		if (Randomize.rng.nextInt(100) == 0)
+		if (Randomize.rng.nextInt(200) == 0)
 			sign = 1 - sign;
 
 		if (isReturn && myHq != null) {
