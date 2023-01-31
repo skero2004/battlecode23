@@ -34,6 +34,10 @@ public class Paths {
 					continue;
 				}
 
+				// if (rc.senseMapInfo(m).getCurrentDirection() ==
+				// current.directionTo(m).opposite())
+				// continue;
+
 				int dist = m.distanceSquaredTo(target);
 				if (dist < bestDistance) {
 					bestDistance = dist;

@@ -15,6 +15,7 @@ public class Launcher extends Robot {
 		switch (myMission.missionName) {
 			case SCOUTING:
 				seekAndDestroy(rc);
+				Scout.move(rc);
 				break;
 
 			case ATTACK_HQ:

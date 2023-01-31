@@ -11,7 +11,7 @@ public class Carrier extends Robot {
 	void execute(RobotController rc) throws GameActionException {
 
 		// TODO: IDK WTH IS GOING ON BUT CARRIERS ARE ASSIGNED ATTACK ISLAND BOOOOO
-		if (myMission.missionName == MissionName.ATTACK_ISLAND) {
+		if (myMission.missionName == MissionName.ATTACK_ISLAND || myMission.missionName == MissionName.PROTECT_HQ) {
 
 			if (Headquarters.missionCount % 2 == 0) {
 				myMission = new Mission(MissionName.COLLECT_MANA);
@@ -22,7 +22,6 @@ public class Carrier extends Robot {
 			}
 
 		}
-			
 
 		switch (myMission.missionName) {
 			case SCOUTING:
