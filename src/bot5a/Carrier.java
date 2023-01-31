@@ -9,7 +9,6 @@ public class Carrier extends Robot {
 	static final int INVENTORY_THRESHOLD = 30;
 
 	void execute(RobotController rc) throws GameActionException {
-
 		// TODO: IDK WTH IS GOING ON BUT CARRIERS ARE ASSIGNED ATTACK ISLAND BOOOOO
 		if (myMission.missionName == MissionName.ATTACK_ISLAND)
 			if (Headquarters.missionCount % 2 == 0) {

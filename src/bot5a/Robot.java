@@ -55,6 +55,8 @@ public abstract class Robot {
 		Direction dir = rc.getLocation().directionTo(target);
 		if (rc.canMove(dir))
 			rc.move(dir);
+		else
+			rc.move(dir.opposite());
 	}
 
 	abstract void execute(RobotController rc) throws GameActionException;

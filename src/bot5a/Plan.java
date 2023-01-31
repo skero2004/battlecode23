@@ -1,9 +1,6 @@
 package bot5a;
 
-import java.util.Arrays;
-
 import battlecode.common.*;
-
 import bot5a.util.*;
 
 public class Plan {
@@ -136,6 +133,7 @@ public class Plan {
 			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
 
 		if (Headquarters.missionCount >= 100
+				&& Communication.readIsland(rc, rc.getTeam().opponent()) != null
 				&& Headquarters.missionCount % 5 == 0)
 			isMissionActive[MissionName.ATTACK_ISLAND.ordinal()] = true;
 

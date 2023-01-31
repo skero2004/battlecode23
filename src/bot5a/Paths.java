@@ -1,7 +1,6 @@
 package bot5a;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import battlecode.common.*;
 
