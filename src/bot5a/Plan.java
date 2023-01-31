@@ -46,12 +46,12 @@ public class Plan {
 					break;
 
 				case CAPTURE_ISLAND:
-					numLauncher = 3;
-					numCarrier = 2;
+					numLauncher = 4;
+					numCarrier = 1;
 					break;
 
 				case ATTACK_ISLAND:
-					numLauncher = 3;
+					numLauncher = 4;
 					break;
 
 				case COLLECT_ADAMANTIUM:
@@ -66,7 +66,7 @@ public class Plan {
 
 				case SCOUTING:
 					numCarrier = 1;
-					numLauncher = 2;
+					numLauncher = 3;
 					break;
 
 				case SEND_AMPLIFIER:
