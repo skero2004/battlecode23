@@ -20,6 +20,7 @@ public class Plan {
 		public int numLauncher = 0;
 		public int numCarrier = 0;
 		public int numAmplifier = 0;
+		public boolean buildAll = false;
 		public MissionName missionName = null;
 		public MapLocation target = null;
 
@@ -32,7 +33,8 @@ public class Plan {
 			switch (m) {
 
 				case PROTECT_HQ:
-					numLauncher = 3;
+					buildAll = true;
+					numLauncher = 4;
 					break;
 
 				case PROTECT_ISLAND:
@@ -92,6 +94,56 @@ public class Plan {
 			}
 		}
 
+		boolean canBuild(RobotController rc) {
+
+			RobotType[] rt = {
+					RobotType.LAUNCHER,
+					RobotType.CARRIER,
+					// RobotType.DESTABILIZER,
+					// RobotType.BOOSTER,
+					RobotType.AMPLIFIER,
+			};
+
+			int[] rn = {
+					numLauncher,
+					numCarrier,
+					// mission.numDestabilizer,
+					// mission.numBooster,
+					numAmplifier,
+			};
+
+			int[] mn = {
+					LAUNCHER_MN,
+					0,
+					// ?,
+					// ?,
+					AMPLIFIER_MN,
+			};
+
+			int[] ad = {
+					0,
+					CARRIER_AD,
+					// ?,
+					// ?,
+					AMPLIFIER_AD,
+			};
+
+			int totalAd = 0, totalMn = 0;
+			for (int i = 0; i < rt.length; ++i) {
+				for (int j = 0; j < rn[i]; ++j) {
+					totalAd += ad[i];
+					totalMn += mn[i];
+				}
+			}
+
+			if (missionName == MissionName.CREATE_ANCHOR) {
+				totalAd += 80;
+				totalMn += 80;
+			}
+
+			return rc.getResourceAmount(ResourceType.MANA) >= totalMn
+					&& rc.getResourceAmount(ResourceType.ADAMANTIUM) > totalAd;
+		}
 	}
 
 	public static Mission chooseMission(RobotController rc) throws GameActionException {
@@ -106,9 +158,9 @@ public class Plan {
 		for (RobotInfo enemy : enemies)
 			if (enemy.getType() == RobotType.LAUNCHER)
 
-		// Logic to choose mission (default is loop of scout -> adamantium -> mana)
-		if (enemies.length >= 2)
-			isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
+				// Logic to choose mission (default is loop of scout -> adamantium -> mana)
+				if (enemies.length >= 2)
+					isMissionActive[MissionName.PROTECT_HQ.ordinal()] = true;
 
 		if (Headquarters.missionCount >= 100
 				&& Communication.readIsland(rc, rc.getTeam().opponent()) != null
@@ -120,8 +172,8 @@ public class Plan {
 				&& Communication.readIsland(rc, rc.getTeam()) != null)
 			isMissionActive[MissionName.PROTECT_ISLAND.ordinal()] = true;
 
-		if (rc.getRobotCount() >= 40
-				&& (Headquarters.missionCount % 99 == 0 || rc.canBuildAnchor(Anchor.STANDARD))
+		if ((rc.getRobotCount() >= 30 || Headquarters.missionCount >= 100)
+				&& (Headquarters.missionCount % 43 == 0 || rc.canBuildAnchor(Anchor.STANDARD))
 				&& rc.getNumAnchors(Anchor.STANDARD) < 4)
 			isMissionActive[MissionName.CREATE_ANCHOR.ordinal()] = true;
 
@@ -150,9 +202,10 @@ public class Plan {
 		else {
 
 			Mission m = new Mission(MissionName.SCOUTING);
-			if (Communication.readWell(rc, ResourceType.ADAMANTIUM) != null && Communication.readWell(rc, ResourceType.MANA) != null)
+			if (Communication.readWell(rc, ResourceType.ADAMANTIUM) != null
+					&& Communication.readWell(rc, ResourceType.MANA) != null)
 				m.numCarrier = 0;
-				
+
 			return new Mission(MissionName.SCOUTING);
 
 		}
