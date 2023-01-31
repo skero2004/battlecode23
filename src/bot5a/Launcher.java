@@ -92,20 +92,26 @@ public class Launcher extends Robot {
 		return false;
 	}
 
-	MapLocation[] last5;
+	MapLocation[] last5 = new MapLocation[5];
 	int cooldown = 0;
+
 	private boolean isStuck(RobotController rc) throws GameActionException {
 		int dx = 0;
 		int dy = 0;
 		MapLocation cur = rc.getLocation();
-		for (int i = 0; i < 5; ++i) if (last5[i] != null) {
-			dx += cur.x - last5[i].x;
-			dy += cur.y - last5[i].y;
+		for (int i = 0; i < 5; ++i)
+			if (last5[i] != null) {
+				dx += cur.x - last5[i].x;
+				dy += cur.y - last5[i].y;
+			}
+		for (int i = 1; i < 5; ++i) {
+			last5[i] = last5[i - 1];
 		}
-		for (int i = 1; i < 5; ++i) { last5[i] = last5[i-1]; } last5[0] = cur;
-		if (cooldown == 0 && dx * dx + dy * dy <= 100) cooldown = 10;
+		last5[0] = cur;
+		if (cooldown == 0 && dx * dx + dy * dy <= 100)
+			cooldown = 10;
 		if (cooldown > 0) {
-			Randomize.move(rc);
+			Scout.move(rc);
 			--cooldown;
 			return true;
 		}
@@ -121,7 +127,8 @@ public class Launcher extends Robot {
 		}
 		if (leader == null || leader.getID() > rc.getID())
 			return false;
-		if (isStuck(rc)) return true; // TEST: unstuck leader logic
+		if (isStuck(rc))
+			return true; // TEST: unstuck leader logic
 		if (rc.getLocation().distanceSquaredTo(leader.getLocation()) > 12)
 			stepTowards(rc, leader.getLocation());
 		else
