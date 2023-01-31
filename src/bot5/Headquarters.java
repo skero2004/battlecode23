@@ -68,6 +68,9 @@ public class Headquarters extends Robot {
 			case ATTACK_HQ:
 				mission.target = Map.reflect(rc.getLocation(), Map.SYMMETRY);
 				return mission.target != null;
+			case FIND_SYMMETRY:
+				mission.target = new MapLocation(61, 61);
+				return true;
 			default:
 				mission.target = new MapLocation(Randomize.rng.nextInt(rc.getMapWidth()),
 						Randomize.rng.nextInt(rc.getMapHeight()));

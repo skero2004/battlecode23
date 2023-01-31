@@ -25,12 +25,11 @@ public abstract class Robot {
 		if (rc.getType() != RobotType.HEADQUARTERS) {
 			if (myHq == null || myMission == null)
 				init(rc);
-			rc.setIndicatorString("M: " + myMission.missionName + ", T: " + myMission.target);
+			//rc.setIndicatorString("M: " + myMission.missionName + ", T: " + myMission.target);
 			Scout.updateInfos(rc);
-		} else {
-			Map.WIDTH = rc.getMapWidth();
-			Map.HEIGHT = rc.getMapHeight();
-		}
+		} 			
+		Map.WIDTH = rc.getMapWidth();
+		Map.HEIGHT = rc.getMapHeight();
 
 		execute(rc);
 
