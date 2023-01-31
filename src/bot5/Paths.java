@@ -1,11 +1,10 @@
-package bottest;
+package bot5;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import battlecode.common.*;
 
-import bottest.util.*;
+import bot5.util.*;
 
 public class Paths {
 
@@ -30,8 +29,7 @@ public class Paths {
 			MapLocation bestLocation = null;
 			for (MapLocation m : neighbors(rc)) {
 				if (!rc.canMove(current.directionTo(m))) {
-					if (rc.isLocationOccupied(m))
-						; // visited[current.x][current.y] = false;
+					// if (rc.isLocationOccupied(m)) visited[current.x][current.y] = false;
 					continue;
 				}
 
@@ -86,7 +84,7 @@ public class Paths {
 
 	/*
 	 * Calculates a single step using local gravity with provided weights.
-	 * (defaults in bot4.util.Constants).
+	 * (defaults in bot5.util.Constants).
 	 */
 	static Direction findMove(RobotController rc, MapLocation target, int MWall, int MEnemyLauncher, int MFriend)
 			throws GameActionException {
