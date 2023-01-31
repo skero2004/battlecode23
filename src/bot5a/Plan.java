@@ -63,7 +63,8 @@ public class Plan {
 					break;
 
 				case SCOUTING:
-					numLauncher = 2;
+					numCarrier = 1;
+					numLauncher = 1;
 					break;
 
 				case SEND_AMPLIFIER:
@@ -144,10 +145,10 @@ public class Plan {
 				return new Mission(m);
 		}
 
-		if (Headquarters.missionCount % 7 <= 2
+		if (Headquarters.missionCount % 5 <= 1
 				&& Communication.readWell(rc, ResourceType.ADAMANTIUM) != null)
 			return new Mission(MissionName.COLLECT_ADAMANTIUM);
-		else if (Headquarters.missionCount % 7 <= 4
+		else if (Headquarters.missionCount % 5 <= 3
 				&& Communication.readWell(rc, ResourceType.MANA) != null)
 			return new Mission(MissionName.COLLECT_MANA);
 		else

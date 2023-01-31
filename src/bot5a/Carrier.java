@@ -9,8 +9,10 @@ public class Carrier extends Robot {
 	static final int INVENTORY_THRESHOLD = 30;
 
 	void execute(RobotController rc) throws GameActionException {
+
 		// TODO: IDK WTH IS GOING ON BUT CARRIERS ARE ASSIGNED ATTACK ISLAND BOOOOO
-		if (myMission.missionName == MissionName.ATTACK_ISLAND)
+		if (myMission.missionName == MissionName.ATTACK_ISLAND) {
+
 			if (Headquarters.missionCount % 2 == 0) {
 				myMission = new Mission(MissionName.COLLECT_MANA);
 				myMission.target = Communication.readWell(rc, ResourceType.ADAMANTIUM);
@@ -19,7 +21,13 @@ public class Carrier extends Robot {
 				myMission.target = Communication.readWell(rc, ResourceType.MANA);
 			}
 
+		}
+			
+
 		switch (myMission.missionName) {
+			case SCOUTING:
+				executeScout(rc);
+				break;
 			case COLLECT_MANA:
 			case COLLECT_ADAMANTIUM:
 				if (turnCount % 100 == 0)
@@ -37,6 +45,23 @@ public class Carrier extends Robot {
 				init(rc);
 				break;
 		}
+	}
+
+	void executeScout(RobotController rc) throws GameActionException {
+
+		Scout.move(rc);
+		WellInfo[] wells = rc.senseNearbyWells();
+		if (wells.length > 0) {
+			if (wells[0].getResourceType() == ResourceType.ADAMANTIUM && rc.getID() % 2 == 0)
+				myMission = new Mission(MissionName.COLLECT_ADAMANTIUM);
+			else if (wells[0].getResourceType() == ResourceType.MANA && rc.getID() % 2 == 1)
+				myMission = new Mission(MissionName.COLLECT_MANA);
+			else
+				return;
+
+			myMission.target = wells[0].getMapLocation();
+		}
+
 	}
 
 	void executeCollectMission(RobotController rc) throws GameActionException {
