@@ -18,8 +18,11 @@ public class Scout {
 		move(rc, null);
 	}
 
+	static int sign = 0;
+
 	static void move(RobotController rc, RobotInfo myHq) throws GameActionException {
-		int sign = Robot.turnCount / 300 + rc.getID();
+		if (Randomize.rng.nextInt(5) == 0)
+			sign = 1 - sign;
 
 		if (isReturn && myHq != null) {
 
@@ -30,11 +33,10 @@ public class Scout {
 
 		} else {
 
-			Direction move = Constants.directions[(int) Math.sqrt(Robot.turnCount - 300 * sign) % 8];
+			Direction move = Constants.directions[(int) Math.sqrt(Robot.turnCount % 300) % 8];
 
-			if (sign % 2 == 1)
-				move = Constants.directions[(int) (7
-						- Math.sqrt(300 - (Robot.turnCount - 300 * sign)) % 8)];
+			if (sign == 1)
+				move = move.opposite();
 
 			if (rc.canMove(move))
 				rc.move(move);

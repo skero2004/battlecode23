@@ -2,8 +2,6 @@ package bot5;
 
 import battlecode.common.*;
 
-import bot5.util.*;
-
 public class Map {
 	enum Symmetry {
 		HORIZONTAL,
@@ -13,7 +11,7 @@ public class Map {
 
 	static int WIDTH;
 	static int HEIGHT;
-	static Symmetry SYMMETRY;
+	static Symmetry SYMMETRY = Symmetry.HORIZONTAL;
 
 	static MapLocation reflect(MapLocation m, Symmetry s) {
 		switch (s) {

@@ -47,7 +47,6 @@ public class Plan {
 					break;
 
 				case ATTACK_HQ:
-					buildAll = true;
 					numLauncher = 8;
 					break;
 
@@ -213,6 +212,9 @@ public class Plan {
 		if (Headquarters.missionCount >= 50
 				&& Headquarters.missionCount % 19 == 0)
 			isMissionActive[MissionName.SEND_AMPLIFIER.ordinal()] = true;
+
+		if (rc.getRobotCount() > 20)
+			return new Mission(MissionName.ATTACK_HQ);
 
 		// Return the correct mission. Defaults to rotation between scouting, collect
 		// adamantium, and collect mana.

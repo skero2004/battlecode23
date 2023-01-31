@@ -42,8 +42,10 @@ public abstract class Robot {
 	}
 
 	void move(RobotController rc, MapLocation target) throws GameActionException {
-		if (target == null)
+		if (target == null) {
 			Scout.move(rc);
+			return;
+		}
 		Direction dir = Paths.findMove(rc, target);
 		if (rc.canMove(dir))
 			rc.move(dir);
